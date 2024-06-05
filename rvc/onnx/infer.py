@@ -38,9 +38,9 @@ class ContentVec(Model):
         super().__init__(vec_path, device)
 
     def __call__(self, wav: np.ndarray[typing.Any, np.dtype]):
-        return self.forward(wav)
+        return self.__forward(wav)
 
-    def forward(self, wav: np.ndarray[typing.Any, np.dtype]):
+    def __forward(self, wav: np.ndarray[typing.Any, np.dtype]):
         if wav.ndim == 2:  # double channels
             wav = wav.mean(-1)
         assert wav.ndim == 1, wav.ndim
@@ -67,21 +67,20 @@ class RVC(Model):
     def __init__(
         self,
         model_path: str | bytes | os.PathLike,
-        sr=40000,
-        hop_size=512,
+        hop_len=512,
         vec_path: str | bytes | os.PathLike = "vec-768-layer-12.onnx",
         device: typing.Literal["cpu", "cuda", "dml"] = "cpu",
     ):
         super().__init__(model_path, device)
         self.vec_model = ContentVec(vec_path, device)
-        self.sampling_rate = sr
-        self.hop_size = hop_size
+        self.hop_len = hop_len
 
     def inference(
         self,
         wav: np.ndarray[typing.Any, np.dtype],
-        sr: int,
-        sid: int,
+        wav_sr: int,
+        model_sr: int = 40000,
+        sid: int = 0,
         f0_method="dio",
         f0_up_key=0,
     ) -> np.ndarray[typing.Any, np.dtype[np.int16]]:
@@ -91,17 +90,14 @@ class RVC(Model):
         f0_mel_max = 1127 * np.log(1 + f0_max / 700)
         f0_predictor = get_f0_predictor(
             f0_method,
-            self.hop_size,
-            self.sampling_rate,
+            self.hop_len,
+            model_sr,
         )
         org_length = len(wav)
-        if org_length / sr > 50.0:
-            raise RuntimeError("Reached Max Length")
+        if org_length / wav_sr > 50.0:
+            raise RuntimeError("wav max length exceeded")
 
-        wav16k = librosa.resample(wav, orig_sr=sr, target_sr=16000)
-        wav16k = wav16k
-
-        hubert = self.vec_model(wav16k)
+        hubert = self.vec_model(librosa.resample(wav, orig_sr=wav_sr, target_sr=16000))
         hubert = np.repeat(hubert, 2, axis=2).transpose(0, 2, 1).astype(np.float32)
         hubert_length = hubert.shape[1]
 
@@ -126,7 +122,9 @@ class RVC(Model):
         out_wav = self.__forward(
             hubert, hubert_length, pitch, pitchf, ds, rnd
         ).squeeze()
-        out_wav = np.pad(out_wav, (0, 2 * self.hop_size), "constant")
+
+        out_wav = np.pad(out_wav, (0, 2 * self.hop_len), "constant")
+
         return out_wav[0:org_length]
 
     def __forward(

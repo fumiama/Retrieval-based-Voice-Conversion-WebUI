@@ -1,7 +1,7 @@
 import soundfile
 import librosa
 
-from rvc.onnx.infer import RVC
+from rvc.onnx import RVC
 
 hop_size = 512
 sampling_rate = 40000  # 采样率
@@ -14,7 +14,7 @@ wav_path = "123.wav"  # 输入路径或ByteIO实例
 out_path = "out.wav"  # 输出路径或ByteIO实例
 
 model = RVC(
-    model_path, vec_path=vec_path, sr=sampling_rate, hop_size=hop_size, device="cuda"
+    model_path, vec_path=vec_path, sr=sampling_rate, hop_len=hop_size, device="cuda"
 )
 
 wav, sr = librosa.load(wav_path, sr=sampling_rate)
