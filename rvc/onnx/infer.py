@@ -6,6 +6,7 @@ from onnx.f0predictor import PMF0Predictor
 from onnx.f0predictor import HarvestF0Predictor
 from onnx.f0predictor import DioF0Predictor
 
+
 class ContentVec:
     def __init__(self, vec_path: str, device=None):
         if device == "cpu" or device is None:
@@ -30,11 +31,13 @@ class ContentVec:
         logits = self.model.run(None, onnx_input)[0]
         return logits.transpose(0, 2, 1)
 
+
 predicters = {
     "pm": PMF0Predictor,
     "harvest": HarvestF0Predictor,
     "dio": DioF0Predictor,
 }
+
 
 def get_f0_predictor(f0_method, hop_length, sampling_rate):
     return predicters[f0_method](hop_length=hop_length, sampling_rate=sampling_rate)
