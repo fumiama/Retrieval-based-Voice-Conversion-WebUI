@@ -117,10 +117,10 @@ def model_hash(config, tgt_sr, net_g, if_f0, version):
     del hbt
     opt_len = len(audio_opt)
     diff = 48000 - opt_len
-    n = diff // 2
-    if n > 0:
-        audio_opt = np.pad(audio_opt, (n, n))
-    elif n < 0:
+    if diff > 0:
+        audio_opt = np.pad(audio_opt, (diff, 0))
+    elif diff < 0:
+        n = diff // 2
         n = -n
         audio_opt = audio_opt[n:-n]
     h = wave_hash(audio_opt)
