@@ -1,6 +1,7 @@
 import numpy as np
 import typing
 
+
 class F0Predictor(object):
     def __init__(self, hop_length=512, f0_min=50, f0_max=1100, sampling_rate=44100):
         self.hop_length = hop_length
@@ -8,9 +9,13 @@ class F0Predictor(object):
         self.f0_max = f0_max
         self.sampling_rate = sampling_rate
 
-    def compute_f0(self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None): ...
+    def compute_f0(
+        self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None
+    ): ...
 
-    def compute_f0_uv(self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None): ...
+    def compute_f0_uv(
+        self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None
+    ): ...
 
     def __interpolate_f0(self, f0: np.ndarray[typing.Any, np.dtype]):
         """
@@ -49,7 +54,7 @@ class F0Predictor(object):
                 last_value = data[i]
 
         return ip_data[:, 0], vuv_vector[:, 0]
-    
+
     def __resize_f0(self, x: np.ndarray[typing.Any, np.dtype], target_len: int):
         source = np.array(x)
         source[source < 0.001] = np.nan

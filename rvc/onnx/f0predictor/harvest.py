@@ -9,7 +9,9 @@ class HarvestF0Predictor(F0Predictor):
     def __init__(self, hop_length=512, f0_min=50, f0_max=1100, sampling_rate=44100):
         super().__init__(hop_length, f0_min, f0_max, sampling_rate)
 
-    def compute_f0(self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None):
+    def compute_f0(
+        self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None
+    ):
         if p_len is None:
             p_len = wav.shape[0] // self.hop_length
         f0, t = pyworld.harvest(
@@ -22,7 +24,9 @@ class HarvestF0Predictor(F0Predictor):
         f0 = pyworld.stonemask(wav.astype(np.double), f0, t, self.fs)
         return self.__interpolate_f0(self.__resize_f0(f0, p_len))[0]
 
-    def compute_f0_uv(self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None):
+    def compute_f0_uv(
+        self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None
+    ):
         if p_len is None:
             p_len = wav.shape[0] // self.hop_length
         f0, t = pyworld.harvest(
