@@ -4,11 +4,20 @@ import onnxruntime
 import typing
 import os
 
-from onnx.f0predictor import PMF0Predictor, HarvestF0Predictor, DioF0Predictor, F0Predictor
+from onnx.f0predictor import (
+    PMF0Predictor,
+    HarvestF0Predictor,
+    DioF0Predictor,
+    F0Predictor,
+)
 
 
 class Model:
-    def __init__(self, path: str | bytes | os.PathLike, device: typing.Literal["cpu", "cuda", "dml"]="cpu"):
+    def __init__(
+        self,
+        path: str | bytes | os.PathLike,
+        device: typing.Literal["cpu", "cuda", "dml"] = "cpu",
+    ):
         if device == "cpu":
             providers = ["CPUExecutionProvider"]
         elif device == "cuda":
@@ -19,8 +28,13 @@ class Model:
             raise RuntimeError("Unsportted Device")
         self.model = onnxruntime.InferenceSession(path, providers=providers)
 
+
 class ContentVec(Model):
-    def __init__(self, vec_path: str | bytes | os.PathLike, device: typing.Literal["cpu", "cuda", "dml"]="cpu"):
+    def __init__(
+        self,
+        vec_path: str | bytes | os.PathLike,
+        device: typing.Literal["cpu", "cuda", "dml"] = "cpu",
+    ):
         super().__init__(vec_path, device)
 
     def __call__(self, wav: np.ndarray[typing.Any, np.dtype]):
@@ -43,7 +57,9 @@ predictors: typing.Dict[str, F0Predictor] = {
 }
 
 
-def get_f0_predictor(f0_method: str, hop_length: int, sampling_rate: int) -> F0Predictor:
+def get_f0_predictor(
+    f0_method: str, hop_length: int, sampling_rate: int
+) -> F0Predictor:
     return predictors[f0_method](hop_length=hop_length, sampling_rate=sampling_rate)
 
 
@@ -107,7 +123,9 @@ class RVC(Model):
         rnd = np.random.randn(1, 192, hubert_length).astype(np.float32)
         hubert_length = np.array([hubert_length]).astype(np.int64)
 
-        out_wav = self.__forward(hubert, hubert_length, pitch, pitchf, ds, rnd).squeeze()
+        out_wav = self.__forward(
+            hubert, hubert_length, pitch, pitchf, ds, rnd
+        ).squeeze()
         out_wav = np.pad(out_wav, (0, 2 * self.hop_size), "constant")
         return out_wav[0:org_length]
 
