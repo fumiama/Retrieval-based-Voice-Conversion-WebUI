@@ -1650,7 +1650,7 @@ try:
 
     signal.signal(signal.SIGINT, cleanup)
     signal.signal(signal.SIGTERM, cleanup)
-    if config.iscolab:
+    if config.global_link:
         app.queue(max_size=1022).launch(share=True, max_threads=511)
     else:
         app.queue(max_size=1022).launch(

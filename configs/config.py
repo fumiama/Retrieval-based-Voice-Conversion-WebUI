@@ -53,7 +53,7 @@ class Config:
         (
             self.python_cmd,
             self.listen_port,
-            self.iscolab,
+            self.global_link,
             self.noparallel,
             self.noautoopen,
             self.dml,
@@ -81,7 +81,7 @@ class Config:
         parser = argparse.ArgumentParser()
         parser.add_argument("--port", type=int, default=7865, help="Listen port")
         parser.add_argument("--pycmd", type=str, default=exe, help="Python command")
-        parser.add_argument("--colab", action="store_true", help="Launch in colab")
+        parser.add_argument("--global_link", action="store_true", help="Generate a global proxy link")
         parser.add_argument(
             "--noparallel", action="store_true", help="Disable parallel processing"
         )
@@ -108,7 +108,7 @@ class Config:
         return (
             cmd_opts.pycmd,
             cmd_opts.port,
-            cmd_opts.colab,
+            cmd_opts.global_link,
             cmd_opts.noparallel,
             cmd_opts.noautoopen,
             cmd_opts.dml,
