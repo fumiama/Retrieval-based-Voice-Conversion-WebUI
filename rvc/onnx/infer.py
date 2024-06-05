@@ -1,15 +1,15 @@
 import librosa
 import numpy as np
 import onnxruntime
+import typing
+import os
 
-from onnx.f0predictor import PMF0Predictor
-from onnx.f0predictor import HarvestF0Predictor
-from onnx.f0predictor import DioF0Predictor
+from onnx.f0predictor import PMF0Predictor, HarvestF0Predictor, DioF0Predictor, F0Predictor
 
 
-class ContentVec:
-    def __init__(self, vec_path: str, device=None):
-        if device == "cpu" or device is None:
+class Model:
+    def __init__(self, path: str | bytes | os.PathLike, device: typing.Literal["cpu", "cuda", "dml"]="cpu"):
+        if device == "cpu":
             providers = ["CPUExecutionProvider"]
         elif device == "cuda":
             providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
@@ -17,12 +17,16 @@ class ContentVec:
             providers = ["DmlExecutionProvider"]
         else:
             raise RuntimeError("Unsportted Device")
-        self.model = onnxruntime.InferenceSession(vec_path, providers=providers)
+        self.model = onnxruntime.InferenceSession(path, providers=providers)
 
-    def __call__(self, wav):
+class ContentVec(Model):
+    def __init__(self, vec_path: str | bytes | os.PathLike, device: typing.Literal["cpu", "cuda", "dml"]="cpu"):
+        super().__init__(vec_path, device)
+
+    def __call__(self, wav: np.ndarray[typing.Any, np.dtype]):
         return self.forward(wav)
 
-    def forward(self, wav):
+    def forward(self, wav: np.ndarray[typing.Any, np.dtype]):
         if wav.ndim == 2:  # double channels
             wav = wav.mean(-1)
         assert wav.ndim == 1, wav.ndim
@@ -32,58 +36,39 @@ class ContentVec:
         return logits.transpose(0, 2, 1)
 
 
-predicters = {
+predictors: typing.Dict[str, F0Predictor] = {
     "pm": PMF0Predictor,
     "harvest": HarvestF0Predictor,
     "dio": DioF0Predictor,
 }
 
 
-def get_f0_predictor(f0_method, hop_length, sampling_rate):
-    return predicters[f0_method](hop_length=hop_length, sampling_rate=sampling_rate)
+def get_f0_predictor(f0_method: str, hop_length: int, sampling_rate: int) -> F0Predictor:
+    return predictors[f0_method](hop_length=hop_length, sampling_rate=sampling_rate)
 
 
-class RVC:
+class RVC(Model):
     def __init__(
         self,
-        model_path,
+        model_path: str | bytes | os.PathLike,
         sr=40000,
         hop_size=512,
-        vec_path="vec-768-layer-12.onnx",
-        device="cpu",
+        vec_path: str | bytes | os.PathLike = "vec-768-layer-12.onnx",
+        device: typing.Literal["cpu", "cuda", "dml"] = "cpu",
     ):
+        super().__init__(model_path, device)
         self.vec_model = ContentVec(vec_path, device)
-        if device == "cpu" or device is None:
-            providers = ["CPUExecutionProvider"]
-        elif device == "cuda":
-            providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
-        elif device == "dml":
-            providers = ["DmlExecutionProvider"]
-        else:
-            raise RuntimeError("Unsportted Device")
-        self.model = onnxruntime.InferenceSession(model_path, providers=providers)
         self.sampling_rate = sr
         self.hop_size = hop_size
 
-    def forward(self, hubert, hubert_length, pitch, pitchf, ds, rnd):
-        onnx_input = {
-            self.model.get_inputs()[0].name: hubert,
-            self.model.get_inputs()[1].name: hubert_length,
-            self.model.get_inputs()[2].name: pitch,
-            self.model.get_inputs()[3].name: pitchf,
-            self.model.get_inputs()[4].name: ds,
-            self.model.get_inputs()[5].name: rnd,
-        }
-        return (self.model.run(None, onnx_input)[0] * 32767).astype(np.int16)
-
     def inference(
         self,
-        wav,
-        sr,
-        sid,
+        wav: np.ndarray[typing.Any, np.dtype],
+        sr: int,
+        sid: int,
         f0_method="dio",
         f0_up_key=0,
-    ):
+    ) -> np.ndarray[typing.Any, np.dtype[np.int16]]:
         f0_min = 50
         f0_max = 1100
         f0_mel_min = 1127 * np.log(1 + f0_min / 700)
@@ -122,6 +107,25 @@ class RVC:
         rnd = np.random.randn(1, 192, hubert_length).astype(np.float32)
         hubert_length = np.array([hubert_length]).astype(np.int64)
 
-        out_wav = self.forward(hubert, hubert_length, pitch, pitchf, ds, rnd).squeeze()
+        out_wav = self.__forward(hubert, hubert_length, pitch, pitchf, ds, rnd).squeeze()
         out_wav = np.pad(out_wav, (0, 2 * self.hop_size), "constant")
         return out_wav[0:org_length]
+
+    def __forward(
+        self,
+        hubert: np.ndarray[typing.Any, np.dtype[np.float32]],
+        hubert_length: int,
+        pitch: np.ndarray[typing.Any, np.dtype[np.int64]],
+        pitchf: np.ndarray[typing.Any, np.dtype[np.float32]],
+        ds: np.ndarray[typing.Any, np.dtype[np.int64]],
+        rnd: np.ndarray[typing.Any, np.dtype[np.float32]],
+    ) -> np.ndarray[typing.Any, np.dtype[np.int16]]:
+        onnx_input = {
+            self.model.get_inputs()[0].name: hubert,
+            self.model.get_inputs()[1].name: hubert_length,
+            self.model.get_inputs()[2].name: pitch,
+            self.model.get_inputs()[3].name: pitchf,
+            self.model.get_inputs()[4].name: ds,
+            self.model.get_inputs()[5].name: rnd,
+        }
+        return (self.model.run(None, onnx_input)[0] * 32767).astype(np.int16)
