@@ -81,7 +81,9 @@ class Config:
         parser = argparse.ArgumentParser()
         parser.add_argument("--port", type=int, default=7865, help="Listen port")
         parser.add_argument("--pycmd", type=str, default=exe, help="Python command")
-        parser.add_argument("--global_link", action="store_true", help="Generate a global proxy link")
+        parser.add_argument(
+            "--global_link", action="store_true", help="Generate a global proxy link"
+        )
         parser.add_argument(
             "--noparallel", action="store_true", help="Disable parallel processing"
         )
