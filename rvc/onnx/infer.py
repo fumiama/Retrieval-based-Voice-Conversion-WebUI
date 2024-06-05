@@ -1,16 +1,13 @@
 import librosa
 import numpy as np
 import onnxruntime
-import soundfile
 
-import logging
-
-logger = logging.getLogger(__name__)
-
+from onnx.f0predictor import PMF0Predictor
+from onnx.f0predictor import HarvestF0Predictor
+from onnx.f0predictor import DioF0Predictor
 
 class ContentVec:
-    def __init__(self, vec_path="pretrained/vec-768-layer-12.onnx", device=None):
-        logger.info("Load model(s) from {}".format(vec_path))
+    def __init__(self, vec_path: str, device=None):
         if device == "cpu" or device is None:
             providers = ["CPUExecutionProvider"]
         elif device == "cuda":
@@ -25,52 +22,33 @@ class ContentVec:
         return self.forward(wav)
 
     def forward(self, wav):
-        feats = wav
-        if feats.ndim == 2:  # double channels
-            feats = feats.mean(-1)
-        assert feats.ndim == 1, feats.ndim
-        feats = np.expand_dims(np.expand_dims(feats, 0), 0)
-        onnx_input = {self.model.get_inputs()[0].name: feats}
+        if wav.ndim == 2:  # double channels
+            wav = wav.mean(-1)
+        assert wav.ndim == 1, wav.ndim
+        wav = np.expand_dims(np.expand_dims(wav, 0), 0)
+        onnx_input = {self.model.get_inputs()[0].name: wav}
         logits = self.model.run(None, onnx_input)[0]
         return logits.transpose(0, 2, 1)
 
+predicters = {
+    "pm": PMF0Predictor,
+    "harvest": HarvestF0Predictor,
+    "dio": DioF0Predictor,
+}
 
-def get_f0_predictor(f0_predictor, hop_length, sampling_rate, **kargs):
-    if f0_predictor == "pm":
-        from lib.infer_pack.modules.F0Predictor.PMF0Predictor import PMF0Predictor
-
-        f0_predictor_object = PMF0Predictor(
-            hop_length=hop_length, sampling_rate=sampling_rate
-        )
-    elif f0_predictor == "harvest":
-        from lib.infer_pack.modules.F0Predictor.HarvestF0Predictor import (
-            HarvestF0Predictor,
-        )
-
-        f0_predictor_object = HarvestF0Predictor(
-            hop_length=hop_length, sampling_rate=sampling_rate
-        )
-    elif f0_predictor == "dio":
-        from lib.infer_pack.modules.F0Predictor.DioF0Predictor import DioF0Predictor
-
-        f0_predictor_object = DioF0Predictor(
-            hop_length=hop_length, sampling_rate=sampling_rate
-        )
-    else:
-        raise Exception("Unknown f0 predictor")
-    return f0_predictor_object
+def get_f0_predictor(f0_method, hop_length, sampling_rate):
+    return predicters[f0_method](hop_length=hop_length, sampling_rate=sampling_rate)
 
 
-class OnnxRVC:
+class RVC:
     def __init__(
         self,
         model_path,
         sr=40000,
         hop_size=512,
-        vec_path="vec-768-layer-12",
+        vec_path="vec-768-layer-12.onnx",
         device="cpu",
     ):
-        vec_path = f"pretrained/{vec_path}.onnx"
         self.vec_model = ContentVec(vec_path, device)
         if device == "cpu" or device is None:
             providers = ["CPUExecutionProvider"]
@@ -97,12 +75,11 @@ class OnnxRVC:
 
     def inference(
         self,
-        raw_path,
+        wav,
+        sr,
         sid,
         f0_method="dio",
         f0_up_key=0,
-        pad_time=0.5,
-        cr_threshold=0.02,
     ):
         f0_min = 50
         f0_max = 1100
@@ -110,16 +87,14 @@ class OnnxRVC:
         f0_mel_max = 1127 * np.log(1 + f0_max / 700)
         f0_predictor = get_f0_predictor(
             f0_method,
-            hop_length=self.hop_size,
-            sampling_rate=self.sampling_rate,
-            threshold=cr_threshold,
+            self.hop_size,
+            self.sampling_rate,
         )
-        wav, sr = librosa.load(raw_path, sr=self.sampling_rate)
         org_length = len(wav)
         if org_length / sr > 50.0:
             raise RuntimeError("Reached Max Length")
 
-        wav16k = librosa.resample(wav, orig_sr=self.sampling_rate, target_sr=16000)
+        wav16k = librosa.resample(wav, orig_sr=sr, target_sr=16000)
         wav16k = wav16k
 
         hubert = self.vec_model(wav16k)

@@ -36,15 +36,6 @@ for filename in glob.iglob("**/*.py", recursive=True):
             print(filename, len(i18n_strings))
             strings.extend(i18n_strings)
 code_keys = set(strings)
-"""
-n_i18n.py
-gui_v1.py 26
-app.py 16
-infer-web.py 147
-scan_i18n.py 0
-i18n.py 0
-lib/train/process_ckpt.py 1
-"""
 print()
 print("Total unique:", len(code_keys))
 

@@ -1,7 +1,7 @@
 import numpy as np
 import parselmouth
 
-from infer.lib.infer_pack.modules.F0Predictor.F0Predictor import F0Predictor
+from .f0 import F0Predictor
 
 
 class PMF0Predictor(F0Predictor):
