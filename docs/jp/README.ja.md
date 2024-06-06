@@ -86,19 +86,19 @@ sh ./run.sh
 3. 自分の GPU に対応する依存関係をインストールします。
 - Nvidia GPU
 	```bash
-	pip install -r requirements.txt
+	pip install -r requirements/requirements.txt
 	```
 - AMD/Intel GPU
 	```bash
-	pip install -r requirements-dml.txt
+	pip install -r requirements/requirements-dml.txt
 	```
 - AMD ROCM (Linux)
 	```bash
-	pip install -r requirements-amd.txt
+	pip install -r requirements/requirements-amd.txt
 	```
 - Intel IPEX (Linux)
 	```bash
-	pip install -r requirements-ipex.txt
+	pip install -r requirements/requirements-ipex.txt
 	```
 
 ## その他のデータを準備
