@@ -2,11 +2,12 @@ from typing import List, Optional, Tuple
 
 import torch
 
+
 def call_weight_data_normal_if_Conv(m: torch.nn.Module):
     classname = m.__class__.__name__
     if classname.find("Conv") != -1:
-        mean=0.0
-        std=0.01
+        mean = 0.0
+        std = 0.01
         m.weight.data.normal_(mean, std)
 
 
@@ -15,8 +16,10 @@ def get_padding(kernel_size: int, dilation=1):
 
 
 def slice_on_last_dim(
-        x: torch.Tensor, start_indices: List[int], segment_size=4,
-    ) -> torch.Tensor:
+    x: torch.Tensor,
+    start_indices: List[int],
+    segment_size=4,
+) -> torch.Tensor:
     new_shape = x.shape
     new_shape[-1] = segment_size
     ret = torch.empty(new_shape)
@@ -28,10 +31,13 @@ def slice_on_last_dim(
 
 
 def rand_slice_segments(
-        x: torch.Tensor, x_lengths: int = None, segment_size=4,
-    ) -> Tuple[torch.Tensor, List[int]]:
+    x: torch.Tensor,
+    x_lengths: int = None,
+    segment_size=4,
+) -> Tuple[torch.Tensor, List[int]]:
     b, _, t = x.size()
-    if x_lengths is None: x_lengths = t
+    if x_lengths is None:
+        x_lengths = t
     ids_str_max = x_lengths - segment_size + 1
     ids_str = (torch.rand([b]).to(device=x.device) * ids_str_max).to(dtype=torch.long)
     ret = slice_on_last_dim(x, ids_str, segment_size)
@@ -53,8 +59,9 @@ def convert_pad_shape(pad_shape: List[List[int]]) -> List[int]:
 
 
 def sequence_mask(
-        length: torch.Tensor, max_length: Optional[int] = None,
-    ) -> torch.BoolTensor:
+    length: torch.Tensor,
+    max_length: Optional[int] = None,
+) -> torch.BoolTensor:
     if max_length is None:
         max_length = int(length.max())
     x = torch.arange(max_length, dtype=length.dtype, device=length.device)

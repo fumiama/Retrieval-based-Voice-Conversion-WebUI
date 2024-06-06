@@ -1,7 +1,15 @@
 import torch
 from torch import nn
 
-from .attentions import TextEncoder, ResidualCouplingBlock, PosteriorEncoder, Generator, SineGen, SourceModuleHnNSF, GeneratorNSF
+from .attentions import (
+    TextEncoder,
+    ResidualCouplingBlock,
+    PosteriorEncoder,
+    Generator,
+    SineGen,
+    SourceModuleHnNSF,
+    GeneratorNSF,
+)
 
 
 class SynthesizerTrnMsNSFsidM(nn.Module):
@@ -29,11 +37,12 @@ class SynthesizerTrnMsNSFsidM(nn.Module):
         **kwargs
     ):
         super(SynthesizerTrnMsNSFsidM, self).__init__()
-        if isinstance(sr, str): sr = {
-            "32k": 32000,
-            "40k": 40000,
-            "48k": 48000,
-        }[sr]
+        if isinstance(sr, str):
+            sr = {
+                "32k": 32000,
+                "40k": 40000,
+                "48k": 48000,
+            }[sr]
         self.spec_channels = spec_channels
         self.inter_channels = inter_channels
         self.hidden_channels = hidden_channels
