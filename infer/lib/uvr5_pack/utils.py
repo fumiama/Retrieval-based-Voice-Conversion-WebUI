@@ -1,15 +1,6 @@
-import json
-
 import numpy as np
 import torch
 from tqdm import tqdm
-
-
-def load_data(file_name: str = "./infer/lib/uvr5_pack/name_params.json") -> dict:
-    with open(file_name, "r") as f:
-        data = json.load(f)
-
-    return data
 
 
 def make_padding(width, cropsize, offset):
@@ -97,25 +88,3 @@ def inference(X_spec, device, model, aggressiveness, data):
         return (pred + pred_tta) * 0.5 * coef, X_mag, np.exp(1.0j * X_phase)
     else:
         return pred * coef, X_mag, np.exp(1.0j * X_phase)
-
-
-def _get_name_params(model_path, model_hash):
-    data = load_data()
-    flag = False
-    ModelName = model_path
-    for type in list(data):
-        for model in list(data[type][0]):
-            for i in range(len(data[type][0][model])):
-                if str(data[type][0][model][i]["hash_name"]) == model_hash:
-                    flag = True
-                elif str(data[type][0][model][i]["hash_name"]) in ModelName:
-                    flag = True
-
-                if flag:
-                    model_params_auto = data[type][0][model][i]["model_params"]
-                    param_name_auto = data[type][0][model][i]["param_name"]
-                    if type == "equivalent":
-                        return param_name_auto, model_params_auto
-                    else:
-                        flag = False
-    return param_name_auto, model_params_auto
