@@ -73,6 +73,7 @@ class Encoder(nn.Module):
         x = x * x_mask
         return x
 
+
 """
 class Decoder(nn.Module):
     def __init__(
@@ -157,6 +158,7 @@ class Decoder(nn.Module):
         x = x * x_mask
         return x
 """
+
 
 class MultiHeadAttention(nn.Module):
     def __init__(

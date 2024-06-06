@@ -60,7 +60,9 @@ class TextEncoder(nn.Module):
         # skip_head: Optional[torch.Tensor] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         return super().__call__(
-            phone, pitch, lengths,
+            phone,
+            pitch,
+            lengths,
             # skip_head=skip_head,
         )
 
@@ -80,8 +82,10 @@ class TextEncoder(nn.Module):
         x = torch.transpose(x, 1, -1)  # [b, h, t]
         x_mask = torch.unsqueeze(
             utils.sequence_mask(
-                lengths, x.size(2),
-            ), 1,
+                lengths,
+                x.size(2),
+            ),
+            1,
         ).to(x.dtype)
         x = self.encoder(x * x_mask, x_mask)
         """
@@ -193,17 +197,19 @@ class PosteriorEncoder(nn.Module):
         self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1)
 
     def __call__(
-            self, x: torch.Tensor, x_lengths: torch.Tensor, g: Optional[torch.Tensor] = None
+        self, x: torch.Tensor, x_lengths: torch.Tensor, g: Optional[torch.Tensor] = None
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-        super().__call__(x, x_lengths, g = g)
+        super().__call__(x, x_lengths, g=g)
 
     def forward(
         self, x: torch.Tensor, x_lengths: torch.Tensor, g: Optional[torch.Tensor] = None
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         x_mask = torch.unsqueeze(
             utils.sequence_mask(
-                x_lengths, x.size(2),
-            ), 1,
+                x_lengths,
+                x.size(2),
+            ),
+            1,
         ).to(x.dtype)
         x = self.pre(x) * x_mask
         x = self.enc(x, x_mask, g=g)
@@ -663,11 +669,12 @@ class SynthesizerTrnMs256NSFsid(nn.Module):
         **kwargs
     ):
         super(SynthesizerTrnMs256NSFsid, self).__init__()
-        if isinstance(sr, str): sr = {
-            "32k": 32000,
-            "40k": 40000,
-            "48k": 48000,
-        }[sr]
+        if isinstance(sr, str):
+            sr = {
+                "32k": 32000,
+                "40k": 40000,
+                "48k": 48000,
+            }[sr]
         self.spec_channels = spec_channels
         self.inter_channels = inter_channels
         self.hidden_channels = hidden_channels
@@ -776,9 +783,7 @@ class SynthesizerTrnMs256NSFsid(nn.Module):
         m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths)
         z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
         z_p = self.flow(z, y_mask, g=g)
-        z_slice, ids_slice = utils.rand_slice_segments(
-            z, y_lengths, self.segment_size
-        )
+        z_slice, ids_slice = utils.rand_slice_segments(z, y_lengths, self.segment_size)
         # print(-1,pitchf.shape,ids_slice,self.segment_size,self.hop_length,self.segment_size//self.hop_length)
         pitchf = utils.slice_on_last_dim(pitchf, ids_slice, self.segment_size)
         # print(-2,pitchf.shape,z_slice.shape)
@@ -816,7 +821,9 @@ class SynthesizerTrnMs256NSFsid(nn.Module):
             z_p = (m_p + torch.exp(logs_p) * torch.randn_like(m_p) * 0.66666) * x_mask
             z = self.flow(z_p, x_mask, g=g, reverse=True)
         o = self.dec(
-            z * x_mask, nsff0, g=g,
+            z * x_mask,
+            nsff0,
+            g=g,
             # n_res=return_length2,
         )
         return o, x_mask, (z, z_p, m_p, logs_p)
@@ -1000,9 +1007,7 @@ class SynthesizerTrnMs256NSFsid_nono(nn.Module):
         m_p, logs_p, x_mask = self.enc_p(phone, None, phone_lengths)
         z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
         z_p = self.flow(z, y_mask, g=g)
-        z_slice, ids_slice = utils.rand_slice_segments(
-            z, y_lengths, self.segment_size
-        )
+        z_slice, ids_slice = utils.rand_slice_segments(z, y_lengths, self.segment_size)
         o = self.dec(z_slice, g=g)
         return o, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
 
@@ -1014,7 +1019,7 @@ class SynthesizerTrnMs256NSFsid_nono(nn.Module):
         sid: torch.Tensor,
         skip_head: Optional[torch.Tensor] = None,
         return_length: Optional[torch.Tensor] = None,
-        #return_length2: Optional[torch.Tensor] = None,
+        # return_length2: Optional[torch.Tensor] = None,
     ):
         g = self.emb_g(sid).unsqueeze(-1)
         if skip_head is not None and return_length is not None:
@@ -1034,7 +1039,8 @@ class SynthesizerTrnMs256NSFsid_nono(nn.Module):
             z_p = (m_p + torch.exp(logs_p) * torch.randn_like(m_p) * 0.66666) * x_mask
             z = self.flow(z_p, x_mask, g=g, reverse=True)
         o = self.dec(
-            z * x_mask, g=g,
+            z * x_mask,
+            g=g,
             # n_res=return_length2
         )
         return o, x_mask, (z, z_p, m_p, logs_p)
