@@ -146,7 +146,7 @@ Os usuários de placas gráficas Intel ARC precisam executar o comando `source /
 
 Em seguida, use este comando para iniciar o Webui:
 ```bash
-python infer-web.py
+python web.py
 ```
 
 Se estiver usando Windows ou macOS, você pode baixar e extrair `RVC-beta.7z` para usar RVC diretamente usando `go-web.bat` no Windows ou `sh ./run.sh` no macOS para iniciar o Webui.
@@ -171,7 +171,7 @@ sudo usermod -aG video $USERNAME
 ````
 Depois disso, você pode executar o WebUI:
 ```bash
-python infer-web.py
+python web.py
 ```
 
 ## Credits

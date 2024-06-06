@@ -132,7 +132,7 @@ https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt
 Pour les utilisateurs d'Intel ARC avec IPEX, exécutez d'abord `source /opt/intel/oneapi/setvars.sh`.
 Ensuite, exécutez la commande suivante pour démarrer WebUI :
 ```bash
-python infer-web.py
+python web.py
 ```
 
 Si vous utilisez Windows ou macOS, vous pouvez télécharger et extraire `RVC-beta.7z`. Les utilisateurs de Windows peuvent exécuter `go-web.bat` pour démarrer WebUI, tandis que les utilisateurs de macOS peuvent exécuter `sh ./run.sh`.
@@ -157,7 +157,7 @@ sudo usermod -aG video $USERNAME
 ````
 Enfin vous pouvez exécuter WebUI:
 ```bash
-python infer-web.py
+python web.py
 ```
 
 ## Crédits

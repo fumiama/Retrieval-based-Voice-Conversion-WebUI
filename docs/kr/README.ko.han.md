@@ -84,7 +84,7 @@ ffmpeg.exe
 ```
 그後 以下의 命令을 使用하여 WebUI를 始作할 수 있습니다:
 ```bash
-python infer-web.py
+python web.py
 ```
 Windows를 使用하는境遇 `RVC-beta.7z`를 다운로드 및 壓縮解除하여 RVC를 直接使用하거나 `go-web.bat`을 使用하여 WebUi를 直接할 수 있습니다.
 

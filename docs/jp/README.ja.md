@@ -200,7 +200,7 @@ sudo usermod -aG video $USERNAME
 ### 直接起動
 以下のコマンドで WebUI を起動します
 ```bash
-python infer-web.py
+python web.py
 ```
 ### Linux/MacOS
 ```bash

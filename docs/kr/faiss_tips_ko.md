@@ -9,7 +9,7 @@ RVC에서는 HuBERT로 변환한 feature의 embedding을 위해 훈련 데이터
 # 구현 개요
 모델이 위치한 `/logs/your-experiment/3_feature256`에는 각 음성 데이터에서 HuBERT가 추출한 feature들이 있습니다. 여기에서 파일 이름별로 정렬된 npy 파일을 읽고, 벡터를 연결하여 big_npy ([N, 256] 모양의 벡터) 를 만듭니다. big_npy를 `/logs/your-experiment/total_fea.npy`로 저장한 후, Faiss로 학습시킵니다.
 
-2023/04/18 기준으로, Faiss의 Index Factory 기능을 이용해, L2 거리에 근거하는 IVF를 이용하고 있습니다. IVF의 분할수(n_ivf)는 N//39로, n_probe는 int(np.power(n_ivf, 0.3))가 사용되고 있습니다. (infer-web.py의 train_index 주위를 찾으십시오.)
+2023/04/18 기준으로, Faiss의 Index Factory 기능을 이용해, L2 거리에 근거하는 IVF를 이용하고 있습니다. IVF의 분할수(n_ivf)는 N//39로, n_probe는 int(np.power(n_ivf, 0.3))가 사용되고 있습니다. (web.py의 train_index 주위를 찾으십시오.)
 
 이 팁에서는 먼저 이러한 매개 변수의 의미를 설명하고, 개발자가 추후 더 나은 index를 작성할 수 있도록 하는 조언을 작성합니다.
 

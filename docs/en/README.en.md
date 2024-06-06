@@ -196,7 +196,7 @@ sudo usermod -aG video $USERNAME
 ### Direct Launch
 Use the following command to start the WebUI.
 ```bash
-python infer-web.py
+python web.py
 ```
 ### Linux/MacOS
 ```bash

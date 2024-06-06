@@ -43,4 +43,4 @@ RUN aria2c --console-log-level=error -c -x 16 -s 16 -k 1M https://huggingface.co
 
 VOLUME [ "/app/weights", "/app/opt" ]
 
-CMD ["python3", "infer-web.py"]
+CMD ["python3", "web.py"]

@@ -198,7 +198,7 @@ sudo usermod -aG video $USERNAME
 ### 直接启动
 使用以下指令来启动 WebUI
 ```bash
-python infer-web.py
+python web.py
 ```
 ### Linux/MacOS 用户
 ```bash

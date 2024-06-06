@@ -131,7 +131,7 @@ Intel ARC grafik kartları kullanıcıları Webui'yi başlatmadan önce `source 
 
 Daha sonra bu komutu kullanarak Webui'yi başlatabilirsiniz:
 ```bash
-python infer-web.py
+python web.py
 ```
 Windows veya macOS kullanıyorsanız, `RVC-beta.7z` dosyasını indirip çıkararak `go-web.bat`i kullanarak veya macOS'ta `sh ./run.sh` kullanarak doğrudan RVC'yi kullanabilirsiniz.
 
