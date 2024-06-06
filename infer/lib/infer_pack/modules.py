@@ -10,8 +10,8 @@ from torch.nn import AvgPool1d, Conv1d, Conv2d, ConvTranspose1d
 from torch.nn import functional as F
 from torch.nn.utils import remove_weight_norm, weight_norm
 
-from infer.lib.infer_pack import commons
-from infer.lib.infer_pack.commons import get_padding, init_weights
+from rvc import utils
+from rvc.utils import get_padding, call_weight_data_normal_if_Conv
 from infer.lib.infer_pack.transforms import piecewise_rational_quadratic_transform
 
 LRELU_SLOPE = 0.1
@@ -204,7 +204,7 @@ class WN(torch.nn.Module):
             else:
                 g_l = torch.zeros_like(x_in)
 
-            acts = commons.fused_add_tanh_sigmoid_multiply(x_in, g_l, n_channels_tensor)
+            acts = utils.fused_add_tanh_sigmoid_multiply(x_in, g_l, n_channels_tensor)
             acts = self.drop(acts)
 
             res_skip_acts = res_skip_layer(acts)
@@ -286,7 +286,7 @@ class ResBlock1(torch.nn.Module):
                 ),
             ]
         )
-        self.convs1.apply(init_weights)
+        self.convs1.apply(call_weight_data_normal_if_Conv)
 
         self.convs2 = nn.ModuleList(
             [
@@ -322,7 +322,7 @@ class ResBlock1(torch.nn.Module):
                 ),
             ]
         )
-        self.convs2.apply(init_weights)
+        self.convs2.apply(call_weight_data_normal_if_Conv)
         self.lrelu_slope = LRELU_SLOPE
 
     def forward(self, x: torch.Tensor, x_mask: Optional[torch.Tensor] = None):
@@ -391,7 +391,7 @@ class ResBlock2(torch.nn.Module):
                 ),
             ]
         )
-        self.convs.apply(init_weights)
+        self.convs.apply(call_weight_data_normal_if_Conv)
         self.lrelu_slope = LRELU_SLOPE
 
     def forward(self, x, x_mask: Optional[torch.Tensor] = None):

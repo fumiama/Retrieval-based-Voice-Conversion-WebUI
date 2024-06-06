@@ -46,7 +46,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
-from infer.lib.infer_pack import commons
+from rvc import utils
 from infer.lib.train.data_utils import (
     DistributedBucketSampler,
     TextAudioCollate,
@@ -452,7 +452,7 @@ def train_and_evaluate(
                 hps.data.mel_fmin,
                 hps.data.mel_fmax,
             )
-            y_mel = commons.slice_segments(
+            y_mel = utils.slice_on_last_dim(
                 mel, ids_slice, hps.train.segment_size // hps.data.hop_length
             )
             with autocast(enabled=False):
@@ -468,7 +468,7 @@ def train_and_evaluate(
                 )
             if hps.train.fp16_run == True:
                 y_hat_mel = y_hat_mel.half()
-            wave = commons.slice_segments(
+            wave = utils.slice_on_last_dim(
                 wave, ids_slice * hps.data.hop_length, hps.train.segment_size
             )  # slice
 
@@ -481,7 +481,7 @@ def train_and_evaluate(
         optim_d.zero_grad()
         scaler.scale(loss_disc).backward()
         scaler.unscale_(optim_d)
-        grad_norm_d = commons.clip_grad_value_(net_d.parameters(), None)
+        grad_norm_d = utils.clip_grad_value_(net_d.parameters(), None)
         scaler.step(optim_d)
 
         with autocast(enabled=hps.train.fp16_run):
@@ -496,7 +496,7 @@ def train_and_evaluate(
         optim_g.zero_grad()
         scaler.scale(loss_gen_all).backward()
         scaler.unscale_(optim_g)
-        grad_norm_g = commons.clip_grad_value_(net_g.parameters(), None)
+        grad_norm_g = utils.clip_grad_value_(net_g.parameters(), None)
         scaler.step(optim_g)
         scaler.update()
 
