@@ -12,7 +12,7 @@ from torch.nn.utils import remove_weight_norm, weight_norm
 
 from rvc import utils
 from rvc.utils import get_padding, call_weight_data_normal_if_Conv
-from infer.lib.infer_pack.transforms import piecewise_rational_quadratic_transform
+from rvc.transforms import piecewise_rational_quadratic_transform
 
 LRELU_SLOPE = 0.1
 
@@ -583,7 +583,7 @@ class ConvFlow(nn.Module):
         reverse=False,
     ):
         x0, x1 = torch.split(x, [self.half_channels] * 2, 1)
-        h = self.pre(x0)
+        h: torch.Tensor = self.pre(x0)
         h = self.convs(h, x_mask, g=g)
         h = self.proj(h) * x_mask
 
