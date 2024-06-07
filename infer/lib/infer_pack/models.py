@@ -9,7 +9,13 @@ from torch.nn import functional as F
 from torch.nn.utils import remove_weight_norm, spectral_norm, weight_norm
 from infer.lib.infer_pack import modules
 
-from rvc.utils import get_padding, call_weight_data_normal_if_Conv, sequence_mask, slice_on_last_dim, rand_slice_segments_on_last_dim
+from rvc.utils import (
+    get_padding,
+    call_weight_data_normal_if_Conv,
+    sequence_mask,
+    slice_on_last_dim,
+    rand_slice_segments_on_last_dim,
+)
 from rvc.encoders import TextEncoder
 
 has_xpu = bool(hasattr(torch, "xpu") and torch.xpu.is_available())
@@ -120,7 +126,8 @@ class PosteriorEncoder(nn.Module):
         self, x: torch.Tensor, x_lengths: torch.Tensor, g: Optional[torch.Tensor] = None
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         x_mask = torch.unsqueeze(
-            sequence_mask(x_lengths, x.size(2)), 1,
+            sequence_mask(x_lengths, x.size(2)),
+            1,
         ).to(x.dtype)
         x = self.pre(x) * x_mask
         x = self.enc(x, x_mask, g=g)
@@ -688,7 +695,9 @@ class SynthesizerTrnMs256NSFsid(nn.Module):
         m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths)
         z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
         z_p = self.flow(z, y_mask, g=g)
-        z_slice, ids_slice = rand_slice_segments_on_last_dim(z, y_lengths, self.segment_size)
+        z_slice, ids_slice = rand_slice_segments_on_last_dim(
+            z, y_lengths, self.segment_size
+        )
         # print(-1,pitchf.shape,ids_slice,self.segment_size,self.hop_length,self.segment_size//self.hop_length)
         pitchf = slice_on_last_dim(pitchf, ids_slice, self.segment_size)
         # print(-2,pitchf.shape,z_slice.shape)
@@ -906,7 +915,9 @@ class SynthesizerTrnMs256NSFsid_nono(nn.Module):
         m_p, logs_p, x_mask = self.enc_p(phone, None, phone_lengths)
         z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
         z_p = self.flow(z, y_mask, g=g)
-        z_slice, ids_slice = rand_slice_segments_on_last_dim(z, y_lengths, self.segment_size)
+        z_slice, ids_slice = rand_slice_segments_on_last_dim(
+            z, y_lengths, self.segment_size
+        )
         o = self.dec(z_slice, g=g)
         return o, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
 

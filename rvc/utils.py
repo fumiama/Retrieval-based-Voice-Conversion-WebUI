@@ -66,13 +66,15 @@ def sequence_mask(
 
 
 def total_grad_norm(
-    parameters: Iterator[torch.nn.Parameter], norm_type: float=2.0,
+    parameters: Iterator[torch.nn.Parameter],
+    norm_type: float = 2.0,
 ) -> float:
     norm_type = float(norm_type)
     total_norm = 0.0
 
     for p in parameters:
-        if p.grad is None: continue
+        if p.grad is None:
+            continue
         param_norm = p.grad.data.norm(norm_type)
         total_norm += float(param_norm.item()) ** norm_type
     total_norm = total_norm ** (1.0 / norm_type)

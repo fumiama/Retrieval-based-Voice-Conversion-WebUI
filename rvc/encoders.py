@@ -57,7 +57,7 @@ class Encoder(nn.Module):
                 )
             )
             self.norm_layers_2.append(LayerNorm(hidden_channels))
-    
+
     def __call__(self, x: torch.Tensor, x_mask: torch.Tensor) -> torch.Tensor:
         return super().__call__(x, x_mask)
 
@@ -146,7 +146,8 @@ class TextEncoder(nn.Module):
         x = self.lrelu(x)
         x = torch.transpose(x, 1, -1)  # [b, h, t]
         x_mask = torch.unsqueeze(
-            sequence_mask(lengths, x.size(2)), 1,
+            sequence_mask(lengths, x.size(2)),
+            1,
         ).to(x.dtype)
         x = self.encoder(x * x_mask, x_mask)
         """
