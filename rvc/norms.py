@@ -6,6 +6,7 @@ from torch.nn import functional as F
 
 from .utils import activate_add_tanh_sigmoid_multiply
 
+
 class LayerNorm(nn.Module):
     def __init__(self, channels: int, eps: float = 1e-5):
         super(LayerNorm, self).__init__()
@@ -19,6 +20,7 @@ class LayerNorm(nn.Module):
         x = x.transpose(1, -1)
         x = F.layer_norm(x, (self.channels,), self.gamma, self.beta, self.eps)
         return x.transpose(1, -1)
+
 
 class WN(torch.nn.Module):
     def __init__(
