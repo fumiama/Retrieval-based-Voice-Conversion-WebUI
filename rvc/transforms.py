@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import torch
 from torch.nn import functional as F
@@ -13,7 +15,7 @@ def piecewise_rational_quadratic_transform(
     unnormalized_heights: torch.Tensor,
     unnormalized_derivatives: torch.Tensor,
     inverse: bool = False,
-    tails: str | None = None,
+    tails: Optional[str] = None,
     tail_bound: float = 1.0,
     min_bin_width=DEFAULT_MIN_BIN_WIDTH,
     min_bin_height=DEFAULT_MIN_BIN_HEIGHT,

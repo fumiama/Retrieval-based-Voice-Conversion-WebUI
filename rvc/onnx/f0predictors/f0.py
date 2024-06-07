@@ -1,5 +1,6 @@
+from typing import Any, Optional
+
 import numpy as np
-import typing
 
 
 class F0Predictor(object):
@@ -10,14 +11,14 @@ class F0Predictor(object):
         self.sampling_rate = sampling_rate
 
     def compute_f0(
-        self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None
+        self, wav: np.ndarray[Any, np.dtype], p_len: Optional[int] = None
     ): ...
 
     def compute_f0_uv(
-        self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None
+        self, wav: np.ndarray[Any, np.dtype], p_len: Optional[int] = None
     ): ...
 
-    def __interpolate_f0(self, f0: np.ndarray[typing.Any, np.dtype]):
+    def __interpolate_f0(self, f0: np.ndarray[Any, np.dtype]):
         """
         对F0进行插值处理
         """
@@ -55,7 +56,7 @@ class F0Predictor(object):
 
         return ip_data[:, 0], vuv_vector[:, 0]
 
-    def __resize_f0(self, x: np.ndarray[typing.Any, np.dtype], target_len: int):
+    def __resize_f0(self, x: np.ndarray[Any, np.dtype], target_len: int):
         source = np.array(x)
         source[source < 0.001] = np.nan
         target = np.interp(

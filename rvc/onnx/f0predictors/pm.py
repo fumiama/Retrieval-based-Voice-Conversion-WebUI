@@ -1,6 +1,7 @@
+from typing import Any, Optional
+
 import numpy as np
 import parselmouth
-import typing
 
 from .f0 import F0Predictor
 
@@ -10,7 +11,7 @@ class PMF0Predictor(F0Predictor):
         super().__init__(hop_length, f0_min, f0_max, sampling_rate)
 
     def compute_f0(
-        self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None
+        self, wav: np.ndarray[Any, np.dtype], p_len: Optional[int] = None
     ):
         x = wav
         if p_len is None:
@@ -36,7 +37,7 @@ class PMF0Predictor(F0Predictor):
         return f0
 
     def compute_f0_uv(
-        self, wav: np.ndarray[typing.Any, np.dtype], p_len: int | None = None
+        self, wav: np.ndarray[Any, np.dtype], p_len: Optional[int] = None
     ):
         x = wav
         if p_len is None:

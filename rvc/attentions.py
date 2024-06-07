@@ -13,9 +13,9 @@ class MultiHeadAttention(nn.Module):
         out_channels: int,
         n_heads: int,
         p_dropout: float = 0.0,
-        window_size: int | None = None,
+        window_size: Optional[int] = None,
         heads_share: bool = True,
-        block_length: int | None = None,
+        block_length: Optional[int] = None,
         proximal_bias: bool = False,
         proximal_init: bool = False,
     ):
@@ -233,7 +233,7 @@ class FFN(nn.Module):
         filter_channels: int,
         kernel_size: int,
         p_dropout: float = 0.0,
-        activation: str | None = None,
+        activation: Optional[str] = None,
         causal: bool = False,
     ):
         super(FFN, self).__init__()

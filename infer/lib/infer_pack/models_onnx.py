@@ -2,12 +2,12 @@ import torch
 from torch import nn
 
 from .models import (
-    ResidualCouplingBlock,
     PosteriorEncoder,
     GeneratorNSF,
 )
 
 from rvc.encoders import TextEncoder
+from rvc.residuals import ResidualCouplingBlock
 
 
 class SynthesizerTrnMsNSFsidM(nn.Module):
