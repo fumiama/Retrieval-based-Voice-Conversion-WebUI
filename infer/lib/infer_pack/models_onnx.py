@@ -79,7 +79,6 @@ class SynthesizerTrnMsNSFsidM(nn.Module):
             upsample_kernel_sizes,
             gin_channels=gin_channels,
             sr=sr,
-            is_half=kwargs["is_half"],
         )
         self.enc_q = PosteriorEncoder(
             spec_channels,

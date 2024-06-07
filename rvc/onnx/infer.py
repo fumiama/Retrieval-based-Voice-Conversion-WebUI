@@ -38,9 +38,9 @@ class ContentVec(Model):
         super().__init__(vec_path, device)
 
     def __call__(self, wav: np.ndarray[typing.Any, np.dtype]):
-        return self.__forward(wav)
+        return self.forward(wav)
 
-    def __forward(self, wav: np.ndarray[typing.Any, np.dtype]):
+    def forward(self, wav: np.ndarray[typing.Any, np.dtype]):
         if wav.ndim == 2:  # double channels
             wav = wav.mean(-1)
         assert wav.ndim == 1, wav.ndim

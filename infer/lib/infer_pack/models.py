@@ -1,5 +1,4 @@
 import math
-import logging
 from typing import Optional, Tuple, List
 
 import torch
@@ -7,8 +6,9 @@ from torch import nn
 from torch.nn import Conv1d, Conv2d, ConvTranspose1d
 from torch.nn import functional as F
 from torch.nn.utils import remove_weight_norm, spectral_norm, weight_norm
-from infer.lib.infer_pack import modules
+from rvc import residuals
 
+from rvc.norms import WN
 from rvc.utils import (
     get_padding,
     call_weight_data_normal_if_Conv,
@@ -22,6 +22,26 @@ has_xpu = bool(hasattr(torch, "xpu") and torch.xpu.is_available())
 
 
 class ResidualCouplingBlock(nn.Module):
+    class Flip(nn.Module):
+        """
+        torch.jit.script() Compiled functions
+        can't take variable number of arguments or
+        use keyword-only arguments with defaults
+        """
+        def forward(
+            self,
+            x: torch.Tensor,
+            x_mask: torch.Tensor,
+            g: Optional[torch.Tensor] = None,
+            reverse: bool = False,
+        ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
+            x = torch.flip(x, [1])
+            if not reverse:
+                logdet = torch.zeros(x.size(0)).to(dtype=x.dtype, device=x.device)
+                return x, logdet
+            else:
+                return x, torch.zeros([1], device=x.device)
+
     def __init__(
         self,
         channels,
@@ -44,7 +64,7 @@ class ResidualCouplingBlock(nn.Module):
         self.flows = nn.ModuleList()
         for i in range(n_flows):
             self.flows.append(
-                modules.ResidualCouplingLayer(
+                residuals.ResidualCouplingLayer(
                     channels,
                     hidden_channels,
                     kernel_size,
@@ -54,7 +74,7 @@ class ResidualCouplingBlock(nn.Module):
                     mean_only=True,
                 )
             )
-            self.flows.append(modules.Flip())
+            self.flows.append(self.Flip())
 
     def forward(
         self,
@@ -108,7 +128,7 @@ class PosteriorEncoder(nn.Module):
         self.gin_channels = gin_channels
 
         self.pre = nn.Conv1d(in_channels, hidden_channels, 1)
-        self.enc = modules.WN(
+        self.enc = WN(
             hidden_channels,
             kernel_size,
             dilation_rate,
@@ -167,7 +187,7 @@ class Generator(torch.nn.Module):
         self.conv_pre = Conv1d(
             initial_channel, upsample_initial_channel, 7, 1, padding=3
         )
-        resblock = modules.ResBlock1 if resblock == "1" else modules.ResBlock2
+        resblock = residuals.ResBlock1 if resblock == "1" else residuals.ResBlock2
 
         self.ups = nn.ModuleList()
         for i, (u, k) in enumerate(zip(upsample_rates, upsample_kernel_sizes)):
@@ -215,7 +235,7 @@ class Generator(torch.nn.Module):
             x = x + self.cond(g)
 
         for i in range(self.num_upsamples):
-            x = F.leaky_relu(x, modules.LRELU_SLOPE)
+            x = F.leaky_relu(x, residuals.LRELU_SLOPE)
             x = self.ups[i](x)
             xs = None
             for j in range(self.num_kernels):
@@ -382,33 +402,21 @@ class SourceModuleHnNSF(torch.nn.Module):
         sine_amp=0.1,
         add_noise_std=0.003,
         voiced_threshod=0,
-        is_half=True,
     ):
         super(SourceModuleHnNSF, self).__init__()
 
         self.sine_amp = sine_amp
         self.noise_std = add_noise_std
-        self.is_half = is_half
         # to produce sine waveforms
         self.l_sin_gen = SineGen(
             sampling_rate, harmonic_num, sine_amp, add_noise_std, voiced_threshod
         )
-
         # to merge source harmonics into a single excitation
         self.l_linear = torch.nn.Linear(harmonic_num + 1, 1)
         self.l_tanh = torch.nn.Tanh()
-        # self.ddtype:int = -1
 
     def forward(self, x: torch.Tensor, upp: int = 1):
-        # if self.ddtype ==-1:
-        #     self.ddtype = self.l_linear.weight.dtype
-        sine_wavs, uv, _ = self.l_sin_gen(x, upp)
-        # print(x.dtype,sine_wavs.dtype,self.l_linear.weight.dtype)
-        # if self.is_half:
-        #     sine_wavs = sine_wavs.half()
-        # sine_merge = self.l_tanh(self.l_linear(sine_wavs.to(x)))
-        # print(sine_wavs.dtype,self.ddtype)
-        # if sine_wavs.dtype != self.l_linear.weight.dtype:
+        sine_wavs, _, _ = self.l_sin_gen(x, upp)
         sine_wavs = sine_wavs.to(dtype=self.l_linear.weight.dtype)
         sine_merge = self.l_tanh(self.l_linear(sine_wavs))
         return sine_merge, None, None  # noise, uv
@@ -426,7 +434,6 @@ class GeneratorNSF(torch.nn.Module):
         upsample_kernel_sizes,
         gin_channels,
         sr,
-        is_half=False,
     ):
         super(GeneratorNSF, self).__init__()
         self.num_kernels = len(resblock_kernel_sizes)
@@ -434,13 +441,13 @@ class GeneratorNSF(torch.nn.Module):
 
         self.f0_upsamp = torch.nn.Upsample(scale_factor=math.prod(upsample_rates))
         self.m_source = SourceModuleHnNSF(
-            sampling_rate=sr, harmonic_num=0, is_half=is_half
+            sampling_rate=sr, harmonic_num=0
         )
         self.noise_convs = nn.ModuleList()
         self.conv_pre = Conv1d(
             initial_channel, upsample_initial_channel, 7, 1, padding=3
         )
-        resblock = modules.ResBlock1 if resblock == "1" else modules.ResBlock2
+        resblock = residuals.ResBlock1 if resblock == "1" else residuals.ResBlock2
 
         self.ups = nn.ModuleList()
         for i, (u, k) in enumerate(zip(upsample_rates, upsample_kernel_sizes)):
@@ -486,7 +493,7 @@ class GeneratorNSF(torch.nn.Module):
 
         self.upp = math.prod(upsample_rates)
 
-        self.lrelu_slope = modules.LRELU_SLOPE
+        self.lrelu_slope = residuals.LRELU_SLOPE
 
     def forward(
         self,
@@ -584,7 +591,6 @@ class SynthesizerTrnMs256NSFsid(nn.Module):
         spk_embed_dim: int,
         gin_channels: int,
         sr: str | int,
-        **kwargs
     ):
         super(SynthesizerTrnMs256NSFsid, self).__init__()
         if isinstance(sr, str):
@@ -631,7 +637,6 @@ class SynthesizerTrnMs256NSFsid(nn.Module):
             upsample_kernel_sizes,
             gin_channels=gin_channels,
             sr=sr,
-            is_half=kwargs["is_half"],
         )
         self.enc_q = PosteriorEncoder(
             spec_channels,
@@ -764,7 +769,6 @@ class SynthesizerTrnMs768NSFsid(SynthesizerTrnMs256NSFsid):
         spk_embed_dim,
         gin_channels,
         sr,
-        **kwargs
     ):
         super(SynthesizerTrnMs768NSFsid, self).__init__(
             spec_channels,
@@ -785,7 +789,6 @@ class SynthesizerTrnMs768NSFsid(SynthesizerTrnMs256NSFsid):
             spk_embed_dim,
             gin_channels,
             sr,
-            **kwargs
         )
         del self.enc_p
         self.enc_p = TextEncoder(
@@ -812,7 +815,7 @@ class SynthesizerTrnMs256NSFsid_nono(nn.Module):
         n_layers,
         kernel_size,
         p_dropout,
-        resblock,
+        resblock: str,
         resblock_kernel_sizes,
         resblock_dilation_sizes,
         upsample_rates,
@@ -1095,7 +1098,7 @@ class DiscriminatorS(torch.nn.Module):
 
         for l in self.convs:
             x = l(x)
-            x = F.leaky_relu(x, modules.LRELU_SLOPE)
+            x = F.leaky_relu(x, residuals.LRELU_SLOPE)
             fmap.append(x)
         x = self.conv_post(x)
         fmap.append(x)
@@ -1179,7 +1182,7 @@ class DiscriminatorP(torch.nn.Module):
 
         for l in self.convs:
             x = l(x)
-            x = F.leaky_relu(x, modules.LRELU_SLOPE)
+            x = F.leaky_relu(x, residuals.LRELU_SLOPE)
             fmap.append(x)
         x = self.conv_post(x)
         fmap.append(x)
