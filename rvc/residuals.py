@@ -14,6 +14,7 @@ from .utils import (
 
 LRELU_SLOPE = 0.1
 
+
 class ResBlock1(torch.nn.Module):
     def __init__(
         self,
@@ -111,6 +112,7 @@ class ResBlock2(torch.nn.Module):
     Actually this module is not used currently
     because all configs specified "resblock": "1"
     """
+
     def __init__(
         self,
         channels: int,
@@ -255,6 +257,7 @@ class ResidualCouplingLayer(nn.Module):
                 torch.nn.utils.remove_weight_norm(self.enc)
         return self
 
+
 class ResidualCouplingBlock(nn.Module):
     class Flip(nn.Module):
         """
@@ -262,6 +265,7 @@ class ResidualCouplingBlock(nn.Module):
         can't take variable number of arguments or
         use keyword-only arguments with defaults
         """
+
         def forward(
             self,
             x: torch.Tensor,

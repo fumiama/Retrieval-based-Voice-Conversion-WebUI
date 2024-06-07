@@ -263,7 +263,7 @@ class FFN(nn.Module):
 
         x = self.conv_2(self._padding(x, x_mask))
         return x * x_mask
-    
+
     def _padding(self, x: torch.Tensor, x_mask: torch.Tensor) -> torch.Tensor:
         if self.causal:
             return self._causal_padding(x * x_mask)
