@@ -7,7 +7,11 @@ from torch.nn import Conv1d
 from torch.nn import functional as F
 from torch.nn.utils import remove_weight_norm, weight_norm
 
-from rvc.utils import get_padding, call_weight_data_normal_if_Conv, activate_add_tanh_sigmoid_multiply
+from rvc.utils import (
+    get_padding,
+    call_weight_data_normal_if_Conv,
+    activate_add_tanh_sigmoid_multiply,
+)
 from rvc.transforms import piecewise_rational_quadratic_transform
 from rvc.norms import LayerNorm
 

@@ -173,7 +173,10 @@ class MultiHeadAttention(nn.Module):
         """
         batch, heads, length, _ = x.size()
         # Concat columns of pad to shift from relative to absolute indexing.
-        x = F.pad(x, [0, 1, 0, 0, 0, 0, 0, 0], )
+        x = F.pad(
+            x,
+            [0, 1, 0, 0, 0, 0, 0, 0],
+        )
 
         # Concat extra elements so to add up to shape (len+1, 2*len-1).
         x_flat = x.view([batch, heads, length * 2 * length])
