@@ -481,7 +481,7 @@ def train_and_evaluate(
         optim_d.zero_grad()
         scaler.scale(loss_disc).backward()
         scaler.unscale_(optim_d)
-        grad_norm_d = utils.clip_grad_value_(net_d.parameters(), None)
+        grad_norm_d = utils.total_grad_norm(net_d.parameters())
         scaler.step(optim_d)
 
         with autocast(enabled=hps.train.fp16_run):
@@ -496,7 +496,7 @@ def train_and_evaluate(
         optim_g.zero_grad()
         scaler.scale(loss_gen_all).backward()
         scaler.unscale_(optim_g)
-        grad_norm_g = utils.clip_grad_value_(net_g.parameters(), None)
+        grad_norm_g = utils.total_grad_norm(net_g.parameters())
         scaler.step(optim_g)
         scaler.update()
 

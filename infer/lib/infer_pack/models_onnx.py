@@ -5,9 +5,6 @@ from .attentions import (
     TextEncoder,
     ResidualCouplingBlock,
     PosteriorEncoder,
-    Generator,
-    SineGen,
-    SourceModuleHnNSF,
     GeneratorNSF,
 )
 
@@ -15,7 +12,7 @@ from .attentions import (
 class SynthesizerTrnMsNSFsidM(nn.Module):
     def __init__(
         self,
-        spec_channels,
+        spec_channels: int,
         segment_size,
         inter_channels,
         hidden_channels,
