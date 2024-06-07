@@ -1,87 +1,17 @@
-import copy
 import math
 from typing import Optional, Tuple
 
-import numpy as np
-import scipy
 import torch
 from torch import nn
-from torch.nn import AvgPool1d, Conv1d, Conv2d, ConvTranspose1d
+from torch.nn import Conv1d
 from torch.nn import functional as F
 from torch.nn.utils import remove_weight_norm, weight_norm
 
-from rvc import utils
-from rvc.utils import get_padding, call_weight_data_normal_if_Conv
+from rvc.utils import get_padding, call_weight_data_normal_if_Conv, activate_add_tanh_sigmoid_multiply
 from rvc.transforms import piecewise_rational_quadratic_transform
+from rvc.norms import LayerNorm
 
 LRELU_SLOPE = 0.1
-
-
-class LayerNorm(nn.Module):
-    def __init__(self, channels, eps=1e-5):
-        super(LayerNorm, self).__init__()
-        self.channels = channels
-        self.eps = eps
-
-        self.gamma = nn.Parameter(torch.ones(channels))
-        self.beta = nn.Parameter(torch.zeros(channels))
-
-    def forward(self, x):
-        x = x.transpose(1, -1)
-        x = F.layer_norm(x, (self.channels,), self.gamma, self.beta, self.eps)
-        return x.transpose(1, -1)
-
-
-class ConvReluNorm(nn.Module):
-    def __init__(
-        self,
-        in_channels,
-        hidden_channels,
-        out_channels,
-        kernel_size,
-        n_layers,
-        p_dropout,
-    ):
-        super(ConvReluNorm, self).__init__()
-        self.in_channels = in_channels
-        self.hidden_channels = hidden_channels
-        self.out_channels = out_channels
-        self.kernel_size = kernel_size
-        self.n_layers = n_layers
-        self.p_dropout = float(p_dropout)
-        assert n_layers > 1, "Number of layers should be larger than 0."
-
-        self.conv_layers = nn.ModuleList()
-        self.norm_layers = nn.ModuleList()
-        self.conv_layers.append(
-            nn.Conv1d(
-                in_channels, hidden_channels, kernel_size, padding=kernel_size // 2
-            )
-        )
-        self.norm_layers.append(LayerNorm(hidden_channels))
-        self.relu_drop = nn.Sequential(nn.ReLU(), nn.Dropout(float(p_dropout)))
-        for _ in range(n_layers - 1):
-            self.conv_layers.append(
-                nn.Conv1d(
-                    hidden_channels,
-                    hidden_channels,
-                    kernel_size,
-                    padding=kernel_size // 2,
-                )
-            )
-            self.norm_layers.append(LayerNorm(hidden_channels))
-        self.proj = nn.Conv1d(hidden_channels, out_channels, 1)
-        self.proj.weight.data.zero_()
-        self.proj.bias.data.zero_()
-
-    def forward(self, x, x_mask):
-        x_org = x
-        for i in range(self.n_layers):
-            x = self.conv_layers[i](x * x_mask)
-            x = self.norm_layers[i](x)
-            x = self.relu_drop(x)
-        x = x_org + self.proj(x)
-        return x * x_mask
 
 
 class DDSConv(nn.Module):
@@ -203,7 +133,7 @@ class WN(torch.nn.Module):
             else:
                 g_l = torch.zeros_like(x_in)
 
-            acts = utils.activate_add_tanh_sigmoid_multiply(x_in, g_l, self.hidden_channels)
+            acts = activate_add_tanh_sigmoid_multiply(x_in, g_l, self.hidden_channels)
             acts = self.drop(acts)
 
             res_skip_acts = res_skip_layer(acts)

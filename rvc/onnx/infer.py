@@ -4,7 +4,7 @@ import onnxruntime
 import typing
 import os
 
-from onnx.f0predictor import (
+from onnx.f0predictors import (
     PMF0Predictor,
     HarvestF0Predictor,
     DioF0Predictor,

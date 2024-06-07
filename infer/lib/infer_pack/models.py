@@ -2,102 +2,17 @@ import math
 import logging
 from typing import Optional, Tuple, List
 
-from rvc import utils
-
-logger = logging.getLogger(__name__)
-
 import torch
 from torch import nn
 from torch.nn import Conv1d, Conv2d, ConvTranspose1d
 from torch.nn import functional as F
 from torch.nn.utils import remove_weight_norm, spectral_norm, weight_norm
-from infer.lib.infer_pack import attentions, modules
-from rvc.utils import get_padding, call_weight_data_normal_if_Conv
+from infer.lib.infer_pack import modules
+
+from rvc.utils import get_padding, call_weight_data_normal_if_Conv, sequence_mask, slice_on_last_dim, rand_slice_segments_on_last_dim
+from rvc.encoders import TextEncoder
 
 has_xpu = bool(hasattr(torch, "xpu") and torch.xpu.is_available())
-
-
-class TextEncoder(nn.Module):
-    def __init__(
-        self,
-        in_channels,
-        out_channels,
-        hidden_channels,
-        filter_channels,
-        n_heads,
-        n_layers,
-        kernel_size,
-        p_dropout,
-        f0=True,
-    ):
-        super(TextEncoder, self).__init__()
-        self.out_channels = out_channels
-        self.hidden_channels = hidden_channels
-        self.filter_channels = filter_channels
-        self.n_heads = n_heads
-        self.n_layers = n_layers
-        self.kernel_size = kernel_size
-        self.p_dropout = float(p_dropout)
-        self.emb_phone = nn.Linear(in_channels, hidden_channels)
-        self.lrelu = nn.LeakyReLU(0.1, inplace=True)
-        if f0 == True:
-            self.emb_pitch = nn.Embedding(256, hidden_channels)  # pitch 256
-        self.encoder = attentions.Encoder(
-            hidden_channels,
-            filter_channels,
-            n_heads,
-            n_layers,
-            kernel_size,
-            float(p_dropout),
-        )
-        self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1)
-
-    def __call__(
-        self,
-        phone: torch.Tensor,
-        pitch: torch.Tensor,
-        lengths: torch.Tensor,
-        # skip_head: Optional[torch.Tensor] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        return super().__call__(
-            phone,
-            pitch,
-            lengths,
-            # skip_head=skip_head,
-        )
-
-    def forward(
-        self,
-        phone: torch.Tensor,
-        pitch: torch.Tensor,
-        lengths: torch.Tensor,
-        # skip_head: Optional[torch.Tensor] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        if pitch is None:
-            x = self.emb_phone(phone)
-        else:
-            x = self.emb_phone(phone) + self.emb_pitch(pitch)
-        x = x * math.sqrt(self.hidden_channels)  # [b, t, h]
-        x = self.lrelu(x)
-        x = torch.transpose(x, 1, -1)  # [b, h, t]
-        x_mask = torch.unsqueeze(
-            utils.sequence_mask(
-                lengths,
-                x.size(2),
-            ),
-            1,
-        ).to(x.dtype)
-        x = self.encoder(x * x_mask, x_mask)
-        """
-        if skip_head is not None:
-            assert isinstance(skip_head, torch.Tensor)
-            head = int(skip_head.item())
-            x = x[:, :, head:]
-            x_mask = x_mask[:, :, head:]
-        """
-        stats: torch.Tensor = self.proj(x) * x_mask
-        m, logs = torch.split(stats, self.out_channels, dim=1)
-        return m, logs, x_mask
 
 
 class ResidualCouplingBlock(nn.Module):
@@ -205,11 +120,7 @@ class PosteriorEncoder(nn.Module):
         self, x: torch.Tensor, x_lengths: torch.Tensor, g: Optional[torch.Tensor] = None
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         x_mask = torch.unsqueeze(
-            utils.sequence_mask(
-                x_lengths,
-                x.size(2),
-            ),
-            1,
+            sequence_mask(x_lengths, x.size(2)), 1,
         ).to(x.dtype)
         x = self.pre(x) * x_mask
         x = self.enc(x, x_mask, g=g)
@@ -728,12 +639,6 @@ class SynthesizerTrnMs256NSFsid(nn.Module):
             inter_channels, hidden_channels, 5, 1, 3, gin_channels=gin_channels
         )
         self.emb_g = nn.Embedding(self.spk_embed_dim, gin_channels)
-        logger.debug(
-            "gin_channels: "
-            + str(gin_channels)
-            + ", self.spk_embed_dim: "
-            + str(self.spk_embed_dim)
-        )
 
     def remove_weight_norm(self):
         self.dec.remove_weight_norm()
@@ -783,9 +688,9 @@ class SynthesizerTrnMs256NSFsid(nn.Module):
         m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths)
         z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
         z_p = self.flow(z, y_mask, g=g)
-        z_slice, ids_slice = utils.rand_slice_segments_on_last_dim(z, y_lengths, self.segment_size)
+        z_slice, ids_slice = rand_slice_segments_on_last_dim(z, y_lengths, self.segment_size)
         # print(-1,pitchf.shape,ids_slice,self.segment_size,self.hop_length,self.segment_size//self.hop_length)
-        pitchf = utils.slice_on_last_dim(pitchf, ids_slice, self.segment_size)
+        pitchf = slice_on_last_dim(pitchf, ids_slice, self.segment_size)
         # print(-2,pitchf.shape,z_slice.shape)
         o = self.dec(z_slice, pitchf, g=g)
         return o, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
@@ -962,12 +867,6 @@ class SynthesizerTrnMs256NSFsid_nono(nn.Module):
             inter_channels, hidden_channels, 5, 1, 3, gin_channels=gin_channels
         )
         self.emb_g = nn.Embedding(self.spk_embed_dim, gin_channels)
-        logger.debug(
-            "gin_channels: "
-            + str(gin_channels)
-            + ", self.spk_embed_dim: "
-            + str(self.spk_embed_dim)
-        )
 
     def remove_weight_norm(self):
         self.dec.remove_weight_norm()
@@ -1007,7 +906,7 @@ class SynthesizerTrnMs256NSFsid_nono(nn.Module):
         m_p, logs_p, x_mask = self.enc_p(phone, None, phone_lengths)
         z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
         z_p = self.flow(z, y_mask, g=g)
-        z_slice, ids_slice = utils.rand_slice_segments_on_last_dim(z, y_lengths, self.segment_size)
+        z_slice, ids_slice = rand_slice_segments_on_last_dim(z, y_lengths, self.segment_size)
         o = self.dec(z_slice, g=g)
         return o, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
 

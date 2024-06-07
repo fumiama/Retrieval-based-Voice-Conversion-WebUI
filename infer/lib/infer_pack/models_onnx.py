@@ -1,12 +1,13 @@
 import torch
 from torch import nn
 
-from .attentions import (
-    TextEncoder,
+from .models import (
     ResidualCouplingBlock,
     PosteriorEncoder,
     GeneratorNSF,
 )
+
+from rvc.encoders import TextEncoder
 
 
 class SynthesizerTrnMsNSFsidM(nn.Module):
