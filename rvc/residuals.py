@@ -42,7 +42,7 @@ class ResBlock1(torch.nn.Module):
 
         self.convs2 = nn.ModuleList()
         for _ in dilation:
-            self.convs1.append(
+            self.convs2.append(
                 weight_norm(
                     Conv1d(
                         channels,
