@@ -1,8 +1,7 @@
 import torch
 from torch import nn
 
-from .models import GeneratorNSF
-
+from rvc.nsf import NSFGenerator
 from rvc.encoders import TextEncoder, PosteriorEncoder
 from rvc.residuals import ResidualCouplingBlock
 
@@ -66,7 +65,7 @@ class SynthesizerTrnMsNSFsidM(nn.Module):
             kernel_size,
             float(p_dropout),
         )
-        self.dec = GeneratorNSF(
+        self.dec = NSFGenerator(
             inter_channels,
             resblock,
             resblock_kernel_sizes,
