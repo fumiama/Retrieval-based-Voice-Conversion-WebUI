@@ -85,19 +85,19 @@ sh ./run.sh
 3. 根据自己的显卡安装对应依赖
 - N卡
 	```bash
-	pip install -r requirements/requirements.txt
+	pip install -r requirements/main.txt
 	```
 - A卡/I卡
 	```bash
-	pip install -r requirements/requirements-dml.txt
+	pip install -r requirements/dml.txt
 	```
 - A卡ROCM(Linux)
 	```bash
-	pip install -r requirements/requirements-amd.txt
+	pip install -r requirements/amd.txt
 	```
 - I卡IPEX(Linux)
 	```bash
-	pip install -r requirements/requirements-ipex.txt
+	pip install -r requirements/ipex.txt
 	```
 
 ## 其他资源准备
