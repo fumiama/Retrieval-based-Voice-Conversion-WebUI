@@ -14,21 +14,41 @@ class MultiPeriodDiscriminator(torch.nn.Module):
     """
     version: 'v1' or 'v2'
     """
-    def __init__(self, version: str, use_spectral_norm: bool = False, has_xpu: bool = False):
+
+    def __init__(
+        self, version: str, use_spectral_norm: bool = False, has_xpu: bool = False
+    ):
         super(MultiPeriodDiscriminator, self).__init__()
-        periods = (2, 3, 5, 7, 11, 17) if version == "v1" else (2, 3, 5, 7, 11, 17, 23, 37)
+        periods = (
+            (2, 3, 5, 7, 11, 17) if version == "v1" else (2, 3, 5, 7, 11, 17, 23, 37)
+        )
 
-        self.discriminators = nn.ModuleList([
-            DiscriminatorS(use_spectral_norm=use_spectral_norm),
-            *(
-                DiscriminatorP(i, use_spectral_norm=use_spectral_norm, has_xpu=has_xpu) for i in periods
-            )
-        ])
+        self.discriminators = nn.ModuleList(
+            [
+                DiscriminatorS(use_spectral_norm=use_spectral_norm),
+                *(
+                    DiscriminatorP(
+                        i, use_spectral_norm=use_spectral_norm, has_xpu=has_xpu
+                    )
+                    for i in periods
+                ),
+            ]
+        )
 
-    def __call__(self, y: torch.Tensor, y_hat: torch.Tensor) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[List[torch.Tensor]], List[List[torch.Tensor]]]:
+    def __call__(self, y: torch.Tensor, y_hat: torch.Tensor) -> Tuple[
+        List[torch.Tensor],
+        List[torch.Tensor],
+        List[List[torch.Tensor]],
+        List[List[torch.Tensor]],
+    ]:
         return super().__call__(y, y_hat)
 
-    def forward(self, y: torch.Tensor, y_hat: torch.Tensor) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[List[torch.Tensor]], List[List[torch.Tensor]]]:
+    def forward(self, y: torch.Tensor, y_hat: torch.Tensor) -> Tuple[
+        List[torch.Tensor],
+        List[torch.Tensor],
+        List[List[torch.Tensor]],
+        List[List[torch.Tensor]],
+    ]:
         y_d_rs = []
         y_d_gs = []
         fmap_rs = []
@@ -97,25 +117,29 @@ class DiscriminatorP(torch.nn.Module):
         convs_padding = (get_padding(kernel_size, 1), 0)
 
         self.convs = nn.ModuleList()
-        for i in range(len(sequence)-1):
-            self.convs.append(norm_f(
+        for i in range(len(sequence) - 1):
+            self.convs.append(
+                norm_f(
+                    Conv2d(
+                        sequence[i],
+                        sequence[i + 1],
+                        (kernel_size, 1),
+                        (stride, 1),
+                        padding=convs_padding,
+                    )
+                )
+            )
+        self.convs.append(
+            norm_f(
                 Conv2d(
-                    sequence[i],
-                    sequence[i + 1],
+                    1024,
+                    1024,
                     (kernel_size, 1),
-                    (stride, 1),
+                    1,
                     padding=convs_padding,
                 )
-            ))
-        self.convs.append(norm_f(
-            Conv2d(
-                1024,
-                1024,
-                (kernel_size, 1),
-                1,
-                padding=convs_padding,
             )
-        ))
+        )
         self.conv_post = norm_f(Conv2d(1024, 1, (3, 1), 1, padding=(1, 0)))
 
     def __call__(self, x: torch.Tensor) -> Tuple[torch.Tensor, List[torch.Tensor]]:
