@@ -46,13 +46,13 @@ with app:
                 RVC 在线demo
                 """
             )
-            sid = gr.Dropdown(label=i18n("推理音色"), choices=sorted(names))
+            sid = gr.Dropdown(label=i18n("Inferencing voice"), choices=sorted(names))
             with gr.Column():
                 spk_item = gr.Slider(
                     minimum=0,
                     maximum=2333,
                     step=1,
-                    label=i18n("请选择说话人id"),
+                    label=i18n("Select Speaker/Singer ID"),
                     value=0,
                     visible=False,
                     interactive=True,
@@ -60,16 +60,16 @@ with app:
             sid.change(fn=vc.get_vc, inputs=[sid], outputs=[spk_item])
             gr.Markdown(
                 value=i18n(
-                    "男转女推荐+12key, 女转男推荐-12key, 如果音域爆炸导致音色失真也可以自己调整到合适音域. "
+                    "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)"
                 )
             )
             vc_input3 = gr.Audio(label="上传音频（长度小于90秒）")
             vc_transform0 = gr.Number(
-                label=i18n("变调(整数, 半音数量, 升八度12降八度-12)"), value=0
+                label=i18n("Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)"), value=0
             )
             f0method0 = gr.Radio(
                 label=i18n(
-                    "选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU,rmvpe效果最好且微吃GPU"
+                    "Select the pitch extraction algorithm ('pm': faster extraction but lower-quality speech; 'harvest': better bass but extremely slow; 'crepe': better quality but GPU intensive), 'rmvpe': best quality, and little GPU requirement"
                 ),
                 choices=["pm", "harvest", "crepe", "rmvpe"],
                 value="pm",
@@ -79,7 +79,7 @@ with app:
                 minimum=0,
                 maximum=7,
                 label=i18n(
-                    ">=3则使用对harvest音高识别的结果使用中值滤波，数值为滤波半径，使用可以削弱哑音"
+                    "If >=3: apply median filtering to the harvested pitch results. The value represents the filter radius and can reduce breathiness."
                 ),
                 value=3,
                 step=1,
@@ -87,27 +87,27 @@ with app:
             )
             with gr.Column():
                 file_index1 = gr.Textbox(
-                    label=i18n("特征检索库文件路径,为空则使用下拉的选择结果"),
+                    label=i18n("Path to the feature index file. Leave blank to use the selected result from the dropdown"),
                     value="",
                     interactive=False,
                     visible=False,
                 )
             file_index2 = gr.Dropdown(
-                label=i18n("自动检测index路径,下拉式选择(dropdown)"),
+                label=i18n("Auto-detect index path and select from the dropdown"),
                 choices=sorted(index_paths),
                 interactive=True,
             )
             index_rate1 = gr.Slider(
                 minimum=0,
                 maximum=1,
-                label=i18n("检索特征占比"),
+                label=i18n("Search feature ratio (controls accent strength, too high has artifacting)"),
                 value=0.88,
                 interactive=True,
             )
             resample_sr0 = gr.Slider(
                 minimum=0,
                 maximum=48000,
-                label=i18n("后处理重采样至最终采样率，0为不进行重采样"),
+                label=i18n("Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling"),
                 value=0,
                 step=1,
                 interactive=True,
@@ -116,7 +116,7 @@ with app:
                 minimum=0,
                 maximum=1,
                 label=i18n(
-                    "输入源音量包络替换输出音量包络融合比例，越靠近1越使用输出包络"
+                    "Adjust the volume envelope scaling. Closer to 0, the more it mimicks the volume of the original vocals. Can help mask noise and make volume sound more natural when set relatively low. Closer to 1 will be more of a consistently loud volume"
                 ),
                 value=1,
                 interactive=True,
@@ -125,18 +125,18 @@ with app:
                 minimum=0,
                 maximum=0.5,
                 label=i18n(
-                    "保护清辅音和呼吸声，防止电音撕裂等artifact，拉满0.5不开启，调低加大保护力度但可能降低索引效果"
+                    "Protect voiceless consonants and breath sounds to prevent artifacts such as tearing in electronic music. Set to 0.5 to disable. Decrease the value to increase protection, but it may reduce indexing accuracy"
                 ),
                 value=0.33,
                 step=0.01,
                 interactive=True,
             )
             f0_file = gr.File(
-                label=i18n("F0曲线文件, 可选, 一行一个音高, 代替默认F0及升降调")
+                label=i18n("F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation")
             )
-            but0 = gr.Button(i18n("转换"), variant="primary")
-            vc_output1 = gr.Textbox(label=i18n("输出信息"))
-            vc_output2 = gr.Audio(label=i18n("输出音频(右下角三个点,点了可以下载)"))
+            but0 = gr.Button(i18n("Convert"), variant="primary")
+            vc_output1 = gr.Textbox(label=i18n("Output information"))
+            vc_output2 = gr.Audio(label=i18n("Export audio (click on the three dots in the lower right corner to download)"))
             but0.click(
                 vc.vc_single,
                 [
