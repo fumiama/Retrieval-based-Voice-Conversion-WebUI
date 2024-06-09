@@ -72,16 +72,16 @@ poetry install
 Ou vous pouvez utiliser pip pour installer les dépendances :
 ```bash
 # Cartes Nvidia :
-pip install -r requirements/requirements.txt
+pip install -r requirements/main.txt
 
 # Cartes AMD/Intel :
-pip install -r requirements/requirements-dml.txt
+pip install -r requirements/dml.txt
 
 # Cartes Intel avec IPEX
-pip install -r requirements/requirements-ipex.txt
+pip install -r requirements/ipex.txt
 
 # Cartes AMD sur Linux (ROCm)
-pip install -r requirements/requirements-amd.txt
+pip install -r requirements/amd.txt
 ```
 
 ------

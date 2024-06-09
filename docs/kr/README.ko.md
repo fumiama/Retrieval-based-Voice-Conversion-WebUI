@@ -72,25 +72,25 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 - N카드
 
 ```bash
-pip install -r requirements/requirements.txt
+pip install -r requirements/main.txt
 ```
 
 - A카드/I카드
 
 ```bash
-pip install -r requirements/requirements-dml.txt
+pip install -r requirements/dml.txt
 ```
 
 - A카드ROCM(Linux)
 
 ```bash
-pip install -r requirements/requirements-amd.txt
+pip install -r requirements/amd.txt
 ```
 
 - I카드IPEX(Linux)
 
 ```bash
-pip install -r requirements/requirements-ipex.txt
+pip install -r requirements/ipex.txt
 ```
 
 #### 2. poetry를 통한 의존성 설치

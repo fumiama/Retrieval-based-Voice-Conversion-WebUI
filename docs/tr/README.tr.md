@@ -71,13 +71,13 @@ Ayrıca bunları pip kullanarak da kurabilirsiniz:
 ```bash
 
 Nvidia grafik kartları için
-  pip install -r requirements/requirements.txt
+  pip install -r requirements/main.txt
 
 AMD/Intel grafik kartları için：
-  pip install -r requirements/requirements-dml.txt
+  pip install -r requirements/dml.txt
 
 Intel ARC grafik kartları için Linux / WSL ile Python 3.10 kullanarak: 
-  pip install -r requirements/requirements-ipex.txt
+  pip install -r requirements/ipex.txt
 
 ```
 
