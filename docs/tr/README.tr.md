@@ -1,13 +1,13 @@
 
 <div align="center">
 
-<h1>Çekme Temelli Ses Dönüşümü Web Arayüzü</h1>
-VITS'e dayalı kullanımı kolay bir Ses Dönüşümü çerçevesi.<br><br>
+# Çekme Temelli Ses Dönüşümü Web Arayüzü
+VITS'e dayalı kullanımı kolay bir Ses Dönüşümü çerçevesi.
 
 [![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange
 )](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI)
 
-<img src="https://counter.seku.su/cmoe?name=rvc&theme=r34" /><br>
+![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Lisans](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
@@ -147,7 +147,5 @@ Windows veya macOS kullanıyorsanız, `RVC-beta.7z` dosyasını indirip çıkara
   + Ön eğitimli model [yxlllc](https://github.com/yxlllc/RMVPE) ve [RVC-Boss](https://github.com/RVC-Boss) tarafından eğitilip test edilmiştir.
   
 ## Katkıda Bulunan Herkese Teşekkürler
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)
 ```

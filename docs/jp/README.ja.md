@@ -1,11 +1,13 @@
 <div align="center">
 
-<h1>Retrieval-based-Voice-Conversion-WebUI</h1>
-VITSに基づく使いやすい音声変換（voice changer）framework<br><br>
+# Retrieval-based-Voice-Conversion-WebUI
+VITSに基づく使いやすい音声変換（voice changer）framework
+
+
 
 [![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI)
 
-<img src="https://counter.seku.su/cmoe?name=rvc&theme=r34" /><br>
+![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/badge/LICENSE-MIT-green.svg?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
@@ -24,24 +26,11 @@ VITSに基づく使いやすい音声変換（voice changer）framework<br><br>
 
 > モデルや統合パッケージをダウンロードしやすい[RVC-Models-Downloader](https://github.com/fumiama/RVC-Models-Downloader)のご利用がお勧めです。
 
-<table>
-   <tr>
-		<td align="center">学習・推論</td>
-		<td align="center">即時音声変換</td>
-	</tr>
-  <tr>
-		<td align="center"><img src="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630"></td>
-    <td align="center"><img src="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6"></td>
-	</tr>
-	<tr>
-		<td align="center">go-web.bat</td>
-		<td align="center">go-realtime-gui.bat</td>
-	</tr>
-  <tr>
-    <td align="center">実行したい操作を自由に選択できます。</td>
-	<td align="center">既に端から端までの170msの遅延を実現しました。ASIO入出力デバイスを使用すれば、端から端までの90msの遅延を達成できますが、ハードウェアドライバーの支援に非常に依存しています。</td>
-	</tr>
-</table>
+| 学習・推論 | 即時音声変換 |
+| :--------: | :---------: |
+| ![web](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630) | ![realtime-gui](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6) |
+| go-web.bat | go-realtime-gui.bat |
+| 実行したい操作を自由に選択できます。 | 既に端から端までの170msの遅延を実現しました。ASIO入出力デバイスを使用すれば、端から端までの90msの遅延を達成できますが、ハードウェアドライバーの支援に非常に依存しています。 |
 
 ## はじめに
 
@@ -230,6 +219,4 @@ rvcmd packs/general/latest # RVC-Models-Downloader command
 
 ## すべての貢献者の努力に感謝します
 
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)
