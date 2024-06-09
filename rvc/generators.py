@@ -9,6 +9,7 @@ from torch.nn.utils import remove_weight_norm, weight_norm
 from .residuals import ResBlock1, ResBlock2, LRELU_SLOPE
 from .utils import call_weight_data_normal_if_Conv
 
+
 class Generator(torch.nn.Module):
     def __init__(
         self,
@@ -156,11 +157,15 @@ class SineGenerator(torch.nn.Module):
         self.dim = harmonic_num + 1
         self.sampling_rate = samp_rate
         self.voiced_threshold = voiced_threshold
-    
-    def __call__(self, f0: torch.Tensor, upp: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+
+    def __call__(
+        self, f0: torch.Tensor, upp: int
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         return super().__call__(f0, upp)
 
-    def forward(self, f0: torch.Tensor, upp: int) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def forward(
+        self, f0: torch.Tensor, upp: int
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """sine_tensor, uv = forward(f0)
         input F0: tensor(batchsize=1, length, dim=1)
                   f0 for unvoiced steps should be 0
@@ -190,7 +195,7 @@ class SineGenerator(torch.nn.Module):
             tmp_over_one *= upp
             tmp_over_one: torch.Tensor = F.interpolate(
                 tmp_over_one.transpose(2, 1),
-                scale_factor = float(upp),
+                scale_factor=float(upp),
                 mode="linear",
                 align_corners=True,
             ).transpose(2, 1)
