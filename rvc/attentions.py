@@ -229,6 +229,7 @@ class FFN(nn.Module):
     """
     Feed-Forward Network
     """
+
     def __init__(
         self,
         in_channels: int,

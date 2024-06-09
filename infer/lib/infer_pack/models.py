@@ -309,7 +309,7 @@ class SynthesizerTrnMs256NSFsid_nono(nn.Module):
         upsample_kernel_sizes: List[int],
         spk_embed_dim: int,
         gin_channels: int,
-        sr = None,
+        sr=None,
     ):
         super(SynthesizerTrnMs256NSFsid_nono, self).__init__()
         self.spec_channels = spec_channels
@@ -464,7 +464,7 @@ class SynthesizerTrnMs768NSFsid_nono(SynthesizerTrnMs256NSFsid_nono):
         upsample_kernel_sizes: List[int],
         spk_embed_dim: int,
         gin_channels: int,
-        sr = None,
+        sr=None,
     ):
         super(SynthesizerTrnMs768NSFsid_nono, self).__init__(
             spec_channels,

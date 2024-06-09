@@ -57,7 +57,8 @@ class SourceModuleHnNSF(torch.nn.Module):
         sine_wavs, _, _ = self.l_sin_gen(x, upp)
         sine_wavs = sine_wavs.to(dtype=self.l_linear.weight.dtype)
         sine_merge: torch.Tensor = self.l_tanh(self.l_linear(sine_wavs))
-        return sine_merge #, None, None  # noise, uv
+        return sine_merge  # , None, None  # noise, uv
+
 
 class NSFGenerator(torch.nn.Module):
     def __init__(

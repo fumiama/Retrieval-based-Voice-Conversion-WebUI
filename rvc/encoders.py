@@ -161,6 +161,7 @@ class TextEncoder(nn.Module):
         m, logs = torch.split(stats, self.out_channels, dim=1)
         return m, logs, x_mask
 
+
 class PosteriorEncoder(nn.Module):
     def __init__(
         self,
