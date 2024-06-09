@@ -6,7 +6,7 @@ from time import time
 import torch
 
 from i18n.i18n import I18nAuto
-from infer.modules.vc import model_hash_ckpt, hash_id
+from rvc.modules.vc import model_hash_ckpt, hash_id
 
 i18n = I18nAuto()
 

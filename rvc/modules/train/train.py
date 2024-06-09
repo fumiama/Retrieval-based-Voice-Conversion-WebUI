@@ -11,7 +11,7 @@ sys.path.append(os.path.join(now_dir))
 
 import datetime
 
-from infer.lib.train import utils
+from rvc.lib.train import utils
 
 hps = utils.get_hparams()
 os.environ["CUDA_VISIBLE_DEVICES"] = hps.gpus.replace("-", ",")
@@ -24,8 +24,8 @@ try:
     import intel_extension_for_pytorch as ipex  # pylint: disable=import-error, unused-import
 
     if torch.xpu.is_available():
-        from infer.modules.ipex import ipex_init
-        from infer.modules.ipex.gradscaler import gradscaler_init
+        from rvc.modules.ipex import ipex_init
+        from rvc.modules.ipex.gradscaler import gradscaler_init
         from torch.xpu.amp import autocast
 
         GradScaler = gradscaler_init()
@@ -48,7 +48,7 @@ from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
 from rvc import utils
-from infer.lib.train.data_utils import (
+from rvc.lib.train.data_utils import (
     DistributedBucketSampler,
     TextAudioCollate,
     TextAudioCollateMultiNSFsid,
@@ -59,24 +59,24 @@ from infer.lib.train.data_utils import (
 from rvc.discriminators import MultiPeriodDiscriminator
 
 if hps.version == "v1":
-    from infer.lib.infer_pack.models import SynthesizerTrnMs256NSFsid as RVC_Model_f0
-    from infer.lib.infer_pack.models import (
+    from rvc.lib.infer_pack.models import SynthesizerTrnMs256NSFsid as RVC_Model_f0
+    from rvc.lib.infer_pack.models import (
         SynthesizerTrnMs256NSFsid_nono as RVC_Model_nof0,
     )
 else:
-    from infer.lib.infer_pack.models import (
+    from rvc.lib.infer_pack.models import (
         SynthesizerTrnMs768NSFsid as RVC_Model_f0,
         SynthesizerTrnMs768NSFsid_nono as RVC_Model_nof0,
     )
 
-from infer.lib.train.losses import (
+from rvc.lib.train.losses import (
     discriminator_loss,
     feature_loss,
     generator_loss,
     kl_loss,
 )
-from infer.lib.train.mel_processing import mel_spectrogram_torch, spec_to_mel_torch
-from infer.lib.train.process_ckpt import save_small_model
+from rvc.lib.train.mel_processing import mel_spectrogram_torch, spec_to_mel_torch
+from rvc.lib.train.process_ckpt import save_small_model
 
 global_step = 0
 

@@ -6,7 +6,7 @@ from scipy.fft import fft
 from pybase16384 import encode_to_string, decode_from_string
 
 from configs import CPUConfig, singleton_variable
-from infer.lib.jit import get_synthesizer_ckpt
+from rvc.lib.jit import get_synthesizer_ckpt
 
 from .pipeline import Pipeline
 from .utils import load_hubert

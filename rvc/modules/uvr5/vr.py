@@ -8,11 +8,11 @@ import numpy as np
 import soundfile as sf
 import torch
 
-from infer.lib.uvr5_pack.lib_v5 import nets_123821KB as Nets
-from infer.lib.uvr5_pack.lib_v5 import spec_utils
-from infer.lib.uvr5_pack.lib_v5.model_param_init import ModelParameters
-from infer.lib.uvr5_pack.lib_v5.nets import CascadedNet
-from infer.lib.uvr5_pack.utils import inference
+from rvc.lib.uvr5_pack.lib_v5 import nets_123821KB as Nets
+from rvc.lib.uvr5_pack.lib_v5 import spec_utils
+from rvc.lib.uvr5_pack.lib_v5.model_param_init import ModelParameters
+from rvc.lib.uvr5_pack.lib_v5.nets import CascadedNet
+from rvc.lib.uvr5_pack.utils import inference
 
 
 class AudioPre:

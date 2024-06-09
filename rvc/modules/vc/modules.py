@@ -9,8 +9,8 @@ import soundfile as sf
 import torch
 from io import BytesIO
 
-from infer.lib.audio import load_audio, wav2
-from infer.lib.jit import get_synthesizer_ckpt, get_synthesizer
+from rvc.lib.audio import load_audio, wav2
+from rvc.lib.jit import get_synthesizer_ckpt, get_synthesizer
 from .info import show_model_info
 from .pipeline import Pipeline
 from .utils import get_index_path_from_model, load_hubert

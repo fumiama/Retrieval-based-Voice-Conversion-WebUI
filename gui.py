@@ -80,7 +80,7 @@ if __name__ == "__main__":
     from multiprocessing import Queue, cpu_count
 
     import librosa
-    from infer.modules.gui import TorchGate
+    from rvc.modules.gui import TorchGate
     import numpy as np
     import FreeSimpleGUI as sg
     import sounddevice as sd
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     import torch.nn.functional as F
     import torchaudio.transforms as tat
 
-    import infer.lib.rtrvc as rtrvc
+    import rvc.lib.rtrvc as rtrvc
     from i18n.i18n import I18nAuto
     from configs import Config
 
@@ -151,7 +151,7 @@ if __name__ == "__main__":
 
         def check_assets(self):
             global now_dir
-            from infer.lib.rvcmd import check_all_assets, download_all_assets
+            from rvc.lib.rvcmd import check_all_assets, download_all_assets
 
             tmp = os.path.join(now_dir, "TEMP")
             shutil.rmtree(tmp, ignore_errors=True)

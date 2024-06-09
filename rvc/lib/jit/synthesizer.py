@@ -2,7 +2,7 @@ import torch
 
 
 def get_synthesizer_ckpt(cpt, device=torch.device("cpu")):
-    from infer.lib.infer_pack.models import (
+    from rvc.lib.infer_pack.models import (
         SynthesizerTrnMs256NSFsid,
         SynthesizerTrnMs256NSFsid_nono,
         SynthesizerTrnMs768NSFsid,

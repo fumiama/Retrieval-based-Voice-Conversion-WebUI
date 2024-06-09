@@ -1,5 +1,5 @@
 import torch
-from infer.lib.rmvpe import STFT
+from rvc.lib.rmvpe import STFT
 from torch.nn.functional import conv1d, conv2d
 from typing import Union, Optional
 from .utils import linspace, temperature_sigmoid, amp_to_db

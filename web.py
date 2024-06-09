@@ -10,9 +10,9 @@ load_dotenv("sha256.env")
 if sys.platform == "darwin":
     os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
-from infer.modules.vc import VC, show_info, hash_similarity
-from infer.modules.uvr5.modules import uvr
-from infer.lib.train.process_ckpt import (
+from rvc.modules.vc import VC, show_info, hash_similarity
+from rvc.modules.uvr5.modules import uvr
+from rvc.lib.train.process_ckpt import (
     change_info,
     extract_small_model,
     merge,
@@ -56,7 +56,7 @@ config = Config()
 vc = VC(config)
 
 if not config.nocheck:
-    from infer.lib.rvcmd import check_all_assets, download_all_assets
+    from rvc.lib.rvcmd import check_all_assets, download_all_assets
 
     if not check_all_assets(update=config.update):
         if config.update:
@@ -180,7 +180,7 @@ def clean():
 
 
 def export_onnx(ModelPath, ExportedPath):
-    from infer.modules.onnx.export import export_onnx as eo
+    from rvc.modules.onnx.export import export_onnx as eo
 
     eo(ModelPath, ExportedPath)
 
@@ -221,7 +221,7 @@ def preprocess_dataset(trainset_dir, exp_dir, sr, n_p):
     os.makedirs("%s/logs/%s" % (now_dir, exp_dir), exist_ok=True)
     f = open("%s/logs/%s/preprocess.log" % (now_dir, exp_dir), "w")
     f.close()
-    cmd = '"%s" infer/modules/train/preprocess.py "%s" %s %s "%s/logs/%s" %s %.1f' % (
+    cmd = '"%s" rvc/modules/train/preprocess.py "%s" %s %s "%s/logs/%s" %s %.1f' % (
         config.python_cmd,
         trainset_dir,
         sr,
@@ -264,7 +264,7 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
     if if_f0:
         if f0method != "rmvpe_gpu":
             cmd = (
-                '"%s" infer/modules/train/extract/extract_f0_print.py "%s/logs/%s" %s %s'
+                '"%s" rvc/modules/train/extract/extract_f0_print.py "%s/logs/%s" %s %s'
                 % (
                     config.python_cmd,
                     now_dir,
@@ -293,7 +293,7 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
                 ps = []
                 for idx, n_g in enumerate(gpus_rmvpe):
                     cmd = (
-                        '"%s" infer/modules/train/extract/extract_f0_rmvpe.py %s %s %s "%s/logs/%s" %s '
+                        '"%s" rvc/modules/train/extract/extract_f0_rmvpe.py %s %s %s "%s/logs/%s" %s '
                         % (
                             config.python_cmd,
                             leng,
@@ -321,7 +321,7 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
             else:
                 cmd = (
                     config.python_cmd
-                    + ' infer/modules/train/extract/extract_f0_rmvpe_dml.py "%s/logs/%s" '
+                    + ' rvc/modules/train/extract/extract_f0_rmvpe_dml.py "%s/logs/%s" '
                     % (
                         now_dir,
                         exp_dir,
@@ -357,7 +357,7 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
     ps = []
     for idx, n_g in enumerate(gpus):
         cmd = (
-            '"%s" infer/modules/train/extract_feature_print.py %s %s %s %s "%s/logs/%s" %s %s'
+            '"%s" rvc/modules/train/extract_feature_print.py %s %s %s %s "%s/logs/%s" %s %s'
             % (
                 config.python_cmd,
                 config.device,
@@ -568,7 +568,7 @@ def click_train(
             )
             f.write("\n")
     cmd = (
-        '"%s" infer/modules/train/train.py -e "%s" -sr %s -f0 %s -bs %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s -a "%s"'
+        '"%s" rvc/modules/train/train.py -e "%s" -sr %s -f0 %s -bs %s -te %s -se %s %s %s -l %s -c %s -sw %s -v %s -a "%s"'
         % (
             config.python_cmd,
             exp_dir1,
