@@ -1,12 +1,14 @@
 <div align="center">
 
-<h1>Retrieval-based-Voice-Conversion-WebUI</h1>
-Un framework simple et facile à utiliser pour la conversion vocale (modificateur de voix) basé sur VITS<br><br>
+# Retrieval-based-Voice-Conversion-WebUI
+Un framework simple et facile à utiliser pour la conversion vocale (modificateur de voix) basé sur VITS
+
+
 
 [![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange
 )](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI)
 
-<img src="https://counter.seku.su/cmoe?name=rvc&theme=r34" /><br>
+![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/badge/LICENSE-MIT-green.svg?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
@@ -70,16 +72,16 @@ poetry install
 Ou vous pouvez utiliser pip pour installer les dépendances :
 ```bash
 # Cartes Nvidia :
-pip install -r requirements/requirements.txt
+pip install -r requirements/main.txt
 
 # Cartes AMD/Intel :
-pip install -r requirements/requirements-dml.txt
+pip install -r requirements/dml.txt
 
 # Cartes Intel avec IPEX
-pip install -r requirements/requirements-ipex.txt
+pip install -r requirements/ipex.txt
 
 # Cartes AMD sur Linux (ROCm)
-pip install -r requirements/requirements-amd.txt
+pip install -r requirements/amd.txt
 ```
 
 ------
@@ -172,6 +174,4 @@ python web.py
   + Le modèle pré-entraîné a été formé et testé par [yxlllc](https://github.com/yxlllc/RMVPE) et [RVC-Boss](https://github.com/RVC-Boss).
 
 ## Remerciements à tous les contributeurs pour leurs efforts
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)

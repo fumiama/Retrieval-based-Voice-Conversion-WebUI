@@ -1,11 +1,11 @@
 <div align="center">
 
-<h1>Retrieval-based-Voice-Conversion-WebUI</h1>
-VITS 기반의 간단하고 사용하기 쉬운 음성 변환 프레임워크.<br><br>
+# Retrieval-based-Voice-Conversion-WebUI
+VITS 기반의 간단하고 사용하기 쉬운 음성 변환 프레임워크.
 
 [![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI)
 
-<img src="https://counter.seku.su/cmoe?name=rvc&theme=r34" /><br>
+![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/badge/LICENSE-MIT-green.svg?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
@@ -24,24 +24,11 @@ VITS 기반의 간단하고 사용하기 쉬운 음성 변환 프레임워크.<b
 
 > 특정 지역에서 Hugging Face에 직접 연결할 수 없는 경우가 있으며, 성공적으로 연결해도 속도가 매우 느릴 수 있으므로, 모델/통합 패키지/도구의 일괄 다운로더를 특별히 소개합니다. [RVC-Models-Downloader](https://github.com/fumiama/RVC-Models-Downloader)
 
-<table>
-   <tr>
-		<td align="center">훈련 및 추론 인터페이스</td>
-		<td align="center">실시간 음성 변환 인터페이스</td>
-	</tr>
-  <tr>
-		<td align="center"><img src="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630"></td>
-    <td align="center"><img src="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6"></td>
-	</tr>
-	<tr>
-		<td align="center">go-web.bat</td>
-		<td align="center">go-realtime-gui.bat</td>
-	</tr>
-  <tr>
-    <td align="center">원하는 작업을 자유롭게 선택할 수 있습니다.</td>
-		<td align="center">우리는 이미 끝에서 끝까지 170ms의 지연을 실현했습니다. ASIO 입력 및 출력 장치를 사용하면 끝에서 끝까지 90ms의 지연을 달성할 수 있지만, 이는 하드웨어 드라이버 지원에 매우 의존적입니다.</td>
-	</tr>
-</table>
+| 훈련 및 추론 인터페이스 | 실시간 음성 변환 인터페이스 |
+| :--------: | :---------: |
+| ![web](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630) | ![realtime-gui](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6) |
+| go-web.bat | go-realtime-gui.bat |
+| 원하는 작업을 자유롭게 선택할 수 있습니다. | 우리는 이미 끝에서 끝까지 170ms의 지연을 실현했습니다. ASIO 입력 및 출력 장치를 사용하면 끝에서 끝까지 90ms의 지연을 달성할 수 있지만, 이는 하드웨어 드라이버 지원에 매우 의존적입니다. |
 
 ## 소개
 
@@ -85,25 +72,25 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 - N카드
 
 ```bash
-pip install -r requirements/requirements.txt
+pip install -r requirements/main.txt
 ```
 
 - A카드/I카드
 
 ```bash
-pip install -r requirements/requirements-dml.txt
+pip install -r requirements/dml.txt
 ```
 
 - A카드ROCM(Linux)
 
 ```bash
-pip install -r requirements/requirements-amd.txt
+pip install -r requirements/amd.txt
 ```
 
 - I카드IPEX(Linux)
 
 ```bash
-pip install -r requirements/requirements-ipex.txt
+pip install -r requirements/ipex.txt
 ```
 
 #### 2. poetry를 통한 의존성 설치
@@ -257,9 +244,7 @@ rvcmd packs/general/latest # RVC-Models-Downloader command
   + The pretrained model is trained and tested by [yxlllc](https://github.com/yxlllc/RMVPE) and [RVC-Boss](https://github.com/RVC-Boss).
 
 ## 感谢所有贡献者作出的努力
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)
 
 translate to Korean
 -->
@@ -415,6 +400,4 @@ source /opt/intel/oneapi/setvars.sh
 
 ## 모든 기여자들의 노력에 감사드립니다
 
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)

@@ -1,12 +1,14 @@
 <div align="center">
 
-<h1>Retrieval-based-Voice-Conversion-WebUI</h1>
-VITS基盤의 簡單하고使用하기 쉬운音聲變換틀<br><br>
+# Retrieval-based-Voice-Conversion-WebUI
+VITS基盤의 簡單하고使用하기 쉬운音聲變換틀
+
+
 
 [![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange
 )](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI)
 
-<img src="https://counter.seku.su/cmoe?name=rvc&theme=r34" /><br>
+![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
@@ -59,7 +61,7 @@ poetry install
 pip를 活用하여依存를 設置하여도 無妨합니다.
 
 ```bash
-pip install -r requirements/requirements.txt
+pip install -r requirements/main.txt
 ```
 
 ## 其他預備모델準備
@@ -98,7 +100,5 @@ Windows를 使用하는境遇 `RVC-beta.7z`를 다운로드 및 壓縮解除하�
 + [audio-slicer](https://github.com/openvpi/audio-slicer)
 ## 모든寄與者분들의勞力에感謝드립니다
 
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)
 

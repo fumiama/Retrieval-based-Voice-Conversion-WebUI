@@ -1,12 +1,12 @@
 <div align="center">
 
-<h1>Retrieval-based-Voice-Conversion-WebUI</h1>
-Uma estrutura de conversão de voz fácil de usar baseada em VITS.<br><br>
+# Retrieval-based-Voice-Conversion-WebUI
+Uma estrutura de conversão de voz fácil de usar baseada em VITS.
 
 [![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange
 )](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI)
 
-<img src="https://counter.seku.su/cmoe?name=rvc&theme=r34" /><br>
+![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
@@ -79,16 +79,16 @@ Você também pode usar pip para instalá-los:
 ```bash
 
 for Nvidia graphics cards
-  pip install -r requirements/requirements.txt
+  pip install -r requirements/main.txt
 
 for AMD/Intel graphics cards on Windows (DirectML)：
-  pip install -r requirements/requirements-dml.txt
+  pip install -r requirements/dml.txt
 
 for Intel ARC graphics cards on Linux / WSL using Python 3.10: 
-  pip install -r requirements/requirements-ipex.txt
+  pip install -r requirements/ipex.txt
 
 for AMD graphics cards on Linux (ROCm):
-  pip install -r requirements/requirements-amd.txt
+  pip install -r requirements/amd.txt
 ```
 
 ------
@@ -186,7 +186,5 @@ python web.py
   + The pretrained model is trained and tested by [yxlllc](https://github.com/yxlllc/RMVPE) and [RVC-Boss](https://github.com/RVC-Boss).
   
 ## Thanks to all contributors for their efforts
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)
 

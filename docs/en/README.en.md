@@ -1,12 +1,14 @@
 <div align="center">
 
-<h1>Retrieval-based-Voice-Conversion-WebUI</h1>
-An easy-to-use voice conversion framework based on VITS.<br><br>
+# Retrieval-based-Voice-Conversion-WebUI
+An easy-to-use voice conversion framework based on VITS.
+
+
 
 [![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange
 )](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI)
 
-<img src="https://counter.seku.su/cmoe?name=rvc&theme=r34" /><br>
+![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
@@ -25,24 +27,11 @@ An easy-to-use voice conversion framework based on VITS.<br><br>
 
 > There's a [one-click downloader](https://github.com/fumiama/RVC-Models-Downloader) for models/integration packages/tools. Welcome to try.
 
-<table>
-   <tr>
-		<td align="center">Training and inference Webui</td>
-		<td align="center">Real-time voice changing GUI</td>
-	</tr>
-  <tr>
-		<td align="center"><img src="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630"></td>
-    <td align="center"><img src="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6"></td>
-	</tr>
-	<tr>
-		<td align="center">go-web.bat</td>
-		<td align="center">go-realtime-gui.bat</td>
-	</tr>
-  <tr>
-    <td align="center">You can freely choose the action you want to perform.</td>
-		<td align="center">We have achieved an end-to-end latency of 170ms. With the use of ASIO input and output devices, we have managed to achieve an end-to-end latency of 90ms, but it is highly dependent on hardware driver support.</td>
-	</tr>
-</table>
+| Training and inference Webui | Real-time voice changing GUI |
+| :--------: | :---------: |
+| ![web](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630) | ![realtime-gui](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6) |
+| go-web.bat | go-realtime-gui.bat |
+| You can freely choose the action you want to perform. | We have achieved an end-to-end latency of 170ms. With the use of ASIO input and output devices, we have managed to achieve an end-to-end latency of 90ms, but it is highly dependent on hardware driver support. |
 
 ## Features:
 + Reduce tone leakage by replacing the source feature to training-set feature using top1 retrieval;
@@ -85,19 +74,19 @@ sh ./run.sh
 3. Install the corresponding dependencies according to your own graphics card.
 - Nvidia GPU
 	```bash
-	pip install -r requirements/requirements.txt
+	pip install -r requirements/main.txt
 	```
 - AMD/Intel GPU
 	```bash
-	pip install -r requirements/requirements-dml.txt
+	pip install -r requirements/dml.txt
 	```
 - AMD ROCM (Linux)
 	```bash
-	pip install -r requirements/requirements-amd.txt
+	pip install -r requirements/amd.txt
 	```
 - Intel IPEX (Linux)
 	```bash
-	pip install -r requirements/requirements-ipex.txt
+	pip install -r requirements/ipex.txt
 	```
 
 ## Preparation of Other Files
@@ -225,6 +214,4 @@ rvcmd packs/general/latest # RVC-Models-Downloader command
   + The pretrained model is trained and tested by [yxlllc](https://github.com/yxlllc/RMVPE) and [RVC-Boss](https://github.com/RVC-Boss).
 
 ## Thanks to all contributors for their efforts
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)

@@ -1,12 +1,12 @@
 <div align="center">
 
-<h1>Retrieval-based-Voice-Conversion-WebUI</h1>
+# Retrieval-based-Voice-Conversion-WebUI
 一个基于VITS的简单易用的变声框架<br><br>
 
 [![madewithlove](https://img.shields.io/badge/made_with-%E2%9D%A4-red?style=for-the-badge&labelColor=orange
 )](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI)
 
-<img src="https://counter.seku.su/cmoe?name=rvc&theme=r34" /><br>
+![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/badge/LICENSE-MIT-green.svg?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
@@ -25,24 +25,11 @@
 
 > 由于某些地区无法直连Hugging Face，即使设法成功访问，速度也十分缓慢，特推出模型/整合包/工具的一键下载器，欢迎试用：[RVC-Models-Downloader](https://github.com/fumiama/RVC-Models-Downloader)
 
-<table>
-   <tr>
-		<td align="center">训练推理界面</td>
-		<td align="center">实时变声界面</td>
-	</tr>
-  <tr>
-		<td align="center"><img src="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630"></td>
-    <td align="center"><img src="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6"></td>
-	</tr>
-	<tr>
-		<td align="center">go-web.bat</td>
-		<td align="center">go-realtime-gui.bat</td>
-	</tr>
-  <tr>
-    <td align="center">可以自由选择想要执行的操作。</td>
-	<td align="center">我们已经实现端到端170ms延迟。如使用ASIO输入输出设备，已能实现端到端90ms延迟，但非常依赖硬件驱动支持。</td>
-	</tr>
-</table>
+| 训练推理界面 | 实时变声界面 |
+| :--------: | :---------: |
+| ![web](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630) | ![realtime-gui](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6) |
+| go-web.bat | go-realtime-gui.bat |
+| 可以自由选择想要执行的操作。 | 我们已经实现端到端170ms延迟。如使用ASIO输入输出设备，已能实现端到端90ms延迟，但非常依赖硬件驱动支持。|
 
 ## 简介
 本仓库具有以下特点
@@ -227,6 +214,4 @@ rvcmd packs/general/latest # RVC-Models-Downloader command
   + The pretrained model is trained and tested by [yxlllc](https://github.com/yxlllc/RMVPE) and [RVC-Boss](https://github.com/RVC-Boss).
 
 ## 感谢所有贡献者作出的努力
-<a href="https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
-  <img src="https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI" />
-</a>
+[![contributors](https://contrib.rocks/image?repo=fumiama/Retrieval-based-Voice-Conversion-WebUI)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors)
