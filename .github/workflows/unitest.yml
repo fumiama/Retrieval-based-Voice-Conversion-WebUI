@@ -25,7 +25,7 @@ jobs:
         python -m pip install --upgrade setuptools
         python -m pip install --upgrade wheel
         pip install torch torchvision torchaudio
-        pip install -r requirements/requirements.txt
+        pip install -r requirements/main.txt
         rvcmd -notrs -w 1 -notui assets/all
     - name: Test step 1 & 2
       run: |
