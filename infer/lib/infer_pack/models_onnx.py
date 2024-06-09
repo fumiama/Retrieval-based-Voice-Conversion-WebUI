@@ -1,12 +1,9 @@
 import torch
 from torch import nn
 
-from .models import (
-    PosteriorEncoder,
-    GeneratorNSF,
-)
+from .models import GeneratorNSF
 
-from rvc.encoders import TextEncoder
+from rvc.encoders import TextEncoder, PosteriorEncoder
 from rvc.residuals import ResidualCouplingBlock
 
 
