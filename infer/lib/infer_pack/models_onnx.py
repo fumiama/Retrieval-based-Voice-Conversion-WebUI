@@ -1,9 +1,9 @@
 import torch
 from torch import nn
 
-from rvc.nsf import NSFGenerator
-from rvc.encoders import TextEncoder, PosteriorEncoder
-from rvc.residuals import ResidualCouplingBlock
+from rvc.layers.nsf import NSFGenerator
+from rvc.layers.encoders import TextEncoder, PosteriorEncoder
+from rvc.layers.residuals import ResidualCouplingBlock
 
 
 class SynthesizerTrnMsNSFsidM(nn.Module):

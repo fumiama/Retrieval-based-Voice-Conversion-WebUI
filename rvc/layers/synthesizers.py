@@ -3,14 +3,15 @@ from typing import Optional, List, Union
 import torch
 from torch import nn
 
-from rvc.residuals import ResidualCouplingBlock
-from rvc.utils import (
+
+from .encoders import TextEncoder, PosteriorEncoder
+from .generators import Generator
+from .nsf import NSFGenerator
+from .residuals import ResidualCouplingBlock
+from .utils import (
     slice_on_last_dim,
     rand_slice_segments_on_last_dim,
 )
-from rvc.encoders import TextEncoder, PosteriorEncoder
-from rvc.generators import Generator
-from rvc.nsf import NSFGenerator
 
 
 class SynthesizerTrnMsNSFsid(nn.Module):

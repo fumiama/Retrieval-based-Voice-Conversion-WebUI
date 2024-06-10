@@ -1,6 +1,6 @@
 import torch
 
-from rvc.synthesizers import SynthesizerTrnMsNSFsid
+from rvc.layers.synthesizers import SynthesizerTrnMsNSFsid
 
 
 def get_synthesizer_ckpt(cpt, device=torch.device("cpu")):

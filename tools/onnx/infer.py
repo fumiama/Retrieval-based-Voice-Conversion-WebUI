@@ -19,6 +19,6 @@ model = RVC(
 
 wav, sr = librosa.load(wav_path, sr=sampling_rate)
 
-audio = model.inference(wav, sr, sid, f0_method=f0_method, f0_up_key=f0_up_key)
+audio = model.infer(wav, sr, sid, f0_method=f0_method, f0_up_key=f0_up_key)
 
 soundfile.write(out_path, audio, sampling_rate)

@@ -56,15 +56,15 @@ from infer.lib.train.data_utils import (
     TextAudioLoaderMultiNSFsid,
 )
 
-from rvc.discriminators import MultiPeriodDiscriminator
+from rvc.layers.discriminators import MultiPeriodDiscriminator
 
 if hps.version == "v1":
-    from rvc.synthesizers import SynthesizerTrnMs256NSFsid as RVC_Model_f0
-    from rvc.synthesizers import (
+    from rvc.layers.synthesizers import SynthesizerTrnMs256NSFsid as RVC_Model_f0
+    from rvc.layers.synthesizers import (
         SynthesizerTrnMs256NSFsid_nono as RVC_Model_nof0,
     )
 else:
-    from rvc.synthesizers import (
+    from rvc.layers.synthesizers import (
         SynthesizerTrnMs768NSFsid as RVC_Model_f0,
         SynthesizerTrnMs768NSFsid_nono as RVC_Model_nof0,
     )
