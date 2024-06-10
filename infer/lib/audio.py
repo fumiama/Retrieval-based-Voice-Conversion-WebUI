@@ -1,15 +1,15 @@
 from io import BufferedWriter, BytesIO
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 import ffmpeg
 import numpy as np
 import av
 
-video_format_dict: dict[str, str] = {
+video_format_dict: Dict[str, str] = {
     "m4a": "mp4",
 }
 
-audio_format_dict: dict[str, str] = {
+audio_format_dict: Dict[str, str] = {
     "ogg": "libvorbis",
     "mp4": "aac",
 }
