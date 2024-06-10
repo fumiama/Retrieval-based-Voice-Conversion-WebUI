@@ -358,7 +358,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("Resonating offset")),
+                                sg.Text(i18n("Formant offset")),
                                 sg.Slider(
                                     range=(-5, 5),
                                     key="formant",
@@ -380,7 +380,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("loudness factor")),
+                                sg.Text(i18n("Loudness factor")),
                                 sg.Slider(
                                     range=(0.0, 1.0),
                                     key="rms_mix_rate",
