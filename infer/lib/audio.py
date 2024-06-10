@@ -33,7 +33,7 @@ def wav2(i: BytesIO, o: BufferedWriter, format: str):
     inp.close()
 
 
-def load_audio(file: str, sr: int) -> np.ndarray[Any, np.dtype[np.float32]]:
+def load_audio(file: str, sr: int) -> np.ndarray:
     if not Path(file).exists():
         raise FileNotFoundError(f"File not found: {file}")
 
