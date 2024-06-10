@@ -1,4 +1,6 @@
+from io import BufferedWriter, BytesIO
 from pathlib import Path
+from typing import Any
 import ffmpeg
 import numpy as np
 import av
@@ -12,7 +14,7 @@ audio_format_dict: dict[str, str] = {
     "mp4": "aac",
 }
 
-def wav2(i, o, format):
+def wav2(i: BytesIO, o: BufferedWriter, format: str):
     inp = av.open(i, "r")
     format = video_format_dict[format]
     out = av.open(o, "w", format=format)
@@ -31,7 +33,10 @@ def wav2(i, o, format):
     inp.close()
 
 
-def load_audio(file, sr):
+def load_audio(file: str, sr: int) -> np.ndarray[Any, np.dtype[np.float32]]:
+    if not Path(file).exists():
+        raise FileNotFoundError(f"File not found: {file}")
+
     try:
         # https://github.com/openai/whisper/blob/main/whisper/audio.py#L26
         # This launches a subprocess to decode audio while down-mixing and resampling as necessary.
