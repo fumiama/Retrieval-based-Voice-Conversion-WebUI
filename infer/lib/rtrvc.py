@@ -428,15 +428,19 @@ class RVC:
         # return_length2 = torch.LongTensor([return_length2])
         return_length = torch.LongTensor([return_length])
         with torch.no_grad():
-            infered_audio = self.net_g.infer(
-                feats,
-                p_len,
-                sid,
-                pitch=cache_pitch,
-                pitchf=cache_pitchf,
-                skip_head=skip_head,
-                return_length=return_length,
-            ).squeeze(1).float()
+            infered_audio = (
+                self.net_g.infer(
+                    feats,
+                    p_len,
+                    sid,
+                    pitch=cache_pitch,
+                    pitchf=cache_pitchf,
+                    skip_head=skip_head,
+                    return_length=return_length,
+                )
+                .squeeze(1)
+                .float()
+            )
         upp_res = int(np.floor(factor * self.tgt_sr // 100))
         if upp_res != self.tgt_sr // 100:
             if upp_res not in self.resample_kernel:

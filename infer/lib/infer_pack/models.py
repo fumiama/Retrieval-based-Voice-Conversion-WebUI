@@ -212,7 +212,7 @@ class SynthesizerTrnMsNSFsid(nn.Module):
                 # n_res=return_length2
             )
         del x_mask, z
-        return o # , x_mask, (z, z_p, m_p, logs_p)
+        return o  # , x_mask, (z, z_p, m_p, logs_p)
 
 
 class SynthesizerTrnMs256NSFsid(SynthesizerTrnMsNSFsid):
