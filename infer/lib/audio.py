@@ -1,4 +1,4 @@
-import platform
+from pathlib import Path
 import ffmpeg
 import numpy as np
 import av
@@ -36,7 +36,7 @@ def load_audio(file, sr):
         # https://github.com/openai/whisper/blob/main/whisper/audio.py#L26
         # This launches a subprocess to decode audio while down-mixing and resampling as necessary.
         # Requires the ffmpeg CLI and `ffmpeg-python` package to be installed.
-        file = clean_path(file)  # 防止小白拷路径头尾带了空格和"和回车
+        file = str(clean_path(file))  # 防止小白拷路径头尾带了空格和"和回车
         out, _ = (
             ffmpeg.input(file, threads=0)
             .output("-", format="f32le", acodec="pcm_f32le", ac=1, ar=sr)
@@ -48,7 +48,5 @@ def load_audio(file, sr):
     return np.frombuffer(out, np.float32).flatten()
 
 
-def clean_path(path_str):
-    if platform.system() == "Windows":
-        path_str = path_str.replace("/", "\\")
-    return path_str.strip(" ").strip('"').strip("\n").strip('"').strip(" ")
+def clean_path(path: str) -> Path:
+    return Path(path.strip(' "\n')).resolve()
