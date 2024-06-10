@@ -183,7 +183,7 @@ for idx, name in enumerate(
     pitchf = torch.FloatTensor(pitchf).unsqueeze(0).to(device)
     with torch.no_grad():
         audio = (
-            net_g.infer(feats, p_len, pitch, pitchf, sid)[0][0, 0]
+            net_g.infer(feats, p_len, sid, pitch=pitch, pitchf=pitchf)[0, 0]
             .data.cpu()
             .float()
             .numpy()

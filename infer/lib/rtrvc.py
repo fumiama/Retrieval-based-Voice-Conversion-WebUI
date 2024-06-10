@@ -399,6 +399,7 @@ class RVC:
         p_len = input_wav.shape[0] // 160
         factor = pow(2, self.formant_shift / 12)
         return_length2 = int(np.ceil(return_length * factor))
+        cache_pitch = cache_pitchf = None
         if self.if_f0 == 1:
             f0_extractor_frame = block_frame_16k + 800
             if f0method == "rmvpe":
@@ -424,25 +425,18 @@ class RVC:
         p_len = torch.LongTensor([p_len]).to(self.device)
         sid = torch.LongTensor([0]).to(self.device)
         skip_head = torch.LongTensor([skip_head])
-        return_length2 = torch.LongTensor([return_length2])
+        # return_length2 = torch.LongTensor([return_length2])
         return_length = torch.LongTensor([return_length])
         with torch.no_grad():
-            if self.if_f0 == 1:
-                infered_audio, _, _ = self.net_g.infer(
-                    feats,
-                    p_len,
-                    cache_pitch,
-                    cache_pitchf,
-                    sid,
-                    skip_head,
-                    return_length,
-                    return_length2,
-                )
-            else:
-                infered_audio, _, _ = self.net_g.infer(
-                    feats, p_len, sid, skip_head, return_length, return_length2
-                )
-        infered_audio = infered_audio.squeeze(1).float()
+            infered_audio = self.net_g.infer(
+                feats,
+                p_len,
+                sid,
+                pitch=cache_pitch,
+                pitchf=cache_pitchf,
+                skip_head=skip_head,
+                return_length=return_length,
+            ).squeeze(1).float()
         upp_res = int(np.floor(factor * self.tgt_sr // 100))
         if upp_res != self.tgt_sr // 100:
             if upp_res not in self.resample_kernel:

@@ -415,6 +415,7 @@ def train_and_evaluate(
     for batch_idx, info in data_iterator:
         # Data
         ## Unpack
+        pitch = pitchf = None
         if hps.if_f0 == 1:
             (
                 phone,
@@ -444,22 +445,13 @@ def train_and_evaluate(
 
         # Calculate
         with autocast(enabled=hps.train.fp16_run):
-            if hps.if_f0 == 1:
-                (
-                    y_hat,
-                    ids_slice,
-                    x_mask,
-                    z_mask,
-                    (z, z_p, m_p, logs_p, m_q, logs_q),
-                ) = net_g(phone, phone_lengths, pitch, pitchf, spec, spec_lengths, sid)
-            else:
-                (
-                    y_hat,
-                    ids_slice,
-                    x_mask,
-                    z_mask,
-                    (z, z_p, m_p, logs_p, m_q, logs_q),
-                ) = net_g(phone, phone_lengths, spec, spec_lengths, sid)
+            (
+                y_hat,
+                ids_slice,
+                x_mask,
+                z_mask,
+                (z, z_p, m_p, logs_p, m_q, logs_q),
+            ) = net_g(phone, phone_lengths, spec, spec_lengths, sid, pitch, pitchf)
             mel = spec_to_mel_torch(
                 spec,
                 hps.data.filter_length,
