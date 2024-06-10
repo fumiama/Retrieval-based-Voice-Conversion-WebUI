@@ -12,7 +12,9 @@ def get_synthesizer_ckpt(cpt, device=torch.device("cpu")):
     elif version == "v2":
         encoder_dim = 768
     net_g = SynthesizerTrnMsNSFsid(
-        *cpt["config"], encoder_dim=encoder_dim, use_f0 = if_f0==1,
+        *cpt["config"],
+        encoder_dim=encoder_dim,
+        use_f0=if_f0 == 1,
     )
     del net_g.enc_q
     net_g.load_state_dict(cpt["weight"], strict=False)

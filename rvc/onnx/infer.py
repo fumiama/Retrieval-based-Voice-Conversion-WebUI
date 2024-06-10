@@ -119,9 +119,7 @@ class RVC(Model):
         rnd = np.random.randn(1, 192, hubert_length).astype(np.float32)
         hubert_length = np.array([hubert_length]).astype(np.int64)
 
-        out_wav = self.forward(
-            hubert, hubert_length, pitch, pitchf, ds, rnd
-        ).squeeze()
+        out_wav = self.forward(hubert, hubert_length, pitch, pitchf, ds, rnd).squeeze()
 
         out_wav = np.pad(out_wav, (0, 2 * self.hop_len), "constant")
 
