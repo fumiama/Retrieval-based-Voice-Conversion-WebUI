@@ -65,7 +65,10 @@ with app:
             )
             vc_input3 = gr.Audio(label="上传音频（长度小于90秒）")
             vc_transform0 = gr.Number(
-                label=i18n("Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)"), value=0
+                label=i18n(
+                    "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)"
+                ),
+                value=0,
             )
             f0method0 = gr.Radio(
                 label=i18n(
@@ -87,7 +90,9 @@ with app:
             )
             with gr.Column():
                 file_index1 = gr.Textbox(
-                    label=i18n("Path to the feature index file. Leave blank to use the selected result from the dropdown"),
+                    label=i18n(
+                        "Path to the feature index file. Leave blank to use the selected result from the dropdown"
+                    ),
                     value="",
                     interactive=False,
                     visible=False,
@@ -100,14 +105,18 @@ with app:
             index_rate1 = gr.Slider(
                 minimum=0,
                 maximum=1,
-                label=i18n("Search feature ratio (controls accent strength, too high has artifacting)"),
+                label=i18n(
+                    "Search feature ratio (controls accent strength, too high has artifacting)"
+                ),
                 value=0.88,
                 interactive=True,
             )
             resample_sr0 = gr.Slider(
                 minimum=0,
                 maximum=48000,
-                label=i18n("Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling"),
+                label=i18n(
+                    "Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling"
+                ),
                 value=0,
                 step=1,
                 interactive=True,
@@ -132,11 +141,17 @@ with app:
                 interactive=True,
             )
             f0_file = gr.File(
-                label=i18n("F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation")
+                label=i18n(
+                    "F0 curve file (optional). One pitch per line. Replaces the default F0 and pitch modulation"
+                )
             )
             but0 = gr.Button(i18n("Convert"), variant="primary")
             vc_output1 = gr.Textbox(label=i18n("Output information"))
-            vc_output2 = gr.Audio(label=i18n("Export audio (click on the three dots in the lower right corner to download)"))
+            vc_output2 = gr.Audio(
+                label=i18n(
+                    "Export audio (click on the three dots in the lower right corner to download)"
+                )
+            )
             but0.click(
                 vc.vc_single,
                 [
