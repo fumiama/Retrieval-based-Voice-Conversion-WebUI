@@ -175,7 +175,7 @@ class SynthesizerTrnMsNSFsid(nn.Module):
         phone_lengths: torch.Tensor,
         sid: torch.Tensor,
         pitch: Optional[torch.Tensor] = None,
-        pitchf: Optional[torch.Tensor] = None, # nsff0
+        pitchf: Optional[torch.Tensor] = None,  # nsff0
         skip_head: Optional[torch.Tensor] = None,
         return_length: Optional[torch.Tensor] = None,
         # return_length2: Optional[torch.Tensor] = None,
