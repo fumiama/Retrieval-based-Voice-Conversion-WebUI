@@ -126,7 +126,9 @@ if if_gpu_ok and len(gpu_infos) > 0:
     gpu_info = "\n".join(gpu_infos)
     default_batch_size = min(mem) // 2
 else:
-    gpu_info = i18n("Unfortunately, there is no compatible GPU available to support your training.")
+    gpu_info = i18n(
+        "Unfortunately, there is no compatible GPU available to support your training."
+    )
     default_batch_size = 1
 gpus = "-".join([i[0] for i in gpu_infos])
 
@@ -683,7 +685,13 @@ def train_index(exp_dir1, version19):
         link(index_save_path, link_target)
         infos.append(i18n("Link index to outside folder") + " " + link_target)
     except:
-        infos.append(i18n("Link index to outside folder") + " " + link_target + " " + i18n("Fail"))
+        infos.append(
+            i18n("Link index to outside folder")
+            + " "
+            + link_target
+            + " "
+            + i18n("Fail")
+        )
 
     # faiss.write_index(index, '%s/added_IVF%s_Flat_FastScan_%s.index'%(exp_dir,n_ivf,version19))
     # infos.append("成功构建索引，added_IVF%s_Flat_FastScan_%s.index"%(n_ivf,version19))
@@ -751,7 +759,9 @@ def train1key(
         author,
     )
     yield get_info_str(
-        i18n("Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.")
+        i18n(
+            "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder."
+        )
     )
 
     # step3b:训练索引
@@ -797,12 +807,16 @@ with gr.Blocks(title="RVC WebUI") as app:
     with gr.Tabs():
         with gr.TabItem(i18n("Model Inference")):
             with gr.Row():
-                sid0 = gr.Dropdown(label=i18n("Inferencing voice"), choices=sorted(names))
+                sid0 = gr.Dropdown(
+                    label=i18n("Inferencing voice"), choices=sorted(names)
+                )
                 with gr.Column():
                     refresh_button = gr.Button(
                         i18n("Refresh voice list and index path"), variant="primary"
                     )
-                    clean_button = gr.Button(i18n("Unload model to save GPU memory"), variant="primary")
+                    clean_button = gr.Button(
+                        i18n("Unload model to save GPU memory"), variant="primary"
+                    )
                 spk_item = gr.Slider(
                     minimum=0,
                     maximum=2333,
@@ -821,14 +835,19 @@ with gr.Blocks(title="RVC WebUI") as app:
                     with gr.Row():
                         with gr.Column():
                             vc_transform0 = gr.Number(
-                                label=i18n("Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)"),
+                                label=i18n(
+                                    "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)"
+                                ),
                                 value=0,
                             )
                             input_audio0 = gr.Audio(
-                                label=i18n("The audio file to be processed"), type="filepath"
+                                label=i18n("The audio file to be processed"),
+                                type="filepath",
                             )
                             file_index2 = gr.Dropdown(
-                                label=i18n("Auto-detect index path and select from the dropdown"),
+                                label=i18n(
+                                    "Auto-detect index path and select from the dropdown"
+                                ),
                                 choices=sorted(index_paths),
                                 interactive=True,
                             )
@@ -853,7 +872,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                             resample_sr0 = gr.Slider(
                                 minimum=0,
                                 maximum=48000,
-                                label=i18n("Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling"),
+                                label=i18n(
+                                    "Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling"
+                                ),
                                 value=0,
                                 step=1,
                                 interactive=True,
@@ -890,7 +911,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                             index_rate1 = gr.Slider(
                                 minimum=0,
                                 maximum=1,
-                                label=i18n("Search feature ratio (controls accent strength, too high has artifacting)"),
+                                label=i18n(
+                                    "Search feature ratio (controls accent strength, too high has artifacting)"
+                                ),
                                 value=0.75,
                                 interactive=True,
                             )
@@ -902,7 +925,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                             )
                             but0 = gr.Button(i18n("Convert"), variant="primary")
                             vc_output2 = gr.Audio(
-                                label=i18n("Export audio (click on the three dots in the lower right corner to download)")
+                                label=i18n(
+                                    "Export audio (click on the three dots in the lower right corner to download)"
+                                )
                             )
 
                             refresh_button.click(
@@ -943,7 +968,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                 with gr.Row():
                     with gr.Column():
                         vc_transform1 = gr.Number(
-                            label=i18n("Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)"),
+                            label=i18n(
+                                "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)"
+                            ),
                             value=0,
                         )
                         dir_input = gr.Textbox(
@@ -954,18 +981,24 @@ with gr.Blocks(title="RVC WebUI") as app:
                         )
                         inputs = gr.File(
                             file_count="multiple",
-                            label=i18n("Multiple audio files can also be imported. If a folder path exists, this input is ignored."),
+                            label=i18n(
+                                "Multiple audio files can also be imported. If a folder path exists, this input is ignored."
+                            ),
                         )
                         opt_input = gr.Textbox(
                             label=i18n("Specify output folder"), value="opt"
                         )
                         file_index4 = gr.Dropdown(
-                            label=i18n("Auto-detect index path and select from the dropdown"),
+                            label=i18n(
+                                "Auto-detect index path and select from the dropdown"
+                            ),
                             choices=sorted(index_paths),
                             interactive=True,
                         )
                         file_index3 = gr.File(
-                            label=i18n("Path to the feature index file. Leave blank to use the selected result from the dropdown"),
+                            label=i18n(
+                                "Path to the feature index file. Leave blank to use the selected result from the dropdown"
+                            ),
                         )
 
                         refresh_button.click(
@@ -996,7 +1029,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                         resample_sr1 = gr.Slider(
                             minimum=0,
                             maximum=48000,
-                            label=i18n("Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling"),
+                            label=i18n(
+                                "Resample the output audio in post-processing to the final sample rate. Set to 0 for no resampling"
+                            ),
                             value=0,
                             step=1,
                             interactive=True,
@@ -1033,7 +1068,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                         index_rate2 = gr.Slider(
                             minimum=0,
                             maximum=1,
-                            label=i18n("Search feature ratio (controls accent strength, too high has artifacting)"),
+                            label=i18n(
+                                "Search feature ratio (controls accent strength, too high has artifacting)"
+                            ),
                             value=1,
                             interactive=True,
                         )
@@ -1081,7 +1118,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                     ],
                     api_name="infer_change_voice",
                 )
-        with gr.TabItem(i18n("Vocals/Accompaniment Separation & Reverberation Removal")):
+        with gr.TabItem(
+            i18n("Vocals/Accompaniment Separation & Reverberation Removal")
+        ):
             with gr.Group():
                 gr.Markdown(
                     value=i18n(
@@ -1091,12 +1130,16 @@ with gr.Blocks(title="RVC WebUI") as app:
                 with gr.Row():
                     with gr.Column():
                         dir_wav_input = gr.Textbox(
-                            label=i18n("Enter the path of the audio folder to be processed"),
+                            label=i18n(
+                                "Enter the path of the audio folder to be processed"
+                            ),
                             placeholder="C:\\Users\\Desktop\\todo-songs",
                         )
                         wav_inputs = gr.File(
                             file_count="multiple",
-                            label=i18n("Multiple audio files can also be imported. If a folder path exists, this input is ignored."),
+                            label=i18n(
+                                "Multiple audio files can also be imported. If a folder path exists, this input is ignored."
+                            ),
                         )
                     with gr.Column():
                         model_choose = gr.Dropdown(
@@ -1112,10 +1155,12 @@ with gr.Blocks(title="RVC WebUI") as app:
                             visible=False,  # 先不开放调整
                         )
                         opt_vocal_root = gr.Textbox(
-                            label=i18n("Specify the output folder for vocals"), value="opt"
+                            label=i18n("Specify the output folder for vocals"),
+                            value="opt",
                         )
                         opt_ins_root = gr.Textbox(
-                            label=i18n("Specify the output folder for accompaniment"), value="opt"
+                            label=i18n("Specify the output folder for accompaniment"),
+                            value="opt",
                         )
                         format0 = gr.Radio(
                             label=i18n("Export file format"),
@@ -1146,13 +1191,17 @@ with gr.Blocks(title="RVC WebUI") as app:
                 )
             )
             with gr.Row():
-                exp_dir1 = gr.Textbox(label=i18n("Enter the experiment name"), value="mi-test")
+                exp_dir1 = gr.Textbox(
+                    label=i18n("Enter the experiment name"), value="mi-test"
+                )
                 author = gr.Textbox(label=i18n("Model Author (Nullable)"))
                 np7 = gr.Slider(
                     minimum=0,
                     maximum=config.n_cpu,
                     step=1,
-                    label=i18n("Number of CPU processes used for pitch extraction and data processing"),
+                    label=i18n(
+                        "Number of CPU processes used for pitch extraction and data processing"
+                    ),
                     value=int(np.ceil(config.n_cpu / 1.5)),
                     interactive=True,
                 )
@@ -1164,7 +1213,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                     interactive=True,
                 )
                 if_f0_3 = gr.Radio(
-                    label=i18n("Whether the model has pitch guidance (required for singing, optional for speech)"),
+                    label=i18n(
+                        "Whether the model has pitch guidance (required for singing, optional for speech)"
+                    ),
                     choices=[i18n("Yes"), i18n("No")],
                     value=i18n("Yes"),
                     interactive=True,
@@ -1213,7 +1264,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                 with gr.Row():
                     with gr.Column():
                         gpu_info9 = gr.Textbox(
-                            label=i18n("GPU Information"), value=gpu_info, visible=F0GPUVisible
+                            label=i18n("GPU Information"),
+                            value=gpu_info,
+                            visible=F0GPUVisible,
                         )
                         gpus6 = gr.Textbox(
                             label=i18n(
@@ -1263,7 +1316,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                     )
             with gr.Group():
                 gr.Markdown(
-                    value=i18n("### Step 3. Start training.\nFill in the training settings and start training the model and index.")
+                    value=i18n(
+                        "### Step 3. Start training.\nFill in the training settings and start training the model and index."
+                    )
                 )
                 with gr.Row():
                     with gr.Column():
@@ -1292,7 +1347,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                             interactive=True,
                         )
                         if_save_latest13 = gr.Radio(
-                            label=i18n("Save only the latest '.ckpt' file to save disk space"),
+                            label=i18n(
+                                "Save only the latest '.ckpt' file to save disk space"
+                            ),
                             choices=[i18n("Yes"), i18n("No")],
                             value=i18n("No"),
                             interactive=True,
@@ -1416,7 +1473,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                     with gr.Column():
                         butmodelcmp = gr.Button(i18n("Calculate"), variant="primary")
                         infomodelcmp = gr.Textbox(
-                            label=i18n("Similarity (from 0 to 1)"), value="", max_lines=1
+                            label=i18n("Similarity (from 0 to 1)"),
+                            value="",
+                            max_lines=1,
                         )
                 butmodelcmp.click(
                     hash_similarity,
@@ -1428,7 +1487,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                     api_name="ckpt_merge",
                 )
             with gr.Group():
-                gr.Markdown(value=i18n("### Model fusion\nCan be used to test timbre fusion."))
+                gr.Markdown(
+                    value=i18n("### Model fusion\nCan be used to test timbre fusion.")
+                )
                 with gr.Row():
                     with gr.Column():
                         ckpt_a = gr.Textbox(
@@ -1512,7 +1573,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                             interactive=True,
                         )
                         name_to_save1 = gr.Textbox(
-                            label=i18n("Save file name (default: same as the source file)"),
+                            label=i18n(
+                                "Save file name (default: same as the source file)"
+                            ),
                             value="",
                             max_lines=1,
                             interactive=True,
@@ -1563,7 +1626,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                                 interactive=True,
                             )
                             if_f0__ = gr.Radio(
-                                label=i18n("Whether the model has pitch guidance (1: yes, 0: no)"),
+                                label=i18n(
+                                    "Whether the model has pitch guidance (1: yes, 0: no)"
+                                ),
                                 choices=["1", "0"],
                                 value="1",
                                 interactive=True,

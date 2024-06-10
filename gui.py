@@ -310,7 +310,9 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Button(i18n("Reload device list"), key="reload_devices"),
+                                sg.Button(
+                                    i18n("Reload device list"), key="reload_devices"
+                                ),
                                 sg.Radio(
                                     i18n("Choose sample rate of the model"),
                                     "sr_type",
@@ -369,7 +371,11 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(i18n("Search feature ratio (controls accent strength, too high has artifacting)")),
+                                sg.Text(
+                                    i18n(
+                                        "Search feature ratio (controls accent strength, too high has artifacting)"
+                                    )
+                                ),
                                 sg.Slider(
                                     range=(0.0, 1.0),
                                     key="index_rate",
@@ -456,7 +462,11 @@ if __name__ == "__main__":
                             #     ),
                             # ],
                             [
-                                sg.Text(i18n("Number of CPU processes used for harvest pitch algorithm")),
+                                sg.Text(
+                                    i18n(
+                                        "Number of CPU processes used for harvest pitch algorithm"
+                                    )
+                                ),
                                 sg.Slider(
                                     range=(1, n_cpu),
                                     key="n_cpu",
