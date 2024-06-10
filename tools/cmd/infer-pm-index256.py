@@ -24,7 +24,7 @@ from fairseq import checkpoint_utils
 
 # from models import SynthesizerTrn256#hifigan_nonsf
 # from lib.infer_pack.models import SynthesizerTrn256NSF as SynthesizerTrn256#hifigan_nsf
-from infer.lib.infer_pack.models import (
+from rvc.synthesizers import (
     SynthesizerTrnMs256NSFsid as SynthesizerTrn256,
 )  # hifigan_nsf
 from scipy.io import wavfile
