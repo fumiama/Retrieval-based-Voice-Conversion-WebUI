@@ -3,16 +3,20 @@ import ffmpeg
 import numpy as np
 import av
 
+video_format_dict: dict[str, str] = {
+    "m4a": "mp4",
+}
+
+audio_format_dict: dict[str, str] = {
+    "ogg": "libvorbis",
+    "mp4": "aac",
+}
 
 def wav2(i, o, format):
     inp = av.open(i, "r")
-    if format == "m4a":
-        format = "mp4"
+    format = video_format_dict[format]
     out = av.open(o, "w", format=format)
-    if format == "ogg":
-        format = "libvorbis"
-    if format == "mp4":
-        format = "aac"
+    format = audio_format_dict[format]
 
     ostream = out.add_stream(format)
 
