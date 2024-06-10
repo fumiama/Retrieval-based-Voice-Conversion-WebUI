@@ -75,7 +75,7 @@ class RVC(Model):
         self.vec_model = ContentVec(vec_path, device)
         self.hop_len = hop_len
 
-    def inference(
+    def infer(
         self,
         wav: np.ndarray[typing.Any, np.dtype],
         wav_sr: int,
@@ -119,15 +119,13 @@ class RVC(Model):
         rnd = np.random.randn(1, 192, hubert_length).astype(np.float32)
         hubert_length = np.array([hubert_length]).astype(np.int64)
 
-        out_wav = self.__forward(
-            hubert, hubert_length, pitch, pitchf, ds, rnd
-        ).squeeze()
+        out_wav = self.forward(hubert, hubert_length, pitch, pitchf, ds, rnd).squeeze()
 
         out_wav = np.pad(out_wav, (0, 2 * self.hop_len), "constant")
 
         return out_wav[0:org_length]
 
-    def __forward(
+    def forward(
         self,
         hubert: np.ndarray[typing.Any, np.dtype[np.float32]],
         hubert_length: int,
