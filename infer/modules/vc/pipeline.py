@@ -291,14 +291,19 @@ class Pipeline(object):
         p_len = torch.tensor([p_len], device=self.device).long()
         with torch.no_grad():
             audio1 = (
-                net_g.infer(
-                    feats,
-                    p_len,
-                    sid,
-                    pitch=pitch,
-                    pitchf=pitchf,
-                )[0, 0]
-            ).data.cpu().float().numpy()
+                (
+                    net_g.infer(
+                        feats,
+                        p_len,
+                        sid,
+                        pitch=pitch,
+                        pitchf=pitchf,
+                    )[0, 0]
+                )
+                .data.cpu()
+                .float()
+                .numpy()
+            )
         del feats, p_len, padding_mask
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
