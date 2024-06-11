@@ -1126,62 +1126,60 @@ with gr.Blocks(title="RVC WebUI") as app:
                 )
             )
             with gr.Row():
-                    with gr.Column():
-                        dir_wav_input = gr.Textbox(
-                            label=i18n(
-                                "Enter the path of the audio folder to be processed"
-                            ),
-                            placeholder="C:\\Users\\Desktop\\todo-songs",
-                        )
-                        wav_inputs = gr.File(
-                            file_count="multiple",
-                            label=i18n(
-                                "Multiple audio files can also be imported. If a folder path exists, this input is ignored."
-                            ),
-                        )
-                    with gr.Column():
-                        model_choose = gr.Dropdown(
-                            label=i18n("Model"), choices=uvr5_names
-                        )
-                        agg = gr.Slider(
-                            minimum=0,
-                            maximum=20,
-                            step=1,
-                            label="人声提取激进程度",
-                            value=10,
-                            interactive=True,
-                            visible=False,  # 先不开放调整
-                        )
-                        opt_vocal_root = gr.Textbox(
-                            label=i18n("Specify the output folder for vocals"),
-                            value="opt",
-                        )
-                        opt_ins_root = gr.Textbox(
-                            label=i18n("Specify the output folder for accompaniment"),
-                            value="opt",
-                        )
-                        format0 = gr.Radio(
-                            label=i18n("Export file format"),
-                            choices=["wav", "flac", "mp3", "m4a"],
-                            value="flac",
-                            interactive=True,
-                        )
-                    but2 = gr.Button(i18n("Convert"), variant="primary")
-                    vc_output4 = gr.Textbox(label=i18n("Output information"))
-                    but2.click(
-                        uvr,
-                        [
-                            model_choose,
-                            dir_wav_input,
-                            opt_vocal_root,
-                            wav_inputs,
-                            opt_ins_root,
-                            agg,
-                            format0,
-                        ],
-                        [vc_output4],
-                        api_name="uvr_convert",
+                with gr.Column():
+                    dir_wav_input = gr.Textbox(
+                        label=i18n(
+                            "Enter the path of the audio folder to be processed"
+                        ),
+                        placeholder="C:\\Users\\Desktop\\todo-songs",
                     )
+                    wav_inputs = gr.File(
+                        file_count="multiple",
+                        label=i18n(
+                            "Multiple audio files can also be imported. If a folder path exists, this input is ignored."
+                        ),
+                    )
+                with gr.Column():
+                    model_choose = gr.Dropdown(label=i18n("Model"), choices=uvr5_names)
+                    agg = gr.Slider(
+                        minimum=0,
+                        maximum=20,
+                        step=1,
+                        label="人声提取激进程度",
+                        value=10,
+                        interactive=True,
+                        visible=False,  # 先不开放调整
+                    )
+                    opt_vocal_root = gr.Textbox(
+                        label=i18n("Specify the output folder for vocals"),
+                        value="opt",
+                    )
+                    opt_ins_root = gr.Textbox(
+                        label=i18n("Specify the output folder for accompaniment"),
+                        value="opt",
+                    )
+                    format0 = gr.Radio(
+                        label=i18n("Export file format"),
+                        choices=["wav", "flac", "mp3", "m4a"],
+                        value="flac",
+                        interactive=True,
+                    )
+                but2 = gr.Button(i18n("Convert"), variant="primary")
+                vc_output4 = gr.Textbox(label=i18n("Output information"))
+                but2.click(
+                    uvr,
+                    [
+                        model_choose,
+                        dir_wav_input,
+                        opt_vocal_root,
+                        wav_inputs,
+                        opt_ins_root,
+                        agg,
+                        format0,
+                    ],
+                    [vc_output4],
+                    api_name="uvr_convert",
+                )
         with gr.TabItem(i18n("Train")):
             gr.Markdown(
                 value=i18n(
@@ -1567,9 +1565,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                         interactive=True,
                     )
                     name_to_save1 = gr.Textbox(
-                        label=i18n(
-                            "Save file name (default: same as the source file)"
-                        ),
+                        label=i18n("Save file name (default: same as the source file)"),
                         value="",
                         max_lines=1,
                         interactive=True,
