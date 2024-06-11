@@ -1,4 +1,5 @@
 {
+    "### Model comparison\n> You can get model ID (long) from `View model information` below.\n\nCalculate a similarity between two models.": "### Model comparison\n> You can get model ID (long) from `View model information` below.\n\nCalculate a similarity between two models.",
     "### Model extraction\n> Enter the path of the large file model under the 'logs' folder.\n\nThis is useful if you want to stop training halfway and manually extract and save a small model file, or if you want to test an intermediate model.": "### モデル抽出\n> ログフォルダー内の大モデルのパスを入力\n\nモデルを半分まで学習し、小モデルを保存しなかった場合、又は中間モデルをテストしたい場合に適用されます。",
     "### Model fusion\nCan be used to test timbre fusion.": "### Model fusion\nCan be used to test timbre fusion.",
     "### Modify model information\n> Only supported for small model files extracted from the 'weights' folder.": "### モデル情報の修正\n> `weights`フォルダから抽出された小モデルのみ対応",
@@ -6,7 +7,6 @@
     "### Step 2. Audio processing. \n#### 1. Slicing.\nAutomatically traverse all files in the training folder that can be decoded into audio and perform slice normalization. Generates 2 wav folders in the experiment directory. Currently, only single-singer/speaker training is supported.": "### 第二歩 音声処理\n#### 1. 音声切分\n学習フォルダー内のすべての音声ファイルを自動的に探し出し、切分と正規化を行い、2つのwavフォルダーを実験ディレクトリに生成します。現在は単人モデルの学習のみを支援しています。",
     "### Step 3. Start training.\nFill in the training settings and start training the model and index.": "### 第三歩 学習開始\n学習設定を入力して、モデルと索引の学習を開始します。",
     "### View model information\n> Only supported for small model files extracted from the 'weights' folder.": "### モデル情報を表示\n> `weights`フォルダから抽出された小さなのみ対応",
-    "### 模型比较\n> 模型ID(长)请于下方`查看模型信息`中获得\n\n可用于比较两模型推理相似度": "### 模型比较\n> 模型ID(长)请于下方`查看模型信息`中获得\n\n可用于比较两模型推理相似度",
     "#### 2. Feature extraction.\nUse CPU to extract pitch (if the model has pitch), use GPU to extract features (select GPU index).": "#### 2. 特徴抽出\nCPUで音高を抽出し(モデルに音高がある場合のみ)、GPUで特徴を抽出する(GPU番号を選択すべし)",
     "Actually calculated": "実際計算",
     "Adjust the volume envelope scaling. Closer to 0, the more it mimicks the volume of the original vocals. Can help mask noise and make volume sound more natural when set relatively low. Closer to 1 will be more of a consistently loud volume": "入力ソースの音量エンベロープと出力音量エンベロープの融合率 1に近づくほど、出力音量エンベロープの割合が高くなる",
@@ -155,6 +155,5 @@
     "ckpt Processing": "ckptファイルの処理",
     "index path cannot contain unicode characters": "indexファイルのパスに漢字を含んではいけません",
     "pth path cannot contain unicode characters": "pthファイルのパスに漢字を含んではいけません",
-    "step2:Pitch extraction & feature extraction": "step2:ピッチ抽出と特徴抽出",
-    "模型作者": "模型作者"
+    "step2:Pitch extraction & feature extraction": "step2:ピッチ抽出と特徴抽出"
 }

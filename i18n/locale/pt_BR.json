@@ -1,4 +1,5 @@
 {
+    "### Model comparison\n> You can get model ID (long) from `View model information` below.\n\nCalculate a similarity between two models.": "### Model comparison\n> You can get model ID (long) from `View model information` below.\n\nCalculate a similarity between two models.",
     "### Model extraction\n> Enter the path of the large file model under the 'logs' folder.\n\nThis is useful if you want to stop training halfway and manually extract and save a small model file, or if you want to test an intermediate model.": "### Extração do modelo\n> Insira o caminho do modelo de arquivo grande na pasta 'logs'.\n\nIsso é útil se você quiser interromper o treinamento no meio do caminho e extrair e salvar manualmente um arquivo de modelo pequeno, ou se quiser testar um modelo intermediário.",
     "### Model fusion\nCan be used to test timbre fusion.": "### Model fusion\nCan be used to test timbre fusion.",
     "### Modify model information\n> Only supported for small model files extracted from the 'weights' folder.": "### Modificar informações do modelo\n> Suportado apenas para arquivos de modelo pequenos extraídos da pasta 'weights'.",
@@ -6,7 +7,6 @@
     "### Step 2. Audio processing. \n#### 1. Slicing.\nAutomatically traverse all files in the training folder that can be decoded into audio and perform slice normalization. Generates 2 wav folders in the experiment directory. Currently, only single-singer/speaker training is supported.": "### 第二步 音频处理\n#### 1. 音频切片\n自动遍历训练文件夹下所有可解码成音频的文件并进行切片归一化, 在实验目录下生成2个wav文件夹; 暂时只支持单人训练.",
     "### Step 3. Start training.\nFill in the training settings and start training the model and index.": "### 第三步 开始训练\n填写训练设置, 开始训练模型和索引.",
     "### View model information\n> Only supported for small model files extracted from the 'weights' folder.": "### Exibir informações do modelo\n> Suportado apenas para arquivos de modelo pequenos extraídos da pasta 'weights'.",
-    "### 模型比较\n> 模型ID(长)请于下方`查看模型信息`中获得\n\n可用于比较两模型推理相似度": "### 模型比较\n> 模型ID(长)请于下方`查看模型信息`中获得\n\n可用于比较两模型推理相似度",
     "#### 2. Feature extraction.\nUse CPU to extract pitch (if the model has pitch), use GPU to extract features (select GPU index).": "#### 2. 特征提取\n使用CPU提取音高(如果模型带音高), 使用GPU提取特征(选择卡号).",
     "Actually calculated": "实际计算",
     "Adjust the volume envelope scaling. Closer to 0, the more it mimicks the volume of the original vocals. Can help mask noise and make volume sound more natural when set relatively low. Closer to 1 will be more of a consistently loud volume": "O envelope de volume da fonte de entrada substitui a taxa de fusão do envelope de volume de saída, quanto mais próximo de 1, mais o envelope de saída é usado:",
@@ -155,6 +155,5 @@
     "ckpt Processing": "processamento ckpt",
     "index path cannot contain unicode characters": "O caminho do arquivo de Index não pode conter caracteres chineses",
     "pth path cannot contain unicode characters": "o caminho do arquivo pth não pode conter caracteres chineses",
-    "step2:Pitch extraction & feature extraction": "step2:正在提取音高&正在提取特征",
-    "模型作者": "模型作者"
+    "step2:Pitch extraction & feature extraction": "step2:正在提取音高&正在提取特征"
 }
