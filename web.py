@@ -1463,7 +1463,7 @@ with gr.Blocks(title="RVC WebUI") as app:
             with gr.Group():
                 gr.Markdown(
                     value=i18n(
-                        "### 模型比较\n> 模型ID(长)请于下方`查看模型信息`中获得\n\n可用于比较两模型推理相似度"
+                        "### Model comparison\n> You can get model ID (long) from `View model information` below.\n\nCalculate a similarity between two models."
                     )
                 )
                 with gr.Row():
