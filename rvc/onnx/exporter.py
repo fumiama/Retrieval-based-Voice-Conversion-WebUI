@@ -1,10 +1,10 @@
 import torch
 
-from infer.lib.infer_pack.models_onnx import SynthesizerTrnMsNSFsidM
+from .synthesizer import SynthesizerTrnMsNSFsid
 
 
-def export_onnx(ModelPath, ExportedPath):
-    cpt = torch.load(ModelPath, map_location="cpu")
+def export_onnx(from_cpkt_pth: str, to_onnx_pth: str) -> str:
+    cpt = torch.load(from_cpkt_pth, map_location="cpu")
     cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]
     vec_channels = 256 if cpt.get("version", "v1") == "v1" else 768
 
@@ -17,8 +17,8 @@ def export_onnx(ModelPath, ExportedPath):
 
     device = "cpu"  # 导出时设备（不影响使用模型）
 
-    net_g = SynthesizerTrnMsNSFsidM(
-        *cpt["config"], is_half=False, encoder_dim=vec_channels
+    net_g = SynthesizerTrnMsNSFsid(
+        *cpt["config"], encoder_dim=vec_channels
     )  # fp32导出（C++要支持fp16必须手动将内存重新排列所以暂时不用fp16）
     net_g.load_state_dict(cpt["weight"], strict=False)
     input_names = ["phone", "phone_lengths", "pitch", "pitchf", "ds", "rnd"]
@@ -36,7 +36,7 @@ def export_onnx(ModelPath, ExportedPath):
             test_ds.to(device),
             test_rnd.to(device),
         ),
-        ExportedPath,
+        to_onnx_pth,
         dynamic_axes={
             "phone": [1],
             "pitch": [1],
