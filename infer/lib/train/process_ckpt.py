@@ -268,7 +268,7 @@ def merge(path1, path2, alpha1, sr, f0, info, name, version):
         if author:
             opt["author"] = author
         opt["sr"] = sr
-        opt["f0"] = 1 if f0 == i18n("是") else 0
+        opt["f0"] = 1 if f0 == i18n("Yes") else 0
         opt["version"] = version
         opt["info"] = info
         h = model_hash_ckpt(opt)
