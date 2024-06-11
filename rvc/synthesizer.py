@@ -1,9 +1,11 @@
+from collections import OrderedDict
+
 import torch
 
-from rvc.layers.synthesizers import SynthesizerTrnMsNSFsid
+from .layers.synthesizers import SynthesizerTrnMsNSFsid
 
 
-def get_synthesizer_ckpt(cpt, device=torch.device("cpu")):
+def get_synthesizer(cpt: OrderedDict, device=torch.device("cpu")):
     cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]
     if_f0 = cpt.get("f0", 1)
     version = cpt.get("version", "v1")
@@ -24,8 +26,9 @@ def get_synthesizer_ckpt(cpt, device=torch.device("cpu")):
     return net_g, cpt
 
 
-def get_synthesizer(pth_path, device=torch.device("cpu")):
-    return get_synthesizer_ckpt(
+def load_synthesizer(
+    pth_path: torch.serialization.FILE_LIKE, device=torch.device("cpu")):
+    return get_synthesizer(
         torch.load(pth_path, map_location=torch.device("cpu")),
         device,
     )

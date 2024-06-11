@@ -44,18 +44,18 @@ def to_jit_model(
 ):
     model = None
     if model_type.lower() == "synthesizer":
-        from .synthesizer import get_synthesizer
+        from rvc.synthesizer import load_synthesizer
 
-        model, _ = get_synthesizer(model_path, device)
+        model, _ = load_synthesizer(model_path, device)
         model.forward = model.infer
     elif model_type.lower() == "rmvpe":
         from .rmvpe import get_rmvpe
 
         model = get_rmvpe(model_path, device)
     elif model_type.lower() == "hubert":
-        from .hubert import get_hubert_model
+        from rvc.hubert import get_hubert
 
-        model = get_hubert_model(model_path, device)
+        model = get_hubert(model_path, device)
         model.forward = model.infer
     else:
         raise ValueError(f"No model type named {model_type}")
@@ -147,9 +147,9 @@ def synthesizer_jit_export(
         save_path += ".half.jit" if is_half else ".jit"
     if "cuda" in str(device) and ":" not in str(device):
         device = torch.device("cuda:0")
-    from .synthesizer import get_synthesizer
+    from rvc.synthesizer import load_synthesizer
 
-    model, cpt = get_synthesizer(model_path, device)
+    model, cpt = load_synthesizer(model_path, device)
     assert isinstance(cpt, dict)
     model.forward = model.infer
     inputs = None
