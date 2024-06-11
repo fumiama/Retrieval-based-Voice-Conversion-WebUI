@@ -1,6 +1,6 @@
 from io import BufferedWriter, BytesIO
 from pathlib import Path
-from typing import Any, Dict
+from typing import Dict
 import ffmpeg
 import numpy as np
 import av
