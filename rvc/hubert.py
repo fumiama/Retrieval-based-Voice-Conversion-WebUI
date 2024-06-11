@@ -262,9 +262,7 @@ def apply_mask(self, x, padding_mask, target_list):
     return x, mask_indices
 
 
-def get_hubert(
-    model_path="assets/hubert/hubert_base.pt", device=torch.device("cpu")
-):
+def get_hubert(model_path="assets/hubert/hubert_base.pt", device=torch.device("cpu")):
     models, _, _ = load_model_ensemble_and_task(
         [model_path],
         suffix="",
