@@ -10,6 +10,8 @@ import torch
 from tqdm import tqdm
 import av
 
+from infer.lib.audio import downsample_audio
+
 cpu = torch.device("cpu")
 
 
@@ -219,10 +221,10 @@ class Predictor:
             sf.write(path_other, opt, rate)
             opt_path_vocal = path_vocal[:-4] + ".%s" % format
             opt_path_other = path_other[:-4] + ".%s" % format
-            process_audio(path_vocal, opt_path_vocal, format)
-            process_audio(path_other, opt_path_other, format)
+            downsample_audio(path_vocal, opt_path_vocal, format)
+            downsample_audio(path_other, opt_path_other, format)
 
-def process_audio(input_path: str, output_path: str, format: str) -> None:
+def downsample_audio(input_path: str, output_path: str, format: str) -> None:
     if not os.path.exists(input_path): return
     
     input_container = av.open(input_path)

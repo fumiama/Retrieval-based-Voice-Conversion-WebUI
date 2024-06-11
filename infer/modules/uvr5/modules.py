@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import av
-from av.audio.resampler import AudioResampler
+from infer.lib.audio import resample_audio
 import torch
 
 from configs import Config
@@ -63,7 +63,7 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
                     os.path.join(os.environ["TEMP"]),
                     os.path.basename(inp_path),
                 )
-                process_audio(inp_path, tmp_path)
+                resample_audio(inp_path, tmp_path, 'pcm_s16le', 44100, 'stereo')
                 inp_path = tmp_path
             try:
                 if done == 0:
@@ -105,37 +105,3 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
             torch.mps.empty_cache()
             logger.info("Executed torch.mps.empty_cache()")
     yield "\n".join(infos)
-
-def process_audio(input_path: str, output_path: str) -> None:
-    if not os.path.exists(input_path): return
-    
-    input_container = av.open(input_path)
-    output_container = av.open(output_path, 'w')
-
-    # Create a stream in the output container
-    input_stream = input_container.streams.audio[0]
-    output_stream = output_container.add_stream('pcm_s16le', rate=44100, layout='stereo')
-    
-    resampler = AudioResampler('pcm_s16le', 'stereo', 44100)
-
-    output_stream.bit_rate = 128_000 # 128kb/s (equivalent to -q:a 2)
-
-    # Copy packets from the input file to the output file
-    for packet in input_container.demux(input_stream):
-        for frame in packet.decode():
-            frame.pts = None  # Clear presentation timestamp to avoid resampling issues
-            resampled = resampler.resample(frame)
-            for out_packet in output_stream.encode(resampled):
-                output_container.mux(out_packet)
-
-    for packet in output_stream.encode():
-        output_container.mux(packet)
-    
-    # Close the containers
-    input_container.close()
-    output_container.close()
-
-    try: # Remove the original file
-        os.remove(input_path)
-    except Exception as e:
-        print(f"Failed to remove the original file: {e}")
