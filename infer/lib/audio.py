@@ -53,7 +53,7 @@ def load_audio(file: str, sr: int) -> np.ndarray:
     except Exception as e:
         raise RuntimeError(f"Failed to load audio: {e}")
 
-    return audio.flatten()
+    return np.frombuffer(audio, dtype=np.float32).flatten()
 
 def downsample_audio(input_path: str, output_path: str, format: str) -> None:
     if not os.path.exists(input_path): return
