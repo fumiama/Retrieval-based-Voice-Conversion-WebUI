@@ -14,6 +14,7 @@ audio_format_dict: Dict[str, str] = {
     "mp4": "aac",
 }
 
+
 def wav2(i: BytesIO, o: BufferedWriter, format: str):
     inp = av.open(i, "r")
     format = video_format_dict.get(format, format)
