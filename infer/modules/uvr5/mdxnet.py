@@ -224,6 +224,7 @@ class Predictor:
             downsample_audio(path_vocal, opt_path_vocal, format)
             downsample_audio(path_other, opt_path_other, format)
 
+
 class MDXNetDereverb:
     def __init__(self, chunks, device):
         self.onnx = "assets/uvr5_weights/onnx_dereverb_By_FoxJoy"

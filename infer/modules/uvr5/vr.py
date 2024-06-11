@@ -184,6 +184,7 @@ class AudioPre:
                 opt_format_path = path[:-4] + ".%s" % format
                 downsample_audio(path, opt_format_path, format)
 
+
 class AudioPreDeEcho:
     def __init__(self, agg, model_path, device, is_half, tta=False):
         self.model_path = model_path
