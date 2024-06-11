@@ -1,10 +1,12 @@
 {
     "### Model extraction\n> Enter the path of the large file model under the 'logs' folder.\n\nThis is useful if you want to stop training halfway and manually extract and save a small model file, or if you want to test an intermediate model.": "### Extraction du modèle\n> Saisissez le chemin d'accès au modèle du grand fichier dans le dossier \"logs\".\n\nCette fonction est utile si vous souhaitez arrêter l'entrainement à mi-chemin et extraire et enregistrer manuellement un petit fichier de modèle, ou si vous souhaitez tester un modèle intermédiaire.",
-    "### Model fusion\nCan be used to test timbre fusion.### Step 1. Fill in the experimental configuration.\nExperimental data is stored in the 'logs' folder, with each experiment having a separate folder. Manually enter the experiment name path, which contains the experimental configuration, logs, and trained model files.": "### Model fusion\nCan be used to test timbre fusion.### Step 1. Fill in the experimental configuration.\nExperimental data is stored in the 'logs' folder, with each experiment having a separate folder. Manually enter the experiment name path, which contains the experimental configuration, logs, and trained model files.",
+    "### Model fusion\nCan be used to test timbre fusion.": "### Model fusion\nCan be used to test timbre fusion.",
     "### Modify model information\n> Only supported for small model files extracted from the 'weights' folder.": "### Modifier les informations du modèle\n> Uniquement pris en charge pour les petits fichiers de modèle extraits du dossier 'weights'.",
+    "### Step 1. Fill in the experimental configuration.\nExperimental data is stored in the 'logs' folder, with each experiment having a separate folder. Manually enter the experiment name path, which contains the experimental configuration, logs, and trained model files.": "### Step 1. Fill in the experimental configuration.\nExperimental data is stored in the 'logs' folder, with each experiment having a separate folder. Manually enter the experiment name path, which contains the experimental configuration, logs, and trained model files.",
     "### Step 2. Audio processing. \n#### 1. Slicing.\nAutomatically traverse all files in the training folder that can be decoded into audio and perform slice normalization. Generates 2 wav folders in the experiment directory. Currently, only single-singer/speaker training is supported.": "### Deuxième étape : Traitement audio\n#### 1. Découpage de l'audio\nParcourez automatiquement tous les fichiers qui peuvent être décodés en audio dans le dossier d'entraînement et effectuez le découpage et la normalisation. Deux dossiers wav sont générés dans le répertoire de l'expérience. Pour le moment, seul l'entraînement individuel est pris en charge.",
     "### Step 3. Start training.\nFill in the training settings and start training the model and index.": "### Troisième étape : Commencer l'entraînement\nRemplissez les paramètres d'entraînement, commencez à entraîner le modèle et l'index.",
     "### View model information\n> Only supported for small model files extracted from the 'weights' folder.": "### Afficher les informations sur le modèle\n> Uniquement pour les petits fichiers de modèle extraits du dossier 'weights'.",
+    "### 模型比较\n> 模型ID(长)请于下方`查看模型信息`中获得\n\n可用于比较两模型推理相似度": "### 模型比较\n> 模型ID(长)请于下方`查看模型信息`中获得\n\n可用于比较两模型推理相似度",
     "#### 2. Feature extraction.\nUse CPU to extract pitch (if the model has pitch), use GPU to extract features (select GPU index).": "#### 2. Extraction des caractéristiques\nUtilisez le CPU pour extraire la hauteur tonale (si le modèle a une hauteur tonale), utilisez le GPU pour extraire les caractéristiques (sélectionnez le numéro de carte).",
     "Actually calculated": "Effectivement calculé",
     "Adjust the volume envelope scaling. Closer to 0, the more it mimicks the volume of the original vocals. Can help mask noise and make volume sound more natural when set relatively low. Closer to 1 will be more of a consistently loud volume": "Ajustez l'échelle de l'enveloppe de volume. Plus il est proche de 0, plus il imite le volume des voix originales. Cela peut aider à masquer les bruits et à rendre le volume plus naturel lorsqu'il est réglé relativement bas. Plus le volume est proche de 1, plus le volume sera fort et constant :",
@@ -48,8 +50,8 @@
     "Hidden": "Caché",
     "ID of model A (long)": "ID du modèle A (long)",
     "ID of model B (long)": "ID du modèle B (long)",
+    "ID(long)": "ID(long)",
     "ID(short)": "ID (court)",
-    "ID(长)": "ID(长)",
     "If >=3: apply median filtering to the harvested pitch results. The value represents the filter radius and can reduce breathiness.": "Si >=3 : appliquer un filtrage médian aux résultats de la reconnaissance de la hauteur de récolte. La valeur représente le rayon du filtre et peut réduire la respiration.",
     "Inference time (ms)": "Temps d'inférence (ms)",
     "Inferencing voice": "Voix pour l'inférence",
@@ -153,5 +155,6 @@
     "ckpt Processing": "Traitement des fichiers .ckpt",
     "index path cannot contain unicode characters": "Le chemin du fichier d'index ne doit pas contenir de caractères chinois.",
     "pth path cannot contain unicode characters": "Le chemin du fichier .pth ne doit pas contenir de caractères chinois.",
-    "step2:Pitch extraction & feature extraction": "Étape 2 : Extraction de la hauteur et extraction des caractéristiques en cours."
+    "step2:Pitch extraction & feature extraction": "Étape 2 : Extraction de la hauteur et extraction des caractéristiques en cours.",
+    "模型作者": "模型作者"
 }
