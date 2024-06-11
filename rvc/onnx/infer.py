@@ -1,10 +1,11 @@
-import librosa
-import numpy as np
-import onnxruntime
 import typing
 import os
 
-from onnx.f0predictors import (
+import librosa
+import numpy as np
+import onnxruntime
+
+from .f0predictors import (
     PMF0Predictor,
     HarvestF0Predictor,
     DioF0Predictor,
@@ -15,7 +16,7 @@ from onnx.f0predictors import (
 class Model:
     def __init__(
         self,
-        path: str | bytes | os.PathLike,
+        path: typing.Union[str, bytes, os.PathLike],
         device: typing.Literal["cpu", "cuda", "dml"] = "cpu",
     ):
         if device == "cpu":
@@ -32,7 +33,7 @@ class Model:
 class ContentVec(Model):
     def __init__(
         self,
-        vec_path: str | bytes | os.PathLike,
+        vec_path: typing.Union[str, bytes, os.PathLike],
         device: typing.Literal["cpu", "cuda", "dml"] = "cpu",
     ):
         super().__init__(vec_path, device)
@@ -66,9 +67,9 @@ def get_f0_predictor(
 class RVC(Model):
     def __init__(
         self,
-        model_path: str | bytes | os.PathLike,
+        model_path: typing.Union[str, bytes, os.PathLike],
         hop_len=512,
-        vec_path: str | bytes | os.PathLike = "vec-768-layer-12.onnx",
+        vec_path: typing.Union[str, bytes, os.PathLike] = "vec-768-layer-12.onnx",
         device: typing.Literal["cpu", "cuda", "dml"] = "cpu",
     ):
         super().__init__(model_path, device)

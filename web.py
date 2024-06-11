@@ -182,7 +182,7 @@ def clean():
 
 
 def export_onnx(ModelPath, ExportedPath):
-    from infer.modules.onnx.export import export_onnx as eo
+    from rvc.onnx import export_onnx as eo
 
     eo(ModelPath, ExportedPath)
 
