@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Install dependenceis to add PPAs
 RUN apt-get update && \
-    apt-get install -y -qq aria2 && apt clean && \
+    apt-get install -y -qq ffmpeg aria2 && apt clean && \
     apt-get install -y software-properties-common && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
