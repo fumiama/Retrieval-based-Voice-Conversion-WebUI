@@ -1,6 +1,6 @@
 from io import BufferedWriter, BytesIO
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Tuple
 import numpy as np
 import av
 import os
@@ -47,7 +47,7 @@ def load_audio(file: str, sr: int) -> np.ndarray:
         for frame in container.decode(audio=0):
             frame.pts = None  # Clear presentation timestamp to avoid resampling issues
             resampled = resampler.resample(frame)
-            decoded_audio.append(resampled.to_ndarray())
+            decoded_audio.append(np.array(resampled))
 
         audio = np.concatenate(decoded_audio)
     except Exception as e:
@@ -85,7 +85,7 @@ def downsample_audio(input_path: str, output_path: str, format: str) -> None:
     except Exception as e:
         print(f"Failed to remove the original file: {e}")
 
-def resample_audio(input_path: str, output_path: str, format: str, sr: int, layout: str) -> None:
+def resample_audio(input_path: str, output_path: str, codec: str, format: str, sr: int, layout: str) -> None:
     if not os.path.exists(input_path): return
     
     input_container = av.open(input_path)
@@ -93,7 +93,7 @@ def resample_audio(input_path: str, output_path: str, format: str, sr: int, layo
 
     # Create a stream in the output container
     input_stream = input_container.streams.audio[0]
-    output_stream = output_container.add_stream(format, rate=sr, layout=layout)
+    output_stream = output_container.add_stream(codec, rate=sr, layout=layout)
     
     resampler = AudioResampler(format, layout, sr)
 
@@ -101,9 +101,10 @@ def resample_audio(input_path: str, output_path: str, format: str, sr: int, layo
     for packet in input_container.demux(input_stream):
         for frame in packet.decode():
             frame.pts = None  # Clear presentation timestamp to avoid resampling issues
-            resampled = resampler.resample(frame)
-            for out_packet in output_stream.encode(resampled):
-                output_container.mux(out_packet)
+            out_frames = resampler.resample(frame)
+            for out_frame in out_frames:
+                for out_packet in output_stream.encode(out_frame):
+                    output_container.mux(out_packet)
 
     for packet in output_stream.encode():
         output_container.mux(packet)
@@ -116,6 +117,14 @@ def resample_audio(input_path: str, output_path: str, format: str, sr: int, layo
         os.remove(input_path)
     except Exception as e:
         print(f"Failed to remove the original file: {e}")
+
+def get_audio_properties(input_path: str) -> Tuple:
+    container = av.open(input_path)
+    audio_stream = next(s for s in container.streams if s.type == 'audio')
+    channels = 1 if audio_stream.layout == 'mono' else 2
+    rate = audio_stream.base_rate
+    container.close()
+    return channels, rate
 
 def clean_path(path: str) -> Path:
     return Path(path.strip(' "\n')).resolve()
