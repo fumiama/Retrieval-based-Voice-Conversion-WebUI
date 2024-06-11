@@ -1,8 +1,3 @@
-## Q1: ffmpeg error/utf8 error
-
-大体の場合、ffmpeg の問題ではなく、音声パスの問題です。<br>
-ffmpeg は空白や()などの特殊文字を含むパスを読み込む際に ffmpeg error が発生する可能性があります。トレーニングセットの音声が中国語のパスを含む場合、filelist.txt に書き込む際に utf8 error が発生する可能性があります。<br>
-
 ## Q2: ワンクリックトレーニングが終わってもインデックスがない
 
 "Training is done. The program is closed."と表示された場合、モデルトレーニングは成功しています。その直後のエラーは誤りです。<br>

@@ -126,27 +126,7 @@ sh ./run.sh
 	rvcmd assets/v2 # RVC-Models-Downloader command
 	```
 
-### 2. 安装 ffmpeg 工具
-若已安装`ffmpeg`和`ffprobe`则可跳过此步骤。
-
-#### Ubuntu/Debian 用户
-```bash
-sudo apt install ffmpeg
-```
-#### MacOS 用户
-```bash
-brew install ffmpeg
-```
-#### Windows 用户
-下载后放置在根目录。
-```bash
-rvcmd tools/ffmpeg # RVC-Models-Downloader command
-```
-- 下载[ffmpeg.exe](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffmpeg.exe)
-
-- 下载[ffprobe.exe](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffprobe.exe)
-
-### 3. 下载 rmvpe 人声音高提取算法所需文件
+### 2. 下载 rmvpe 人声音高提取算法所需文件
 
 如果你想使用最新的RMVPE人声音高提取算法，则你需要下载音高提取模型参数并放置于`assets/rmvpe`。
 
@@ -162,7 +142,7 @@ rvcmd tools/ffmpeg # RVC-Models-Downloader command
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```
 
-### 4. AMD显卡Rocm(可选, 仅Linux)
+### 3. AMD显卡Rocm(可选, 仅Linux)
 
 如果你想基于AMD的Rocm技术在Linux系统上运行RVC，请先在[这里](https://rocm.docs.amd.com/en/latest/deploy/linux/os-native/install.html)安装所需的驱动。
 
@@ -207,7 +187,6 @@ rvcmd packs/general/latest # RVC-Models-Downloader command
 + [VITS](https://github.com/jaywalnut310/vits)
 + [HIFIGAN](https://github.com/jik876/hifi-gan)
 + [Gradio](https://github.com/gradio-app/gradio)
-+ [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 + [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 + [audio-slicer](https://github.com/openvpi/audio-slicer)
 + [Vocal pitch extraction:RMVPE](https://github.com/Dream-High/RMVPE)

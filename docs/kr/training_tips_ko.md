@@ -16,9 +16,6 @@ GUI의 훈련 탭의 단계를 따라 설명합니다.
 음성 파일이 있는 폴더를 지정하면 해당 폴더에 있는 음성 파일이 자동으로 가져와집니다.
 예를 들어 `C:Users\hoge\voices`를 지정하면 `C:Users\hoge\voices\voice.mp3`가 읽히지만 `C:Users\hoge\voices\dir\voice.mp3`는 읽히지 않습니다.
 
-음성 로드에는 내부적으로 ffmpeg를 이용하고 있으므로, ffmpeg로 대응하고 있는 확장자라면 자동적으로 읽힙니다.
-ffmpeg에서 int16으로 변환한 후 float32로 변환하고 -1과 1 사이에 정규화됩니다.
-
 ### 잡음 제거
 음성 파일에 대해 scipy의 filtfilt를 이용하여 잡음을 처리합니다.
 

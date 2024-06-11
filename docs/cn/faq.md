@@ -1,10 +1,3 @@
-## Q1:ffmpeg error/utf8 error.
-
-大概率不是ffmpeg问题，而是音频路径问题；
-
-ffmpeg读取路径带空格、()等特殊符号，可能出现ffmpeg error；训练集音频带中文路径，在写入filelist.txt的时候可能出现utf8 error；
-
-
 ## Q2:一键训练结束没有索引
 
 显示"Training is done. The program is closed."则模型训练成功，后续紧邻的报错是假的；

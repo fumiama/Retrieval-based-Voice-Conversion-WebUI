@@ -19,8 +19,6 @@ GUIの訓練タブのstepに沿って説明します。
 音声のあるフォルダを指定すると、そのフォルダ内にある音声ファイルを自動で読み込みます。
 例えば`C:Users\hoge\voices`を指定した場合、`C:Users\hoge\voices\voice.mp3`は読み込まれますが、`C:Users\hoge\voices\dir\voice.mp3`は読み込まれません。
 
-音声の読み込みには内部でffmpegを利用しているので、ffmpegで対応している拡張子であれば自動的に読み込まれます。
-ffmpegでint16に変換した後、float32に変換し、-1 ~ 1の間に正規化されます。
 
 ### denoising
 音声についてscipyのfiltfiltによる平滑化を行います。

@@ -20,9 +20,6 @@ Charge et pré-traite l'audio.
 Si vous spécifiez un dossier avec de l'audio, les fichiers audio de ce dossier seront lus automatiquement.
 Par exemple, si vous spécifiez `C:Users\hoge\voices`, `C:Users\hoge\voices\voice.mp3` sera chargé, mais `C:Users\hoge\voices\dir\voice.mp3` ne sera pas chargé.
 
-Comme ffmpeg est utilisé en interne pour lire l'audio, si l'extension est prise en charge par ffmpeg, elle sera lue automatiquement.
-Après la conversion en int16 avec ffmpeg, convertir en float32 et normaliser entre -1 et 1.
-
 ### débruitage
 L'audio est lissé par filtfilt de scipy.
 

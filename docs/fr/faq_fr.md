@@ -1,8 +1,3 @@
-## Q1: Erreur ffmpeg/erreur utf8.
-Il s'agit très probablement non pas d'un problème lié à FFmpeg, mais d'un problème lié au chemin de l'audio ;
-
-FFmpeg peut rencontrer une erreur lors de la lecture de chemins contenant des caractères spéciaux tels que des espaces et (), ce qui peut provoquer une erreur FFmpeg ; et lorsque l'audio du jeu d'entraînement contient des chemins en chinois, l'écrire dans filelist.txt peut provoquer une erreur utf8.<br>
-
 ## Q2: Impossible de trouver le fichier index après "Entraînement en un clic".
 Si l'affichage indique "L'entraînement est terminé. Le programme est fermé", alors le modèle a été formé avec succès, et les erreurs subséquentes sont fausses ;
 
