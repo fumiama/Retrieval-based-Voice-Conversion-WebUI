@@ -14,11 +14,11 @@ wav_path = "123.wav"  # 输入路径或ByteIO实例
 out_path = "out.wav"  # 输出路径或ByteIO实例
 
 model = RVC(
-    model_path, vec_path=vec_path, sr=sampling_rate, hop_len=hop_size, device="cuda"
+    model_path, vec_path=vec_path, hop_len=hop_size, device="cuda"
 )
 
 wav, sr = librosa.load(wav_path, sr=sampling_rate)
 
-audio = model.infer(wav, sr, sid, f0_method=f0_method, f0_up_key=f0_up_key)
+audio = model.infer(wav, sr, sampling_rate, sid, f0_method, f0_up_key)
 
 soundfile.write(out_path, audio, sampling_rate)
