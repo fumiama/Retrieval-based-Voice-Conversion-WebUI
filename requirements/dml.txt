@@ -10,7 +10,6 @@ gradio
 Cython
 pydub>=0.25.1
 soundfile>=0.12.1
-ffmpeg-python>=0.2.0
 tensorboardX
 Jinja2>=3.1.2
 json5
@@ -41,7 +40,6 @@ httpx
 onnxruntime-directml
 torchcrepe==0.0.20
 fastapi
-ffmpy==0.3.1
 python-dotenv>=1.0.0
 av
 torchfcpe
