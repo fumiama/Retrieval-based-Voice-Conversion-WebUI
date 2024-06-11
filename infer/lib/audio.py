@@ -42,7 +42,9 @@ def load_audio(file: str, sr: int) -> np.ndarray:
     try:
         container = av.open(file)
         resampler = AudioResampler(format='fltp', layout='mono', rate=sr)
-        decoded_audio = []
+
+        # AV stores duration in nanoseconds
+        decoded_audio = (((container.duration * sr / container.bit_rate) // 1_000_000) + 1)*[]
 
         for frame in container.decode(audio=0):
             frame.pts = None  # Clear presentation timestamp to avoid resampling issues
