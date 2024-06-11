@@ -20,6 +20,9 @@ Loads and preprocesses audio.
 If you specify a folder with audio, the audio files in that folder will be read automatically.
 For example, if you specify `C:Users\hoge\voices`, `C:Users\hoge\voices\voice.mp3` will be loaded, but `C:Users\hoge\voices\dir\voice.mp3` will Not loaded.
 
+Since ffmpeg is used internally for reading audio, if the extension is supported by ffmpeg, it will be read automatically.
+After converting to int16 with ffmpeg, convert to float32 and normalize between -1 to 1.
+
 ### denoising
 The audio is smoothed by scipy's filtfilt.
 

@@ -20,6 +20,9 @@ Carrega e pré-processa áudio.
 Se você especificar uma pasta com áudio, os arquivos de áudio dessa pasta serão lidos automaticamente.
 Por exemplo, se você especificar `C:Users\hoge\voices`, `C:Users\hoge\voices\voice.mp3` será carregado, mas `C:Users\hoge\voices\dir\voice.mp3` será Não carregado.
 
+Como o ffmpeg é usado internamente para leitura de áudio, se a extensão for suportada pelo ffmpeg, ela será lida automaticamente.
+Após converter para int16 com ffmpeg, converta para float32 e normalize entre -1 e 1.
+
 ### Eliminar ruído
 O áudio é suavizado pelo filtfilt do scipy.
 

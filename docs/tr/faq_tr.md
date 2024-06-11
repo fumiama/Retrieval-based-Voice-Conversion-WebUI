@@ -1,3 +1,8 @@
+## Q1: FFmpeg Hatası/UTF8 Hatası
+Büyük olasılıkla bu bir FFmpeg sorunu değil, daha çok ses dosyası yolunda bir sorun;
+
+FFmpeg, boşluklar ve () gibi özel karakterler içeren yolları okurken bir hata ile karşılaşabilir; ve eğitim setinin ses dosyaları Çin karakterleri içeriyorsa, bunlar filelist.txt'ye yazıldığında utf8 hatasına neden olabilir.<br>
+
 ## Q2: "Tek Tıklamayla Eğitim" Sonrası İndeks Dosyası Bulunamıyor
 Eğer "Eğitim tamamlandı. Program kapatıldı." mesajını görüyorsa, model başarıyla eğitilmiş demektir ve sonraki hatalar sahte;
 

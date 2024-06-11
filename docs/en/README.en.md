@@ -128,7 +128,26 @@ If you want to use the v2 version of the model, you need to download additional 
 	rvcmd assets/v2 # RVC-Models-Downloader command
 	```
 
-### 2. Download the required files for the rmvpe vocal pitch extraction algorithm
+### 2. Install ffmpeg tool
+If `ffmpeg` and `ffprobe` have already been installed, you can skip this step.
+#### Ubuntu/Debian
+```bash
+sudo apt install ffmpeg
+```
+#### MacOS
+```bash
+brew install ffmpeg
+```
+#### Windows
+After downloading, place it in the root directory.
+```bash
+rvcmd tools/ffmpeg # RVC-Models-Downloader command
+```
+- [ffmpeg.exe](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffmpeg.exe)
+
+- [ffprobe.exe](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffprobe.exe)
+
+### 3. Download the required files for the rmvpe vocal pitch extraction algorithm
 
 If you want to use the latest RMVPE vocal pitch extraction algorithm, you need to download the pitch extraction model parameters and place them in `assets/rmvpe`.
 
@@ -144,7 +163,7 @@ If you want to use the latest RMVPE vocal pitch extraction algorithm, you need t
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```
 
-### 3. AMD ROCM (optional, Linux only)
+### 4. AMD ROCM (optional, Linux only)
 
 If you want to run RVC on a Linux system based on AMD's ROCM technology, please first install the required drivers [here](https://rocm.docs.amd.com/en/latest/deploy/linux/os-native/install.html).
 
@@ -188,6 +207,7 @@ rvcmd packs/general/latest # RVC-Models-Downloader command
 + [VITS](https://github.com/jaywalnut310/vits)
 + [HIFIGAN](https://github.com/jik876/hifi-gan)
 + [Gradio](https://github.com/gradio-app/gradio)
++ [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 + [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 + [audio-slicer](https://github.com/openvpi/audio-slicer)
 + [Vocal pitch extraction:RMVPE](https://github.com/Dream-High/RMVPE)

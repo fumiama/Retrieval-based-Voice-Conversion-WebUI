@@ -100,6 +100,10 @@ Primeira coisa que gostaria de lembrar, não necessariamente quanto mais epochs 
 
 
 # <b>FAQ Original traduzido</b>
+## <b><span style="color: #337dff;">Q1: erro ffmpeg/erro utf8.</span></b>
+Provavelmente não é um problema do FFmpeg, mas sim um problema de caminho de áudio;
+
+O FFmpeg pode encontrar um erro ao ler caminhos contendo caracteres especiais como spaces e (), o que pode causar um erro FFmpeg; e quando o áudio do conjunto de treinamento contém caminhos chineses, gravá-lo em filelist.txt pode causar um erro utf8.<hr>
 
 ## <b><span style="color: #337dff;">Q2:Não é possível encontrar o arquivo de Index após "Treinamento com um clique".</span></b>
 Se exibir "O treinamento está concluído. O programa é fechado ", então o modelo foi treinado com sucesso e os erros subsequentes são falsos;

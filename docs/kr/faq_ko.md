@@ -1,3 +1,8 @@
+## Q1:ffmpeg 오류/utf8 오류
+
+대부분의 경우 ffmpeg 문제가 아니라 오디오 경로 문제입니다. <br>
+ffmpeg가 공백, () 등의 특수 문자가 포함된 경로를 읽을 때 ffmpeg 오류가 발생할 수 있습니다. 트레이닝 세트 오디오가 중문 경로일 때 filelist.txt에 쓸 때 utf8 오류가 발생할 수 있습니다. <br>
+
 ## Q2:일괄 트레이닝이 끝나고 인덱스가 없음
 
 "Training is done. The program is closed."라고 표시되면 모델 트레이닝이 성공한 것이며, 이어지는 오류는 가짜입니다. <br>

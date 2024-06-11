@@ -20,6 +20,9 @@ Ses yüklenir ve ön işleme yapılır.
 Ses içeren bir klasör belirtirseniz, bu klasördeki ses dosyaları otomatik olarak okunur.
 Örneğin, `C:Users\hoge\voices` belirtirseniz, `C:Users\hoge\voices\voice.mp3` yüklenecek, ancak `C:Users\hoge\voices\dir\voice.mp3` yüklenmeyecektir.
 
+Ses okumak için dahili olarak ffmpeg kullanıldığından, uzantı ffmpeg tarafından destekleniyorsa otomatik olarak okunacaktır.
+ffmpeg ile int16'ya dönüştürüldükten sonra float32'ye dönüştürülüp -1 ile 1 arasında normalize edilir.
+
 ### Gürültü Temizleme
 Ses scipy'nin filtfilt işlevi ile yumuşatılır.
 

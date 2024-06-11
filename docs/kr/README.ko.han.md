@@ -81,6 +81,8 @@ V2 버전 모델을 테스트하려면 추가 다운로드가 필요합니다.
 
 ./assets/pretrained_v2
 
+# Windows를 使用하는境遇 이 사전도 必要할 수 있습니다. FFmpeg가 設置되어 있으면 건너뛰어도 됩니다.
+ffmpeg.exe
 ```
 그後 以下의 命令을 使用하여 WebUI를 始作할 수 있습니다:
 ```bash
@@ -93,6 +95,7 @@ Windows를 使用하는境遇 `RVC-beta.7z`를 다운로드 및 壓縮解除하�
 + [VITS](https://github.com/jaywalnut310/vits)
 + [HIFIGAN](https://github.com/jik876/hifi-gan)
 + [Gradio](https://github.com/gradio-app/gradio)
++ [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 + [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 + [audio-slicer](https://github.com/openvpi/audio-slicer)
 ## 모든寄與者분들의勞力에感謝드립니다

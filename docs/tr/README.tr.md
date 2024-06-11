@@ -108,6 +108,15 @@ V2 sürüm modelini test etmek isterseniz (v2 sürüm modeli, 9 katmanlı Hubert
 
 ./assets/pretrained_v2
 
+Eğer Windows kullanıyorsanız, FFmpeg ve FFprobe kurulu değilse bu iki dosyayı da indirmeniz gerekebilir.
+ffmpeg.exe
+
+https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffmpeg.exe
+
+ffprobe.exe
+
+https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffprobe.exe
+
 En son SOTA RMVPE vokal ton çıkarma algoritmasını kullanmak istiyorsanız, RMVPE ağırlıklarını indirip RVC kök dizinine koymalısınız.
 
 https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt
@@ -131,6 +140,7 @@ Windows veya macOS kullanıyorsanız, `RVC-beta.7z` dosyasını indirip çıkara
 + [VITS](https://github.com/jaywalnut310/vits)
 + [HIFIGAN](https://github.com/jik876/hifi-gan)
 + [Gradio](https://github.com/gradio-app/gradio)
++ [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 + [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 + [audio-slicer](https://github.com/openvpi/audio-slicer)
 + [Vokal ton çıkarma:RMVPE](https://github.com/Dream-High/RMVPE)

@@ -1,3 +1,8 @@
+## Q1:ffmpeg error/utf8 error.
+It is most likely not a FFmpeg issue, but rather an audio path issue;
+
+FFmpeg may encounter an error when reading paths containing special characters like spaces and (), which may cause an FFmpeg error; and when the training set's audio contains Chinese paths, writing it into filelist.txt may cause a utf8 error.<br>
+
 ## Q2:Cannot find index file after "One-click Training".
 If it displays "Training is done. The program is closed," then the model has been trained successfully, and the subsequent errors are fake;
 
