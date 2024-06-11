@@ -48,7 +48,7 @@ def show_model_info(cpt, show_long_id=False):
             )
         txt = f"""{i18n("Model name")}: %s
 {i18n("Sealing date")}: %s
-{i18n("模型作者")}: %s
+{i18n("Model Author")}: %s
 {i18n("Information")}: %s
 {i18n("Sampling rate")}: %s
 {i18n("Pitch guidance (f0)")}: %s
