@@ -1,5 +1,5 @@
 {
-    "### Model comparison\n> You can get model ID (long) from `View model information` below.\n\nCalculate a similarity between two models.": "### Model comparison\n> You can get model ID (long) from `View model information` below.\n\nCalculate a similarity between two models.",
+    "### Model comparison\n> You can get model ID (long) from `View model information` below.\n\nCalculate a similarity between two models.": "### 模型比较\n> 模型ID(长)请于下方`查看模型信息`中获得\n\n可用于比较两模型推理相似度",
     "### Model extraction\n> Enter the path of the large file model under the 'logs' folder.\n\nThis is useful if you want to stop training halfway and manually extract and save a small model file, or if you want to test an intermediate model.": "### 模型提取\n> 输入logs文件夹下大文件模型路径\n\n适用于训一半不想训了模型没有自动提取保存小文件模型, 或者想测试中间模型的情况",
     "### Model fusion\nCan be used to test timbre fusion.": "### 模型融合\n可用于测试音色融合",
     "### Modify model information\n> Only supported for small model files extracted from the 'weights' folder.": "### 修改模型信息\n> 仅支持weights文件夹下提取的小模型文件",
