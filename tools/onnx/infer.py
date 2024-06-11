@@ -13,9 +13,7 @@ vec_path = "vec-256-layer-9.onnx"  # 需要onnx的vec模型
 wav_path = "123.wav"  # 输入路径或ByteIO实例
 out_path = "out.wav"  # 输出路径或ByteIO实例
 
-model = RVC(
-    model_path, vec_path=vec_path, hop_len=hop_size, device="cuda"
-)
+model = RVC(model_path, vec_path=vec_path, hop_len=hop_size, device="cuda")
 
 wav, sr = librosa.load(wav_path, sr=sampling_rate)
 
