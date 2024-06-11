@@ -8,6 +8,7 @@ import numpy as np
 import soundfile as sf
 import torch
 from tqdm import tqdm
+import av
 
 cpu = torch.device("cpu")
 
@@ -218,20 +219,38 @@ class Predictor:
             sf.write(path_other, opt, rate)
             opt_path_vocal = path_vocal[:-4] + ".%s" % format
             opt_path_other = path_other[:-4] + ".%s" % format
-            if os.path.exists(path_vocal):
-                os.system(f'ffmpeg -i "{path_vocal}" -vn "{opt_path_vocal}" -q:a 2 -y')
-                if os.path.exists(opt_path_vocal):
-                    try:
-                        os.remove(path_vocal)
-                    except:
-                        pass
-            if os.path.exists(path_other):
-                os.system(f'ffmpeg -i "{path_other}" -vn "{opt_path_other}" -q:a 2 -y')
-                if os.path.exists(opt_path_other):
-                    try:
-                        os.remove(path_other)
-                    except:
-                        pass
+            process_audio(path_vocal, opt_path_vocal, format)
+            process_audio(path_other, opt_path_other, format)
+
+def process_audio(input_path: str, output_path: str, format: str) -> None:
+    if not os.path.exists(input_path): return
+    
+    input_container = av.open(input_path)
+    output_container = av.open(output_path, 'w')
+
+    # Create a stream in the output container
+    input_stream = input_container.streams.audio[0]
+    output_stream = output_container.add_stream(format)
+
+    output_stream.bit_rate = 128_000 # 128kb/s (equivalent to -q:a 2)
+
+    # Copy packets from the input file to the output file
+    for packet in input_container.demux(input_stream):
+        for frame in packet.decode():
+            for out_packet in output_stream.encode(frame):
+                output_container.mux(out_packet)
+
+    for packet in output_stream.encode():
+        output_container.mux(packet)
+    
+    # Close the containers
+    input_container.close()
+    output_container.close()
+
+    try: # Remove the original file
+        os.remove(input_path)
+    except Exception as e:
+        print(f"Failed to remove the original file: {e}")
 
 
 class MDXNetDereverb:

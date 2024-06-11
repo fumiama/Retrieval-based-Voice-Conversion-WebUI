@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 import librosa
 import numpy as np
 import soundfile as sf
+import av
 import torch
 
 from infer.lib.uvr5_pack.lib_v5 import nets_123821KB as Nets
@@ -146,12 +147,7 @@ class AudioPre:
                 )
                 if os.path.exists(path):
                     opt_format_path = path[:-4] + ".%s" % format
-                    os.system(f'ffmpeg -i "{path}" -vn "{opt_format_path}" -q:a 2 -y')
-                    if os.path.exists(opt_format_path):
-                        try:
-                            os.remove(path)
-                        except:
-                            pass
+                    process_audio(path, opt_format_path, format)
         if vocal_root is not None:
             if is_hp3 == True:
                 head = "instrument_"
@@ -185,15 +181,38 @@ class AudioPre:
                     (np.array(wav_vocals) * 32768).astype("int16"),
                     self.mp.param["sr"],
                 )
-                if os.path.exists(path):
-                    opt_format_path = path[:-4] + ".%s" % format
-                    os.system(f'ffmpeg -i "{path}" -vn "{opt_format_path}" -q:a 2 -y')
-                    if os.path.exists(opt_format_path):
-                        try:
-                            os.remove(path)
-                        except:
-                            pass
+                opt_format_path = path[:-4] + ".%s" % format
+                process_audio(path, opt_format_path, format)
 
+def process_audio(input_path: str, output_path: str, format: str) -> None:
+    if not os.path.exists(input_path): return
+    
+    input_container = av.open(input_path)
+    output_container = av.open(output_path, 'w')
+
+    # Create a stream in the output container
+    input_stream = input_container.streams.audio[0]
+    output_stream = output_container.add_stream(format)
+
+    output_stream.bit_rate = 128_000 # 128kb/s (equivalent to -q:a 2)
+
+    # Copy packets from the input file to the output file
+    for packet in input_container.demux(input_stream):
+        for frame in packet.decode():
+            for out_packet in output_stream.encode(frame):
+                output_container.mux(out_packet)
+
+    for packet in output_stream.encode():
+        output_container.mux(packet)
+    
+    # Close the containers
+    input_container.close()
+    output_container.close()
+
+    try: # Remove the original file
+        os.remove(input_path)
+    except Exception as e:
+        print(f"Failed to remove the original file: {e}")
 
 class AudioPreDeEcho:
     def __init__(self, agg, model_path, device, is_half, tta=False):
@@ -323,12 +342,7 @@ class AudioPreDeEcho:
                 )
                 if os.path.exists(path):
                     opt_format_path = path[:-4] + ".%s" % format
-                    os.system(f'ffmpeg -i "{path}" -vn "{opt_format_path}" -q:a 2 -y')
-                    if os.path.exists(opt_format_path):
-                        try:
-                            os.remove(path)
-                        except:
-                            pass
+                    process_audio(path, opt_format_path, format)
         if vocal_root is not None:
             if self.data["high_end_process"].startswith("mirroring"):
                 input_high_end_ = spec_utils.mirroring(
@@ -360,9 +374,4 @@ class AudioPreDeEcho:
                 )
                 if os.path.exists(path):
                     opt_format_path = path[:-4] + ".%s" % format
-                    os.system(f'ffmpeg -i "{path}" -vn "{opt_format_path}" -q:a 2 -y')
-                    if os.path.exists(opt_format_path):
-                        try:
-                            os.remove(path)
-                        except:
-                            pass
+                    process_audio(path, opt_format_path, format)
