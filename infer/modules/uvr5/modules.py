@@ -50,7 +50,9 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
 
                 # Check the audio stream's properties
                 if channels == 2 and rate == 44100:
-                    pre_fun._path_audio_(inp_path, save_root_ins, save_root_vocal, format0, is_hp3=is_hp3)
+                    pre_fun._path_audio_(
+                        inp_path, save_root_ins, save_root_vocal, format0, is_hp3=is_hp3
+                    )
                     need_reformat = 0
                     done = 1
             except Exception as e:
@@ -61,7 +63,7 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
                     os.path.join(os.environ["TEMP"]),
                     os.path.basename(inp_path),
                 )
-                resample_audio(inp_path, tmp_path, 'pcm_s16le', 's16', 44100, 'stereo')
+                resample_audio(inp_path, tmp_path, "pcm_s16le", "s16", 44100, "stereo")
                 inp_path = tmp_path
             try:
                 if done == 0:
