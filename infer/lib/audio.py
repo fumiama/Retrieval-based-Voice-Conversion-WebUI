@@ -149,7 +149,3 @@ def get_audio_properties(input_path: str) -> Tuple:
     rate = audio_stream.base_rate
     container.close()
     return channels, rate
-
-
-def clean_path(path: str) -> Path:
-    return Path(path.strip(' "\n')).resolve()
