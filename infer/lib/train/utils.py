@@ -252,7 +252,10 @@ def load_wav_to_torch(full_path):
 
 def load_filepaths_and_text(filename, split="|"):
     try:
-        return [line.strip().split(split) for line in codecs.open(filename, encoding="utf-8")]
+        return [
+            line.strip().split(split)
+            for line in codecs.open(filename, encoding="utf-8")
+        ]
     except UnicodeDecodeError as e:
         logger.error("Error loading file %s: %s", filename, e)
 
