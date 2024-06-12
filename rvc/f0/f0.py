@@ -11,11 +11,10 @@ class F0Predictor(object):
         self.sampling_rate = sampling_rate
 
     def compute_f0(
-        self, wav: np.ndarray[Any, np.dtype], p_len: Optional[int] = None
-    ): ...
-
-    def compute_f0_uv(
-        self, wav: np.ndarray[Any, np.dtype], p_len: Optional[int] = None
+        self,
+        wav: np.ndarray[Any, np.dtype],
+        p_len: Optional[int] = None,
+        filter_radius: Optional[int] = None,
     ): ...
 
     def interpolate_f0(self, f0: np.ndarray[Any, np.dtype]):

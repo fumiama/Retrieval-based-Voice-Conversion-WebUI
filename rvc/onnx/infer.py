@@ -5,10 +5,10 @@ import librosa
 import numpy as np
 import onnxruntime
 
-from .f0 import (
-    PMF0Predictor,
-    HarvestF0Predictor,
-    DioF0Predictor,
+from rvc.f0 import (
+    PM,
+    Harvest,
+    Dio,
     F0Predictor,
 )
 
@@ -52,9 +52,9 @@ class ContentVec(Model):
 
 
 predictors: typing.Dict[str, F0Predictor] = {
-    "pm": PMF0Predictor,
-    "harvest": HarvestF0Predictor,
-    "dio": DioF0Predictor,
+    "pm": PM,
+    "harvest": Harvest,
+    "dio": Dio,
 }
 
 

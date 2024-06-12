@@ -2,7 +2,7 @@ import torch
 
 
 def get_rmvpe(model_path="assets/rmvpe/rmvpe.pt", device=torch.device("cpu")):
-    from infer.lib.rmvpe import E2E
+    from rvc.f0.e2e import E2E
 
     model = E2E(4, 1, (2, 2))
     ckpt = torch.load(model_path, map_location=device)
