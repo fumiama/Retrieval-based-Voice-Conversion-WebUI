@@ -100,37 +100,33 @@ Primeira coisa que gostaria de lembrar, não necessariamente quanto mais epochs 
 
 
 # <b>FAQ Original traduzido</b>
-## <b><span style="color: #337dff;">Q1: erro ffmpeg/erro utf8.</span></b>
-Provavelmente não é um problema do FFmpeg, mas sim um problema de caminho de áudio;
 
-O FFmpeg pode encontrar um erro ao ler caminhos contendo caracteres especiais como spaces e (), o que pode causar um erro FFmpeg; e quando o áudio do conjunto de treinamento contém caminhos chineses, gravá-lo em filelist.txt pode causar um erro utf8.<hr>
-
-## <b><span style="color: #337dff;">Q2:Não é possível encontrar o arquivo de Index após "Treinamento com um clique".</span></b>
+## <b><span style="color: #337dff;">Q1:Não é possível encontrar o arquivo de Index após "Treinamento com um clique".</span></b>
 Se exibir "O treinamento está concluído. O programa é fechado ", então o modelo foi treinado com sucesso e os erros subsequentes são falsos;
 
 A falta de um arquivo de index 'adicionado' após o treinamento com um clique pode ser devido ao conjunto de treinamento ser muito grande, fazendo com que a adição do index fique presa; isso foi resolvido usando o processamento em lote para adicionar o index, o que resolve o problema de sobrecarga de memória ao adicionar o index. Como solução temporária, tente clicar no botão "Treinar Index" novamente.<hr>
 
-## <b><span style="color: #337dff;">Q3:Não é possível encontrar o modelo em “Modelo de voz” após o treinamento</span></b>
+## <b><span style="color: #337dff;">Q2:Não é possível encontrar o modelo em “Modelo de voz” após o treinamento</span></b>
 Clique em "Atualizar lista de voz" ou "Atualizar na EasyGUI e verifique novamente; se ainda não estiver visível, verifique se há erros durante o treinamento e envie capturas de tela do console, da interface do usuário da Web e dos ``logs/experiment_name/*.log`` para os desenvolvedores para análise posterior.<hr>
 
-## <b><span style="color: #337dff;">Q4:Como compartilhar um modelo/Como usar os modelos dos outros?</span></b>
+## <b><span style="color: #337dff;">Q3:Como compartilhar um modelo/Como usar os modelos dos outros?</span></b>
 Os arquivos ``.pth`` armazenados em ``*/logs/minha-voz`` não são destinados para compartilhamento ou inference, mas para armazenar os checkpoits do experimento para reprodutibilidade e treinamento adicional. O modelo a ser compartilhado deve ser o arquivo ``.pth`` de 60+MB na pasta **weights**;
 
 No futuro, ``weights/minha-voz.pth`` e ``logs/minha-voz/added_xxx.index`` serão mesclados em um único arquivo de ``weights/minha-voz.zip`` para eliminar a necessidade de entrada manual de index; portanto, compartilhe o arquivo zip, não somente o arquivo .pth, a menos que você queira continuar treinando em uma máquina diferente;
 
 Copiar/compartilhar os vários arquivos .pth de centenas de MB da pasta de logs para a pasta de weights para inference forçada pode resultar em erros como falta de f0, tgt_sr ou outras chaves. Você precisa usar a guia ckpt na parte inferior para manualmente ou automaticamente (se as informações forem encontradas nos ``logs/minha-voz``), selecione se deseja incluir informações de tom e opções de taxa de amostragem de áudio de destino e, em seguida, extrair o modelo menor. Após a extração, haverá um arquivo pth de 60+ MB na pasta de weights, e você pode atualizar as vozes para usá-lo.<hr>
 
-## <b><span style="color: #337dff;">Q5 Erro de conexão:</span></b>
+## <b><span style="color: #337dff;">Q4 Erro de conexão:</span></b>
 Para sermos otimistas, aperte F5/recarregue a página, pode ter sido apenas um bug da GUI
 
 Se não...
 Você pode ter fechado o console (janela de linha de comando preta).
 Ou o Google Colab, no caso do Colab, as vezes pode simplesmente fechar<hr>
 
-## <b><span style="color: #337dff;">Q6: Pop-up WebUI 'Valor esperado: linha 1 coluna 1 (caractere 0)'.</span></b>
+## <b><span style="color: #337dff;">Q5: Pop-up WebUI 'Valor esperado: linha 1 coluna 1 (caractere 0)'.</span></b>
 Desative o proxy LAN do sistema/proxy global e atualize.<hr>
 
-## <b><span style="color: #337dff;">Q7:Como treinar e inferir sem a WebUI?</span></b>
+## <b><span style="color: #337dff;">Q6:Como treinar e inferir sem a WebUI?</span></b>
 Script de treinamento:
 <br>Você pode executar o treinamento em WebUI primeiro, e as versões de linha de comando do pré-processamento e treinamento do conjunto de dados serão exibidas na janela de mensagens.<br>
 
@@ -153,17 +149,17 @@ index_rate=float(sys.argv[7])<br>
 device=sys.argv[8]<br>
 is_half=bool(sys.argv[9])<hr>
 
-## <b><span style="color: #337dff;">Q8: Erro Cuda/Cuda sem memória.</span></b>
+## <b><span style="color: #337dff;">Q7: Erro Cuda/Cuda sem memória.</span></b>
 Há uma pequena chance de que haja um problema com a configuração do CUDA ou o dispositivo não seja suportado; mais provavelmente, não há memória suficiente (falta de memória).<br>
 
 Para treinamento, reduza o (batch size) tamanho do lote (se reduzir para 1 ainda não for suficiente, talvez seja necessário alterar a placa gráfica); para inference, ajuste as configurações x_pad, x_query, x_center e x_max no arquivo config.py conforme necessário. Cartões de memória 4G ou inferiores (por exemplo, 1060(3G) e várias placas 2G) podem ser abandonados, enquanto os placas de vídeo com memória 4G ainda têm uma chance.<hr>
 
-## <b><span style="color: #337dff;">Q9:Quantos total_epoch são ótimos?</span></b>
+## <b><span style="color: #337dff;">Q8:Quantos total_epoch são ótimos?</span></b>
 Se a qualidade de áudio do conjunto de dados de treinamento for ruim e o nível de ruído for alto, **20-30 epochs** são suficientes. Defini-lo muito alto não melhorará a qualidade de áudio do seu conjunto de treinamento de baixa qualidade.<br>
 
 Se a qualidade de áudio do conjunto de treinamento for alta, o nível de ruído for baixo e houver duração suficiente, você poderá aumentá-lo. **200 é aceitável** (uma vez que o treinamento é rápido e, se você puder preparar um conjunto de treinamento de alta qualidade, sua GPU provavelmente poderá lidar com uma duração de treinamento mais longa sem problemas).<hr>
 
-## <b><span style="color: #337dff;">Q10:Quanto tempo de treinamento é necessário?</span></b>
+## <b><span style="color: #337dff;">Q9:Quanto tempo de treinamento é necessário?</span></b>
 
 **Recomenda-se um conjunto de dados de cerca de 10 min a 50 min.**<br>
 
@@ -175,28 +171,28 @@ Há algumas pessoas que treinaram com sucesso com dados de 1 a 2 minutos, mas o 
 Dados com menos de 1 minuto, já obtivemo sucesso. Mas não é recomendado.<hr>
 
 
-## <b><span style="color: #337dff;">Q11:Qual é a taxa do index e como ajustá-la?</span></b>
+## <b><span style="color: #337dff;">Q10:Qual é a taxa do index e como ajustá-la?</span></b>
 Se a qualidade do tom do modelo pré-treinado e da fonte de inference for maior do que a do conjunto de treinamento, eles podem trazer a qualidade do tom do resultado do inference, mas ao custo de um possível viés de tom em direção ao tom do modelo subjacente/fonte de inference, em vez do tom do conjunto de treinamento, que é geralmente referido como "vazamento de tom".<br>
 
 A taxa de index é usada para reduzir/resolver o problema de vazamento de timbre. Se a taxa do index for definida como 1, teoricamente não há vazamento de timbre da fonte de inference e a qualidade do timbre é mais tendenciosa em relação ao conjunto de treinamento. Se o conjunto de treinamento tiver uma qualidade de som mais baixa do que a fonte de inference, uma taxa de index mais alta poderá reduzir a qualidade do som. Reduzi-lo a 0 não tem o efeito de usar a mistura de recuperação para proteger os tons definidos de treinamento.<br>
 
 Se o conjunto de treinamento tiver boa qualidade de áudio e longa duração, aumente o total_epoch, quando o modelo em si é menos propenso a se referir à fonte inferida e ao modelo subjacente pré-treinado, e há pouco "vazamento de tom", o index_rate não é importante e você pode até não criar/compartilhar o arquivo de index.<hr>
 
-## <b><span style="color: #337dff;">Q12:Como escolher o GPU ao inferir?</span></b>
+## <b><span style="color: #337dff;">Q11:Como escolher o GPU ao inferir?</span></b>
 No arquivo ``config.py``, selecione o número da placa em "device cuda:".<br>
 
 O mapeamento entre o número da placa e a placa gráfica pode ser visto na seção de informações da placa gráfica da guia de treinamento.<hr>
 
-## <b><span style="color: #337dff;">Q13:Como usar o modelo salvo no meio do treinamento?</span></b>
+## <b><span style="color: #337dff;">Q12:Como usar o modelo salvo no meio do treinamento?</span></b>
 Salvar via extração de modelo na parte inferior da guia de processamento do ckpt.<hr>
 
-## <b><span style="color: #337dff;">Q14: Erro de arquivo/memória (durante o treinamento)?</span></b>
+## <b><span style="color: #337dff;">Q13: Erro de arquivo/memória (durante o treinamento)?</span></b>
 Muitos processos e sua memória não é suficiente. Você pode corrigi-lo por:
 
 1. Diminuir a entrada no campo "Threads da CPU".
 2. Diminuir o tamanho do conjunto de dados.
 
-## Q15: Como continuar treinando usando mais dados
+## Q14: Como continuar treinando usando mais dados
 
 passo 1: coloque todos os dados wav no path2.
 
@@ -206,7 +202,7 @@ passo 3: copie o arquivo G e D mais recente de exp_name1 (seu experimento anteri
 
 passo 4: clique em "treinar o modelo" e ele continuará treinando desde o início da época anterior do modelo exp.
 
-## Q16: erro sobre llvmlite.dll
+## Q15: erro sobre llvmlite.dll
 
 OSError: Não foi possível carregar o arquivo de objeto compartilhado: llvmlite.dll
 
@@ -214,11 +210,11 @@ FileNotFoundError: Não foi possível encontrar o módulo lib\site-packages\llvm
 
 O problema acontecerá no Windows, instale https://aka.ms/vs/17/release/vc_redist.x64.exe e será corrigido.
 
-## Q17: RuntimeError: O tamanho expandido do tensor (17280) deve corresponder ao tamanho existente (0) na dimensão 1 não singleton. Tamanhos de destino: [1, 17280]. Tamanhos de tensor: [0]
+## Q16: RuntimeError: O tamanho expandido do tensor (17280) deve corresponder ao tamanho existente (0) na dimensão 1 não singleton. Tamanhos de destino: [1, 17280]. Tamanhos de tensor: [0]
 
 Exclua os arquivos wav cujo tamanho seja significativamente menor que outros e isso não acontecerá novamente. Em seguida, clique em "treinar o modelo" e "treinar o índice".
 
-## Q18: RuntimeError: O tamanho do tensor a (24) deve corresponder ao tamanho do tensor b (16) na dimensão não singleton 2
+## Q17: RuntimeError: O tamanho do tensor a (24) deve corresponder ao tamanho do tensor b (16) na dimensão não singleton 2
 
 Não altere a taxa de amostragem e continue o treinamento. Caso seja necessário alterar, o nome do exp deverá ser alterado e o modelo será treinado do zero. Você também pode copiar o pitch e os recursos (pastas 0/1/2/2b) extraídos da última vez para acelerar o processo de treinamento.
 

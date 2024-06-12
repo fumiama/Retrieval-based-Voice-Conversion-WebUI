@@ -123,15 +123,6 @@ Se você deseja testar o modelo da versão v2 (o modelo da versão v2 alterou a 
 
 ./assets/pretrained_v2
 
-#Se você estiver usando Windows, também pode precisar desses dois arquivos, pule se FFmpeg e FFprobe estiverem instalados
-ffmpeg.exe
-
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffmpeg.exe
-
-ffprobe.exe
-
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffprobe.exe
-
 Se quiser usar o algoritmo de extração de tom vocal SOTA RMVPE mais recente, você precisa baixar os pesos RMVPE e colocá-los no diretório raiz RVC
 
 https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt
@@ -179,7 +170,6 @@ python web.py
 + [VITS](https://github.com/jaywalnut310/vits)
 + [HIFIGAN](https://github.com/jik876/hifi-gan)
 + [Gradio](https://github.com/gradio-app/gradio)
-+ [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 + [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 + [audio-slicer](https://github.com/openvpi/audio-slicer)
 + [Vocal pitch extraction:RMVPE](https://github.com/Dream-High/RMVPE)

@@ -12,5 +12,3 @@ xcuserdata
 /logs
 
 /assets/weights/*
-ffmpeg.*
-ffprobe.*

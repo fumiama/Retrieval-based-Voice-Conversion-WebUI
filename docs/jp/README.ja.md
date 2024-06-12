@@ -130,26 +130,6 @@ v2バージョンのモデルを使用したい場合は、追加ダウンロー
 	rvcmd assets/v2 # RVC-Models-Downloader command
 	```
 
-### 2. ffmpegツールのインストール
-`ffmpeg`と`ffprobe`がすでにインストールされている場合は、このステップをスキップできます。
-
-#### Ubuntu/Debian
-```bash
-sudo apt install ffmpeg
-```
-#### MacOS
-```bash
-brew install ffmpeg
-```
-#### Windows
-ダウンロード後、ルートディレクトリに配置しましょう。
-```bash
-rvcmd tools/ffmpeg # RVC-Models-Downloader command
-```
-- [ffmpeg.exe](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffmpeg.exe)
-
-- [ffprobe.exe](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffprobe.exe)
-
 ### 3. RMVPE人声音高抽出アルゴリズムに必要なファイルのダウンロード
 
 最新のRMVPE人声音高抽出アルゴリズムを使用したい場合は、音高抽出モデルをダウンロードし、`assets/rmvpe`に配置する必要があります。
@@ -211,7 +191,6 @@ rvcmd packs/general/latest # RVC-Models-Downloader command
 - [VITS](https://github.com/jaywalnut310/vits)
 - [HIFIGAN](https://github.com/jik876/hifi-gan)
 - [Gradio](https://github.com/gradio-app/gradio)
-- [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 - [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 - [audio-slicer](https://github.com/openvpi/audio-slicer)
 - [Vocal pitch extraction:RMVPE](https://github.com/Dream-High/RMVPE)
