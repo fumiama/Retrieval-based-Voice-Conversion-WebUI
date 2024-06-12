@@ -130,7 +130,7 @@ v2バージョンのモデルを使用したい場合は、追加ダウンロー
 	rvcmd assets/v2 # RVC-Models-Downloader command
 	```
 
-### 3. RMVPE人声音高抽出アルゴリズムに必要なファイルのダウンロード
+### 2. RMVPE人声音高抽出アルゴリズムに必要なファイルのダウンロード
 
 最新のRMVPE人声音高抽出アルゴリズムを使用したい場合は、音高抽出モデルをダウンロードし、`assets/rmvpe`に配置する必要があります。
 
@@ -146,7 +146,7 @@ v2バージョンのモデルを使用したい場合は、追加ダウンロー
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```
 
-### 4. AMD ROCM（オプション、Linuxのみ）
+### 3. AMD ROCM（オプション、Linuxのみ）
 
 AMDのRocm技術を基にLinuxシステムでRVCを実行したい場合は、まず[ここ](https://rocm.docs.amd.com/en/latest/deploy/linux/os-native/install.html)で必要なドライバをインストールしてください。
 

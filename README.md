@@ -128,7 +128,7 @@ If you want to use the v2 version of the model, you need to download additional 
 	rvcmd assets/v2 # RVC-Models-Downloader command
 	```
 
-### 3. Download the required files for the rmvpe vocal pitch extraction algorithm
+### 2. Download the required files for the rmvpe vocal pitch extraction algorithm
 
 If you want to use the latest RMVPE vocal pitch extraction algorithm, you need to download the pitch extraction model parameters and place them in `assets/rmvpe`.
 
@@ -144,7 +144,7 @@ If you want to use the latest RMVPE vocal pitch extraction algorithm, you need t
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```
 
-### 4. AMD ROCM (optional, Linux only)
+### 3. AMD ROCM (optional, Linux only)
 
 If you want to run RVC on a Linux system based on AMD's ROCM technology, please first install the required drivers [here](https://rocm.docs.amd.com/en/latest/deploy/linux/os-native/install.html).
 

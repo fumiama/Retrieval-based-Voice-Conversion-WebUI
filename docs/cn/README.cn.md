@@ -126,7 +126,7 @@ sh ./run.sh
 	rvcmd assets/v2 # RVC-Models-Downloader command
 	```
 
-### 3. 下载 rmvpe 人声音高提取算法所需文件
+### 2. 下载 rmvpe 人声音高提取算法所需文件
 
 如果你想使用最新的RMVPE人声音高提取算法，则你需要下载音高提取模型参数并放置于`assets/rmvpe`。
 
@@ -142,7 +142,7 @@ sh ./run.sh
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```
 
-### 4. AMD显卡Rocm(可选, 仅Linux)
+### 3. AMD显卡Rocm(可选, 仅Linux)
 
 如果你想基于AMD的Rocm技术在Linux系统上运行RVC，请先在[这里](https://rocm.docs.amd.com/en/latest/deploy/linux/os-native/install.html)安装所需的驱动。
 

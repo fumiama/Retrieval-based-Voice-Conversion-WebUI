@@ -277,7 +277,7 @@ v2 버전 모델을 사용하려면 추가로 다음을 다운로드해야 합�
   rvcmd assets/v2 # RVC-Models-Downloader command
   ```
 
-### 3. RMVPE 인간 음성 피치 추출 알고리즘에 필요한 파일 다운로드
+### 2. RMVPE 인간 음성 피치 추출 알고리즘에 필요한 파일 다운로드
 
 최신 RMVPE 인간 음성 피치 추출 알고리즘을 사용하려면 음피치 추출 모델 매개변수를 다운로드하고 RVC 루트 디렉토리에 배치해야 합니다.
 
@@ -287,7 +287,7 @@ v2 버전 모델을 사용하려면 추가로 다음을 다운로드해야 합�
 
 - [rmvpe.onnx 다운로드](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.onnx)
 
-### 4. AMD 그래픽 카드 Rocm(선택사항, Linux만 해당)
+### 3. AMD 그래픽 카드 Rocm(선택사항, Linux만 해당)
 
 Linux 시스템에서 AMD의 Rocm 기술을 기반으로 RVC를 실행하려면 [여기](https://rocm.docs.amd.com/en/latest/deploy/linux/os-native/install.html)에서 필요한 드라이버를 먼저 설치하세요.
 
