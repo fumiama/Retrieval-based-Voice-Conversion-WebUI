@@ -44,7 +44,9 @@ def load_audio(file: str, sr: int) -> np.ndarray:
         resampler = AudioResampler(format="fltp", layout="mono", rate=sr)
 
         # Estimated maximum total number of samples to pre-allocate the array
-        audio_duration_sec: float = container.duration / 1_000_000 # AV stores length in microseconds by default
+        audio_duration_sec: float = (
+            container.duration / 1_000_000
+        )  # AV stores length in microseconds by default
         estimated_total_samples = int(audio_duration_sec * sr + 0.5)
         decoded_audio = np.zeros(estimated_total_samples + 1, dtype=np.float32)
 
@@ -55,12 +57,12 @@ def load_audio(file: str, sr: int) -> np.ndarray:
             for resampled_frame in resampled_frames:
                 frame_data = np.array(resampled_frame.to_ndarray()).flatten()
                 end_index = offset + len(frame_data)
-                
+
                 # Check if decoded_audio has enough space, and resize if necessary
                 if end_index > decoded_audio.shape[0]:
                     decoded_audio = np.resize(decoded_audio, end_index + 1)
-                
-                decoded_audio[offset : end_index] = frame_data
+
+                decoded_audio[offset:end_index] = frame_data
                 offset += len(frame_data)
 
         # Truncate the array to the actual size
