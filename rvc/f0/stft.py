@@ -14,7 +14,7 @@ class STFT(torch.nn.Module):
         hop_length=512,
         win_length: Optional[int] = None,
         window="hann",
-        use_torch_stft = True,
+        use_torch_stft=True,
     ):
         """
         This module implements an STFT using 1D convolution and 1D transpose convolutions.
