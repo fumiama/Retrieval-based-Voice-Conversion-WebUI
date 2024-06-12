@@ -4,7 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import ffmpeg
+from infer.lib.audio import resample_audio, get_audio_properties
 import torch
 
 from configs import Config
@@ -46,27 +46,24 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
             need_reformat = 1
             done = 0
             try:
-                info = ffmpeg.probe(inp_path, cmd="ffprobe")
-                if (
-                    info["streams"][0]["channels"] == 2
-                    and info["streams"][0]["sample_rate"] == "44100"
-                ):
-                    need_reformat = 0
+                channels, rate = get_audio_properties(inp_path)
+
+                # Check the audio stream's properties
+                if channels == 2 and rate == 44100:
                     pre_fun._path_audio_(
                         inp_path, save_root_ins, save_root_vocal, format0, is_hp3=is_hp3
                     )
+                    need_reformat = 0
                     done = 1
-            except:
+            except Exception as e:
                 need_reformat = 1
-                traceback.print_exc()
+                print(f"Exception {e} occured. Will reformat")
             if need_reformat == 1:
                 tmp_path = "%s/%s.reformatted.wav" % (
                     os.path.join(os.environ["TEMP"]),
                     os.path.basename(inp_path),
                 )
-                os.system(
-                    f'ffmpeg -i "{inp_path}" -vn -acodec pcm_s16le -ac 2 -ar 44100 "{tmp_path}" -y'
-                )
+                resample_audio(inp_path, tmp_path, "pcm_s16le", "s16", 44100, "stereo")
                 inp_path = tmp_path
             try:
                 if done == 0:

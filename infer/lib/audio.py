@@ -1,9 +1,10 @@
 from io import BufferedWriter, BytesIO
 from pathlib import Path
-from typing import Dict
-import ffmpeg
+from typing import Dict, Tuple
 import numpy as np
 import av
+import os
+from av.audio.resampler import AudioResampler
 
 video_format_dict: Dict[str, str] = {
     "m4a": "mp4",
@@ -39,20 +40,112 @@ def load_audio(file: str, sr: int) -> np.ndarray:
         raise FileNotFoundError(f"File not found: {file}")
 
     try:
-        # https://github.com/openai/whisper/blob/main/whisper/audio.py#L26
-        # This launches a subprocess to decode audio while down-mixing and resampling as necessary.
-        # Requires the ffmpeg CLI and `ffmpeg-python` package to be installed.
-        file = str(clean_path(file))  # 防止小白拷路径头尾带了空格和"和回车
-        out, _ = (
-            ffmpeg.input(file, threads=0)
-            .output("-", format="f32le", acodec="pcm_f32le", ac=1, ar=sr)
-            .run(cmd=["ffmpeg", "-nostdin"], capture_stdout=True, capture_stderr=True)
-        )
+        container = av.open(file)
+        resampler = AudioResampler(format="fltp", layout="mono", rate=sr)
+
+        # Estimated maximum total number of samples to pre-allocate the array
+        audio_duration_sec: float = (
+            container.duration / 1_000_000
+        )  # AV stores length in microseconds by default
+        estimated_total_samples = int(audio_duration_sec * sr + 0.5)
+        decoded_audio = np.zeros(estimated_total_samples + 1, dtype=np.float32)
+
+        offset = 0
+        for frame in container.decode(audio=0):
+            frame.pts = None  # Clear presentation timestamp to avoid resampling issues
+            resampled_frames = resampler.resample(frame)
+            for resampled_frame in resampled_frames:
+                frame_data = np.array(resampled_frame.to_ndarray()).flatten()
+                end_index = offset + len(frame_data)
+
+                # Check if decoded_audio has enough space, and resize if necessary
+                if end_index > decoded_audio.shape[0]:
+                    decoded_audio = np.resize(decoded_audio, end_index + 1)
+
+                decoded_audio[offset:end_index] = frame_data
+                offset += len(frame_data)
+
+        # Truncate the array to the actual size
+        decoded_audio = decoded_audio[:offset]
     except Exception as e:
         raise RuntimeError(f"Failed to load audio: {e}")
 
-    return np.frombuffer(out, np.float32).flatten()
+    return decoded_audio
 
 
-def clean_path(path: str) -> Path:
-    return Path(path.strip(' "\n')).resolve()
+def downsample_audio(input_path: str, output_path: str, format: str) -> None:
+    if not os.path.exists(input_path):
+        return
+
+    input_container = av.open(input_path)
+    output_container = av.open(output_path, "w")
+
+    # Create a stream in the output container
+    input_stream = input_container.streams.audio[0]
+    output_stream = output_container.add_stream(format)
+
+    output_stream.bit_rate = 128_000  # 128kb/s (equivalent to -q:a 2)
+
+    # Copy packets from the input file to the output file
+    for packet in input_container.demux(input_stream):
+        for frame in packet.decode():
+            for out_packet in output_stream.encode(frame):
+                output_container.mux(out_packet)
+
+    for packet in output_stream.encode():
+        output_container.mux(packet)
+
+    # Close the containers
+    input_container.close()
+    output_container.close()
+
+    try:  # Remove the original file
+        os.remove(input_path)
+    except Exception as e:
+        print(f"Failed to remove the original file: {e}")
+
+
+def resample_audio(
+    input_path: str, output_path: str, codec: str, format: str, sr: int, layout: str
+) -> None:
+    if not os.path.exists(input_path):
+        return
+
+    input_container = av.open(input_path)
+    output_container = av.open(output_path, "w")
+
+    # Create a stream in the output container
+    input_stream = input_container.streams.audio[0]
+    output_stream = output_container.add_stream(codec, rate=sr, layout=layout)
+
+    resampler = AudioResampler(format, layout, sr)
+
+    # Copy packets from the input file to the output file
+    for packet in input_container.demux(input_stream):
+        for frame in packet.decode():
+            frame.pts = None  # Clear presentation timestamp to avoid resampling issues
+            out_frames = resampler.resample(frame)
+            for out_frame in out_frames:
+                for out_packet in output_stream.encode(out_frame):
+                    output_container.mux(out_packet)
+
+    for packet in output_stream.encode():
+        output_container.mux(packet)
+
+    # Close the containers
+    input_container.close()
+    output_container.close()
+
+    try:  # Remove the original file
+        os.remove(input_path)
+    except Exception as e:
+        print(f"Failed to remove the original file: {e}")
+
+
+def get_audio_properties(input_path: str) -> Tuple:
+    container = av.open(input_path)
+    audio_stream = next(s for s in container.streams if s.type == "audio")
+    channels = 1 if audio_stream.layout == "mono" else 2
+    rate = audio_stream.base_rate
+    container.close()
+    return channels, rate

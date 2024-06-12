@@ -8,6 +8,9 @@ import numpy as np
 import soundfile as sf
 import torch
 from tqdm import tqdm
+import av
+
+from infer.lib.audio import downsample_audio
 
 cpu = torch.device("cpu")
 
@@ -218,20 +221,8 @@ class Predictor:
             sf.write(path_other, opt, rate)
             opt_path_vocal = path_vocal[:-4] + ".%s" % format
             opt_path_other = path_other[:-4] + ".%s" % format
-            if os.path.exists(path_vocal):
-                os.system(f'ffmpeg -i "{path_vocal}" -vn "{opt_path_vocal}" -q:a 2 -y')
-                if os.path.exists(opt_path_vocal):
-                    try:
-                        os.remove(path_vocal)
-                    except:
-                        pass
-            if os.path.exists(path_other):
-                os.system(f'ffmpeg -i "{path_other}" -vn "{opt_path_other}" -q:a 2 -y')
-                if os.path.exists(opt_path_other):
-                    try:
-                        os.remove(path_other)
-                    except:
-                        pass
+            downsample_audio(path_vocal, opt_path_vocal, format)
+            downsample_audio(path_other, opt_path_other, format)
 
 
 class MDXNetDereverb:

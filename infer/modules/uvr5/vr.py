@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 import librosa
 import numpy as np
 import soundfile as sf
+from infer.lib.audio import downsample_audio
 import torch
 
 from infer.lib.uvr5_pack.lib_v5 import nets_123821KB as Nets
@@ -60,7 +61,7 @@ class AudioPre:
                 (
                     X_wave[d],
                     _,
-                ) = librosa.core.load(  # 理论上librosa读取可能对某些音频有bug，应该上ffmpeg读取，但是太麻烦了弃坑
+                ) = librosa.core.load(  # 理论上librosa读取可能对某些音频有bug，应该上av读取，但是太麻烦了弃坑
                     music_file,
                     bp["sr"],
                     False,
@@ -146,12 +147,7 @@ class AudioPre:
                 )
                 if os.path.exists(path):
                     opt_format_path = path[:-4] + ".%s" % format
-                    os.system(f'ffmpeg -i "{path}" -vn "{opt_format_path}" -q:a 2 -y')
-                    if os.path.exists(opt_format_path):
-                        try:
-                            os.remove(path)
-                        except:
-                            pass
+                    downsample_audio(path, opt_format_path, format)
         if vocal_root is not None:
             if is_hp3 == True:
                 head = "instrument_"
@@ -185,14 +181,8 @@ class AudioPre:
                     (np.array(wav_vocals) * 32768).astype("int16"),
                     self.mp.param["sr"],
                 )
-                if os.path.exists(path):
-                    opt_format_path = path[:-4] + ".%s" % format
-                    os.system(f'ffmpeg -i "{path}" -vn "{opt_format_path}" -q:a 2 -y')
-                    if os.path.exists(opt_format_path):
-                        try:
-                            os.remove(path)
-                        except:
-                            pass
+                opt_format_path = path[:-4] + ".%s" % format
+                downsample_audio(path, opt_format_path, format)
 
 
 class AudioPreDeEcho:
@@ -241,7 +231,7 @@ class AudioPreDeEcho:
                 (
                     X_wave[d],
                     _,
-                ) = librosa.core.load(  # 理论上librosa读取可能对某些音频有bug，应该上ffmpeg读取，但是太麻烦了弃坑
+                ) = librosa.core.load(  # 理论上librosa读取可能对某些音频有bug，应该上av读取，但是太麻烦了弃坑
                     music_file,
                     bp["sr"],
                     False,
@@ -323,12 +313,7 @@ class AudioPreDeEcho:
                 )
                 if os.path.exists(path):
                     opt_format_path = path[:-4] + ".%s" % format
-                    os.system(f'ffmpeg -i "{path}" -vn "{opt_format_path}" -q:a 2 -y')
-                    if os.path.exists(opt_format_path):
-                        try:
-                            os.remove(path)
-                        except:
-                            pass
+                    downsample_audio(path, opt_format_path, format)
         if vocal_root is not None:
             if self.data["high_end_process"].startswith("mirroring"):
                 input_high_end_ = spec_utils.mirroring(
@@ -360,9 +345,4 @@ class AudioPreDeEcho:
                 )
                 if os.path.exists(path):
                     opt_format_path = path[:-4] + ".%s" % format
-                    os.system(f'ffmpeg -i "{path}" -vn "{opt_format_path}" -q:a 2 -y')
-                    if os.path.exists(opt_format_path):
-                        try:
-                            os.remove(path)
-                        except:
-                            pass
+                    downsample_audio(path, opt_format_path, format)

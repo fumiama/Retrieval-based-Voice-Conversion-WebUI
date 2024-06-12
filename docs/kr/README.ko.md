@@ -156,26 +156,6 @@ sh ./run.sh
 	rvcmd assets/v2 # RVC-Models-Downloader command
 	```
 
-### 2. 安装 ffmpeg 工具
-若已安装`ffmpeg`和`ffprobe`则可跳过此步骤。
-
-#### Ubuntu/Debian 用户
-```bash
-sudo apt install ffmpeg
-```
-#### MacOS 用户
-```bash
-brew install ffmpeg
-```
-#### Windows 用户
-下载后放置在根目录。
-```bash
-rvcmd tools/ffmpeg # RVC-Models-Downloader command
-```
-- 下载[ffmpeg.exe](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffmpeg.exe)
-
-- 下载[ffprobe.exe](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffprobe.exe)
-
 ### 3. 下载 rmvpe 人声音高提取算法所需文件
 
 如果你想使用最新的RMVPE人声音高提取算法，则你需要下载音高提取模型参数并放置于`assets/rmvpe`。
@@ -237,7 +217,6 @@ rvcmd packs/general/latest # RVC-Models-Downloader command
 + [VITS](https://github.com/jaywalnut310/vits)
 + [HIFIGAN](https://github.com/jik876/hifi-gan)
 + [Gradio](https://github.com/gradio-app/gradio)
-+ [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 + [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 + [audio-slicer](https://github.com/openvpi/audio-slicer)
 + [Vocal pitch extraction:RMVPE](https://github.com/Dream-High/RMVPE)
@@ -298,31 +277,7 @@ v2 버전 모델을 사용하려면 추가로 다음을 다운로드해야 합�
   rvcmd assets/v2 # RVC-Models-Downloader command
   ```
 
-### 2. ffmpeg 설치
-
-`ffmpeg`와 `ffprobe`가 이미 설치되어 있다면 건너뜁니다.
-
-#### Ubuntu/Debian 사용자
-
-```bash
-sudo apt install ffmpeg
-```
-
-#### MacOS 사용자
-
-```bash
-brew install ffmpeg
-```
-
-#### Windows 사용자
-
-다운로드 후 루트 디렉토리에 배치.
-
-- [ffmpeg.exe 다운로드](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffmpeg.exe)
-
-- [ffprobe.exe 다운로드](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/ffprobe.exe)
-
-### 3. RMVPE 인간 음성 피치 추출 알고리즘에 필요한 파일 다운로드
+### 2. RMVPE 인간 음성 피치 추출 알고리즘에 필요한 파일 다운로드
 
 최신 RMVPE 인간 음성 피치 추출 알고리즘을 사용하려면 음피치 추출 모델 매개변수를 다운로드하고 RVC 루트 디렉토리에 배치해야 합니다.
 
@@ -332,7 +287,7 @@ brew install ffmpeg
 
 - [rmvpe.onnx 다운로드](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.onnx)
 
-### 4. AMD 그래픽 카드 Rocm(선택사항, Linux만 해당)
+### 3. AMD 그래픽 카드 Rocm(선택사항, Linux만 해당)
 
 Linux 시스템에서 AMD의 Rocm 기술을 기반으로 RVC를 실행하려면 [여기](https://rocm.docs.amd.com/en/latest/deploy/linux/os-native/install.html)에서 필요한 드라이버를 먼저 설치하세요.
 
@@ -392,7 +347,6 @@ source /opt/intel/oneapi/setvars.sh
 - [VITS](https://github.com/jaywalnut310/vits)
 - [HIFIGAN](https://github.com/jik876/hifi-gan)
 - [Gradio](https://github.com/gradio-app/gradio)
-- [FFmpeg](https://github.com/FFmpeg/FFmpeg)
 - [Ultimate Vocal Remover](https://github.com/Anjok07/ultimatevocalremovergui)
 - [audio-slicer](https://github.com/openvpi/audio-slicer)
 - [Vocal pitch extraction:RMVPE](https://github.com/Dream-High/RMVPE)
