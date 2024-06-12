@@ -16,6 +16,8 @@ import torch.nn.functional as F
 import torchcrepe
 from torchaudio.transforms import Resample
 
+from rvc.synthesizer import load_synthesizer
+
 now_dir = os.getcwd()
 sys.path.append(now_dir)
 from multiprocessing import Manager as M
@@ -113,7 +115,7 @@ class RVC:
             self.net_g: nn.Module = None
 
             def set_default_model():
-                self.net_g, cpt = jit.get_synthesizer(self.pth_path, self.device)
+                self.net_g, cpt = load_synthesizer(self.pth_path, self.device)
                 self.tgt_sr = cpt["config"][-1]
                 cpt["config"][-3] = cpt["weight"]["emb_g.weight"].shape[0]
                 self.if_f0 = cpt.get("f0", 1)
