@@ -6,7 +6,7 @@ from scipy.fft import fft
 from pybase16384 import encode_to_string, decode_from_string
 
 from configs import CPUConfig, singleton_variable
-from infer.lib.jit import get_synthesizer_ckpt
+from rvc.synthesizer import get_synthesizer
 
 from .pipeline import Pipeline
 from .utils import load_hubert
@@ -132,7 +132,7 @@ def model_hash_ckpt(cpt):
     config = CPUConfig()
 
     with TorchSeedContext(114514):
-        net_g, cpt = get_synthesizer_ckpt(cpt, config.device)
+        net_g, cpt = get_synthesizer(cpt, config.device)
         tgt_sr = cpt["config"][-1]
         if_f0 = cpt.get("f0", 1)
         version = cpt.get("version", "v1")

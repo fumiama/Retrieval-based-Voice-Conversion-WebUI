@@ -518,16 +518,15 @@ class RMVPE:
             def get_jit_model():
                 jit_model_path = model_path.rstrip(".pth")
                 jit_model_path += ".half.jit" if is_half else ".jit"
-                reload = False
+                ckpt = None
                 if os.path.exists(jit_model_path):
                     ckpt = jit.load(jit_model_path)
                     model_device = ckpt["device"]
                     if model_device != str(self.device):
-                        reload = True
-                else:
-                    reload = True
+                        del ckpt
+                        ckpt = None
 
-                if reload:
+                if ckpt is None:
                     ckpt = jit.rmvpe_jit_export(
                         model_path=model_path,
                         mode="script",
@@ -536,6 +535,7 @@ class RMVPE:
                         device=device,
                         is_half=is_half,
                     )
+
                 model = torch.jit.load(BytesIO(ckpt["model"]), map_location=device)
                 return model
 

@@ -5,7 +5,7 @@ import librosa
 import numpy as np
 import onnxruntime
 
-from .f0predictors import (
+from .f0 import (
     PMF0Predictor,
     HarvestF0Predictor,
     DioF0Predictor,

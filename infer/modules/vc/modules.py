@@ -10,7 +10,7 @@ import torch
 from io import BytesIO
 
 from infer.lib.audio import load_audio, wav2
-from infer.lib.jit import get_synthesizer_ckpt, get_synthesizer
+from rvc.synthesizer import get_synthesizer, load_synthesizer
 from .info import show_model_info
 from .pipeline import Pipeline
 from .utils import get_index_path_from_model, load_hubert
@@ -62,9 +62,7 @@ class VC:
                 elif torch.backends.mps.is_available():
                     torch.mps.empty_cache()
                 ###楼下不这么折腾清理不干净
-                self.net_g, self.cpt = get_synthesizer_ckpt(
-                    self.cpt, self.config.device
-                )
+                self.net_g, self.cpt = get_synthesizer(self.cpt, self.config.device)
                 self.if_f0 = self.cpt.get("f0", 1)
                 self.version = self.cpt.get("version", "v1")
                 del self.net_g, self.cpt
@@ -88,7 +86,7 @@ class VC:
         person = f'{os.getenv("weight_root")}/{sid}'
         logger.info(f"Loading: {person}")
 
-        self.net_g, self.cpt = get_synthesizer(person, self.config.device)
+        self.net_g, self.cpt = load_synthesizer(person, self.config.device)
         self.tgt_sr = self.cpt["config"][-1]
         self.cpt["config"][-3] = self.cpt["weight"]["emb_g.weight"].shape[0]  # n_spk
         self.if_f0 = self.cpt.get("f0", 1)
