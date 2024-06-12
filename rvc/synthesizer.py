@@ -27,7 +27,8 @@ def get_synthesizer(cpt: OrderedDict, device=torch.device("cpu")):
 
 
 def load_synthesizer(
-    pth_path: torch.serialization.FILE_LIKE, device=torch.device("cpu")):
+    pth_path: torch.serialization.FILE_LIKE, device=torch.device("cpu")
+):
     return get_synthesizer(
         torch.load(pth_path, map_location=torch.device("cpu")),
         device,

@@ -62,9 +62,7 @@ class VC:
                 elif torch.backends.mps.is_available():
                     torch.mps.empty_cache()
                 ###楼下不这么折腾清理不干净
-                self.net_g, self.cpt = get_synthesizer(
-                    self.cpt, self.config.device
-                )
+                self.net_g, self.cpt = get_synthesizer(self.cpt, self.config.device)
                 self.if_f0 = self.cpt.get("f0", 1)
                 self.version = self.cpt.get("version", "v1")
                 del self.net_g, self.cpt
