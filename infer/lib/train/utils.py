@@ -5,6 +5,7 @@ import logging
 import os
 import sys
 
+import codecs
 import numpy as np
 import torch
 from scipy.io.wavfile import read
@@ -251,13 +252,11 @@ def load_wav_to_torch(full_path):
 
 def load_filepaths_and_text(filename, split="|"):
     try:
-        with open(filename, encoding="utf-8") as f:
-            filepaths_and_text = [line.strip().split(split) for line in f]
-    except UnicodeDecodeError:
-        with open(filename) as f:
-            filepaths_and_text = [line.strip().split(split) for line in f]
+        return [line.strip().split(split) for line in codecs.open(filename, encoding="utf-8")]
+    except UnicodeDecodeError as e:
+        logger.error("Error loading file %s: %s", filename, e)
 
-    return filepaths_and_text
+    return []
 
 
 def get_hparams(init=True):
