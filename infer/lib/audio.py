@@ -43,21 +43,26 @@ def load_audio(file: str, sr: int) -> np.ndarray:
         container = av.open(file)
         resampler = AudioResampler(format="fltp", layout="mono", rate=sr)
 
-        # AV stores duration in nanoseconds
-        decoded_audio = (
-            ((container.duration * sr / container.bit_rate) // 1_000_000) + 1
-        ) * []
+        # Estimated maximum total number of samples to pre-allocate the array
+        audio_duration_sec = container.duration / 1_000_000  # Internally the PyAV stores duration in microseconds
+        estimated_total_samples = int(audio_duration_sec * container.streams.audio[0].rate)
+        decoded_audio = np.zeros(estimated_total_samples + 1, dtype=np.float32)
 
+        offset = 0
         for frame in container.decode(audio=0):
             frame.pts = None  # Clear presentation timestamp to avoid resampling issues
-            resampled = resampler.resample(frame)
-            decoded_audio.append(np.array(resampled))
+            resampled_frames = resampler.resample(frame)
+            for resampled_frame in resampled_frames:
+                frame_data = np.array(resampled_frame.to_ndarray()).flatten()
+                decoded_audio[offset:offset+len(frame_data)] = frame_data
+                offset += len(frame_data)
 
-        audio = np.concatenate(decoded_audio)
+        # Truncate the array to the actual size
+        decoded_audio = decoded_audio[:offset]
     except Exception as e:
         raise RuntimeError(f"Failed to load audio: {e}")
 
-    return np.frombuffer(audio, dtype=np.float32).flatten()
+    return decoded_audio
 
 
 def downsample_audio(input_path: str, output_path: str, format: str) -> None:
