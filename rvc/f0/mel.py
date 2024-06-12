@@ -19,7 +19,7 @@ class MelSpectrogram(torch.nn.Module):
         mel_fmin: int = 0,
         mel_fmax: int = None,
         clamp: float = 1e-5,
-        device = torch.device("cpu"),
+        device=torch.device("cpu"),
     ):
         super().__init__()
         if n_fft is None:
@@ -45,7 +45,7 @@ class MelSpectrogram(torch.nn.Module):
             hop_length=hop_length,
             win_length=win_length,
             window="hann",
-            use_torch_stft="privateuseone" not in str(device)
+            use_torch_stft="privateuseone" not in str(device),
         ).to(device)
 
     def forward(
