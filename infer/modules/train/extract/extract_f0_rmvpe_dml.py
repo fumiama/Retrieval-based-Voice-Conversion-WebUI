@@ -44,13 +44,13 @@ class FeatureInput(object):
         # p_len = x.shape[0] // self.hop
         if f0_method == "rmvpe":
             if hasattr(self, "model_rmvpe") == False:
-                from infer.lib.rmvpe import RMVPE
+                from rvc.f0.rmvpe import RMVPE
 
                 print("Loading rmvpe model")
                 self.model_rmvpe = RMVPE(
                     "assets/rmvpe/rmvpe.pt", is_half=False, device=device
                 )
-            f0 = self.model_rmvpe.infer_from_audio(x, threshold=0.03)
+            f0 = self.model_rmvpe.compute_f0(x, filter_radius=0.03)
         return f0
 
     def coarse_f0(self, f0):

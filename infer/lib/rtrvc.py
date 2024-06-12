@@ -313,7 +313,7 @@ class RVC:
 
     def get_f0_rmvpe(self, x, f0_up_key):
         if hasattr(self, "model_rmvpe") == False:
-            from infer.lib.rmvpe import RMVPE
+            from rvc.f0 import RMVPE
 
             printt("Loading rmvpe model")
             self.model_rmvpe = RMVPE(
@@ -322,7 +322,7 @@ class RVC:
                 device=self.device,
                 use_jit=self.config.use_jit,
             )
-        f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
+        f0 = self.model_rmvpe.compute_f0(x, thred=0.03)
         f0 *= pow(2, f0_up_key / 12)
         return self.get_f0_post(f0)
 

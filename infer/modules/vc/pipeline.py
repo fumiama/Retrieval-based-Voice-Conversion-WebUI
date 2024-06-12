@@ -16,7 +16,7 @@ import torch.nn.functional as F
 import torchcrepe
 from scipy import signal
 
-from rvc.f0 import PM, Harvest
+from rvc.f0 import PM, Harvest, RMVPE
 
 now_dir = os.getcwd()
 sys.path.append(now_dir)
@@ -108,24 +108,23 @@ class Pipeline(object):
             f0[pd < 0.1] = 0
             f0 = f0[0].cpu().numpy()
         elif f0_method == "rmvpe":
-            if not hasattr(self, "model_rmvpe"):
-                from infer.lib.rmvpe import RMVPE
-
+            if not hasattr(self, "rmvpe"):
                 logger.info(
                     "Loading rmvpe model %s" % "%s/rmvpe.pt" % os.environ["rmvpe_root"]
                 )
-                self.model_rmvpe = RMVPE(
+                self.rmvpe = RMVPE(
                     "%s/rmvpe.pt" % os.environ["rmvpe_root"],
                     is_half=self.is_half,
                     device=self.device,
                     # use_jit=self.config.use_jit,
                 )
-            f0 = self.model_rmvpe.infer_from_audio(x, threshold=0.03)
+            f0 = self.rmvpe.compute_f0(x, filter_radius=0.03)
 
             if "privateuseone" in str(self.device):  # clean ortruntime memory
-                del self.model_rmvpe.model
-                del self.model_rmvpe
+                del self.rmvpe.model
+                del self.rmvpe
                 logger.info("Cleaning ortruntime memory")
+
         elif f0_method == "fcpe":
             if not hasattr(self, "model_fcpe"):
                 from torchfcpe import spawn_bundled_infer_model
