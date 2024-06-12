@@ -21,10 +21,10 @@ class RMVPE(F0Predictor):
         device: str,
         use_jit=False,
     ):
-        hop_length=160
-        f0_min=30
-        f0_max=8000
-        sampling_rate=16000
+        hop_length = 160
+        f0_min = 30
+        f0_max = 8000
+        sampling_rate = 16000
 
         super().__init__(hop_length, f0_min, f0_max, sampling_rate)
 
@@ -55,6 +55,7 @@ class RMVPE(F0Predictor):
                 providers=["DmlExecutionProvider"],
             )
         else:
+
             def get_jit_model():
                 jit_model_path = model_path.rstrip(".pth")
                 jit_model_path += ".half.jit" if is_half else ".jit"
@@ -110,9 +111,7 @@ class RMVPE(F0Predictor):
             p_len = wav.shape[0] // self.hop_length
         if not torch.is_tensor(wav):
             wav = torch.from_numpy(wav)
-        mel = self.mel_extractor(
-            wav.float().to(self.device).unsqueeze(0), center=True
-        )
+        mel = self.mel_extractor(wav.float().to(self.device).unsqueeze(0), center=True)
         hidden = self._mel2hidden(mel)
         if "privateuseone" not in str(self.device):
             hidden = hidden.squeeze(0).cpu().numpy()
