@@ -17,7 +17,7 @@ class F0Predictor(object):
         filter_radius: Optional[Union[int, float]] = None,
     ): ...
 
-    def interpolate_f0(self, f0: np.ndarray[Any, np.dtype]):
+    def _interpolate_f0(self, f0: np.ndarray[Any, np.dtype]):
         """
         对F0进行插值处理
         """
@@ -55,7 +55,7 @@ class F0Predictor(object):
 
         return ip_data[:, 0], vuv_vector[:, 0]
 
-    def resize_f0(self, x: np.ndarray[Any, np.dtype], target_len: int):
+    def _resize_f0(self, x: np.ndarray[Any, np.dtype], target_len: int):
         source = np.array(x)
         source[source < 0.001] = np.nan
         target = np.interp(

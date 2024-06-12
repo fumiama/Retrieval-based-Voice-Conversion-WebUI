@@ -122,7 +122,7 @@ class RMVPE(F0Predictor):
 
         f0 = self._decode(hidden, thred=filter_radius)
 
-        return self.interpolate_f0(self.resize_f0(f0, p_len))[0]
+        return self._interpolate_f0(self._resize_f0(f0, p_len))[0]
 
     def _to_local_average_cents(self, salience, threshold=0.05):
         center = np.argmax(salience, axis=1)  # 帧长#index

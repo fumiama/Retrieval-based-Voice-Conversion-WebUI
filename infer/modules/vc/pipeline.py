@@ -10,7 +10,6 @@ from time import time
 import faiss
 import librosa
 import numpy as np
-import pyworld
 import torch
 import torch.nn.functional as F
 import torchcrepe
