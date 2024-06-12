@@ -1,9 +1,10 @@
 from io import BufferedWriter, BytesIO
 from pathlib import Path
 from typing import Dict, Tuple
+import os
+
 import numpy as np
 import av
-import os
 from av.audio.resampler import AudioResampler
 
 video_format_dict: Dict[str, str] = {
@@ -44,10 +45,8 @@ def load_audio(file: str, sr: int) -> np.ndarray:
         resampler = AudioResampler(format="fltp", layout="mono", rate=sr)
 
         # Estimated maximum total number of samples to pre-allocate the array
-        audio_duration_sec: float = (
-            container.duration / 1_000_000
-        )  # AV stores length in microseconds by default
-        estimated_total_samples = int(audio_duration_sec * sr + 0.5)
+        # AV stores length in microseconds by default
+        estimated_total_samples = int(container.duration * sr // 1_000_000)
         decoded_audio = np.zeros(estimated_total_samples + 1, dtype=np.float32)
 
         offset = 0
@@ -55,7 +54,7 @@ def load_audio(file: str, sr: int) -> np.ndarray:
             frame.pts = None  # Clear presentation timestamp to avoid resampling issues
             resampled_frames = resampler.resample(frame)
             for resampled_frame in resampled_frames:
-                frame_data = np.array(resampled_frame.to_ndarray()).flatten()
+                frame_data = resampled_frame.to_ndarray()[0]
                 end_index = offset + len(frame_data)
 
                 # Check if decoded_audio has enough space, and resize if necessary
