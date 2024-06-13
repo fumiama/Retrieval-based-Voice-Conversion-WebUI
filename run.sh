@@ -1,51 +1,29 @@
 #!/bin/sh
 
-if [ "$(uname)" = "Darwin" ]; then
+if [[ "$(uname)" = "Darwin" ]]; then
   # macOS specific env:
   export PYTORCH_ENABLE_MPS_FALLBACK=1
   export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
 fi
 
-if [ -d ".venv" ]; then
-  echo "Activate venv..."
-  . .venv/bin/activate
+if [[ -d ".venv" ]]; then
+  echo "Activating venv..."
+  source .venv/bin/activate
 else
-  echo "Create venv..."
+  echo "Creating venv..."
   requirements_file="requirements/main.txt"
 
-  # Check if Python 3.8 is installed
-  if ! (command -v python3.8 >/dev/null 2>&1 || pyenv versions --bare | grep -q "3.8"); then
-    echo "Python 3 not found. Attempting to install 3.8..."
-    if [ "$(uname)" = "Darwin" ] && command -v brew >/dev/null 2>&1; then
-      brew install python@3.8
-    elif [ "$(uname)" = "Linux" ] && command -v apt-get >/dev/null 2>&1; then
-      sudo apt update
-      sudo apt install -y python3.8
-    else
-      echo "Please install Python 3.8 manually."
-      exit 1
-    fi
+  # Check if Python is installed
+  if ! command -v python; then
+    echo "Python not found. Please install Python using your package manager or via PyEnv."
   fi
 
-  python3.8 -m venv .venv
-  . .venv/bin/activate
+  python -m venv .venv
+  source .venv/bin/activate
 
-  # Check if required packages are installed and install them if not
-  if [ -f "${requirements_file}" ]; then
-    installed_packages=$(python3.8 -m pip freeze)
-    while IFS= read -r package; do
-      expr "${package}" : "^#.*" > /dev/null && continue
-      package_name=$(echo "${package}" | sed 's/[<>=!].*//')
-      if ! echo "${installed_packages}" | grep -q "${package_name}"; then
-        echo "${package_name} not found. Attempting to install..."
-        python3.8 -m pip install --upgrade "${package}"
-      fi
-    done < "${requirements_file}"
-  else
-    echo "${requirements_file} not found. Please ensure the requirements file with required packages exists."
-    exit 1
-  fi
+  # Check if required packages are up-to-date and update them if not
+  pip install --upgrade -r "${requirements_file}"
 fi
 
 # Run the main script
-python3 web.py --pycmd python3
+python web.py --pycmd python3
