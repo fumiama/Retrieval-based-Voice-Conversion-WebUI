@@ -15,15 +15,20 @@ from rvc.f0 import F0Predictor, CRePE, PM, Dio, Harvest, RMVPE, FCPE
 from infer.lib.audio import load_audio
 
 from torch.multiprocessing import Process, set_start_method
+
 set_start_method("spawn", force=True)
 
 # exp_dir = sys.argv[1]
 # f = open("%s/extract_f0_feature.log" % exp_dir, "a+")
 
+
 def printt(strr):
     logger.info(strr)
 
-def save_f0(predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str) -> None:
+
+def save_f0(
+    predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str
+) -> None:
     try:
         out_features = predictor.compute_f0(load_audio(inp_path, 16000))
         out_coarse = 0  # TODO: add coarse f0
@@ -41,7 +46,9 @@ def save_f0(predictor: F0Predictor, inp_path: str, coarse_path: str, feature_pat
         printt("Failed to compute f0 for - %s: %s" % (inp_path, e))
 
 
-def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, device: str) -> None:
+def extract_features(
+    predictor: F0Predictor, expected_dir: str, is_half: bool, device: str
+) -> None:
     """
     Extract features
 
@@ -78,7 +85,11 @@ def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, d
 
     ps = []
     for idx, (inp_path, coarse_path, feature_path) in enumerate(paths):
-        p = Process(name=f"extract_f0_feature_{idx}", target=save_f0, args=(featureInput, inp_path, coarse_path, feature_path))
+        p = Process(
+            name=f"extract_f0_feature_{idx}",
+            target=save_f0,
+            args=(featureInput, inp_path, coarse_path, feature_path),
+        )
         logger.info(f"Starting extract_f0_feature_{idx} thread for {inp_path}")
         p.start()
         ps.append(p)
@@ -98,7 +109,9 @@ predictors = {
 }
 
 
-def call_extract_features(expected_dir: str, method_f0: str, is_half: bool, device: str) -> None:
+def call_extract_features(
+    expected_dir: str, method_f0: str, is_half: bool, device: str
+) -> None:
     """
     Extract features
 
