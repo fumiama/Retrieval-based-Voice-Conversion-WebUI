@@ -23,6 +23,7 @@ from multiprocessing import Process
 def printt(strr):
     print(strr)
 
+
 class DMLFeatureInputRMVPE(object):
     def __init__(self, device: str, samplerate=16000, hop_size=160):
         self.device = device
@@ -94,6 +95,7 @@ class DMLFeatureInputRMVPE(object):
                     )  # ori
                 except:
                     printt("f0fail-%s-%s-%s" % (idx, inp_path, traceback.format_exc()))
+
 
 class FeatureInput(object):
     def __init__(self, samplerate=16000, hop_size=160):
@@ -316,22 +318,24 @@ def default_extract_features(expected_dir: str, cores: int, method_f0: str) -> N
     for p in ps:
         p.join()
 
+
 def extract_rmvpe_dml_features(exp_dir: str, device: str):
-    import torch_directml # type: ignore # TODO: move this import somewhere else
+    import torch_directml  # type: ignore # TODO: move this import somewhere else
 
     featureInput = DMLFeatureInputRMVPE(device=device)
 
-    inp_root  = f"{exp_dir}/1_16k_wavs"
+    inp_root = f"{exp_dir}/1_16k_wavs"
     opt_root1 = f"{exp_dir}/2a_f0"
     opt_root2 = f"{exp_dir}/2b-f0nsf"
 
     os.makedirs(opt_root1, exist_ok=True)
     os.makedirs(opt_root2, exist_ok=True)
-    
+
     paths = []
     for name in sorted(list(os.listdir(inp_root))):
         inp_path = "%s/%s" % (inp_root, name)
-        if "spec" in inp_path: continue
+        if "spec" in inp_path:
+            continue
 
         opt_path1 = "%s/%s" % (opt_root1, name)
         opt_path2 = "%s/%s" % (opt_root2, name)
@@ -342,7 +346,10 @@ def extract_rmvpe_dml_features(exp_dir: str, device: str):
     except:
         printt("f0_all_fail-%s" % (traceback.format_exc()))
 
-def extract_rmvpe_features(expected_dir: str, is_half: bool, i_gpu: int, n_gpu: str) -> None:
+
+def extract_rmvpe_features(
+    expected_dir: str, is_half: bool, i_gpu: int, n_gpu: str
+) -> None:
     """
     Extract features using RMVPE
 
@@ -385,7 +392,7 @@ extraction_methods = {
     "harvest": default_extract_features,
     "dio": default_extract_features,
     "rmvpe": default_extract_features,
-    "rmvpe_gpu": extract_rmvpe_features
+    "rmvpe_gpu": extract_rmvpe_features,
 }
 
 
