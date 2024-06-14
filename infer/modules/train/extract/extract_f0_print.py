@@ -20,7 +20,7 @@ from multiprocessing import Process
 def printt(strr):
     logger.info(strr)
 
-def write_f0(predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str) -> None:
+def save_f0(predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str) -> None:
     try:
         out_features = predictor.compute_f0(inp_path)
         out_coarse = 0  # TODO: add coarse f0
@@ -53,7 +53,6 @@ def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, d
         predictor = predictor(device=device)
     featureInput = predictor
 
-    # TODO: rename these vars to not be confusing
     inp_root = f"{expected_dir}/1_16k_wavs"
     coarse_path = f"{expected_dir}/2a_f0"
     feature_path = f"{expected_dir}/2b-f0nsf"
@@ -68,13 +67,13 @@ def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, d
         inp_path = f"{inp_root}/{name}"
         if "spec" in inp_path:
             continue
-        opt_path1 = f"{coarse_path}/{name}"
-        opt_path2 = f"{feature_path}/{name}"
-        paths.append([inp_path, opt_path1, opt_path2])
+        coarse_path = f"{coarse_path}/{name}"
+        feature_path = f"{feature_path}/{name}"
+        paths.append([inp_path, coarse_path, feature_path])
 
     ps = []
     for idx, (inp_path, coarse_path, feature_path) in enumerate(paths):
-        p = Process(target=write_f0, args=(featureInput, inp_path, coarse_path, feature_path))
+        p = Process(target=save_f0, args=(featureInput, inp_path, coarse_path, feature_path))
         p.start()
         ps.append(p)
 
