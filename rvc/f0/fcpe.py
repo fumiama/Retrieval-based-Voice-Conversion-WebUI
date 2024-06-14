@@ -36,10 +36,15 @@ class FCPE(F0Predictor):
             p_len = wav.shape[0] // self.hop_length
         if not torch.is_tensor(wav):
             wav = torch.from_numpy(wav)
-        f0 = self.model.infer(
-            wav.float().to(self.device).unsqueeze(0),
-            sr=self.sampling_rate,
-            decoder_mode="local_argmax",
-            threshold=filter_radius,
-        ).squeeze().cpu().numpy()
+        f0 = (
+            self.model.infer(
+                wav.float().to(self.device).unsqueeze(0),
+                sr=self.sampling_rate,
+                decoder_mode="local_argmax",
+                threshold=filter_radius,
+            )
+            .squeeze()
+            .cpu()
+            .numpy()
+        )
         return self._interpolate_f0(self._resize_f0(f0, p_len))[0]
