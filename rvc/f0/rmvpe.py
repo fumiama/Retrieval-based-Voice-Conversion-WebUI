@@ -26,15 +26,17 @@ class RMVPE(F0Predictor):
         f0_max = 8000
         sampling_rate = 16000
 
-        super().__init__(hop_length, f0_min, f0_max, sampling_rate)
+        super().__init__(
+            hop_length,
+            f0_min,
+            f0_max,
+            sampling_rate,
+            device,
+        )
 
         self.is_half = is_half
         cents_mapping = 20 * np.arange(360) + 1997.3794084376191
         self.cents_mapping = np.pad(cents_mapping, (4, 4))  # 368
-
-        if device is None:
-            device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        self.device = device
 
         self.mel_extractor = MelSpectrogram(
             is_half=is_half,
@@ -44,10 +46,10 @@ class RMVPE(F0Predictor):
             hop_length=hop_length,
             mel_fmin=f0_min,
             mel_fmax=f0_max,
-            device=device,
-        ).to(device)
+            device=self.device,
+        ).to(self.device)
 
-        if "privateuseone" in str(device):
+        if "privateuseone" in str(self.device):
             import onnxruntime as ort
 
             self.model = ort.InferenceSession(
@@ -73,11 +75,11 @@ class RMVPE(F0Predictor):
                         mode="script",
                         inputs_path=None,
                         save_path=jit_model_path,
-                        device=device,
+                        device=self.device,
                         is_half=is_half,
                     )
 
-                model = torch.jit.load(BytesIO(ckpt["model"]), map_location=device)
+                model = torch.jit.load(BytesIO(ckpt["model"]), map_location=self.device)
                 return model
 
             def get_default_model():
@@ -99,7 +101,7 @@ class RMVPE(F0Predictor):
             else:
                 self.model = get_default_model()
 
-            self.model = self.model.to(device)
+            self.model = self.model.to(self.device)
 
     def compute_f0(
         self,

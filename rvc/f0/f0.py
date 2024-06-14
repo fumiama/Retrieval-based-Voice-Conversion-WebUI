@@ -1,14 +1,25 @@
 from typing import Any, Optional, Union
 
+import torch
 import numpy as np
 
 
 class F0Predictor(object):
-    def __init__(self, hop_length=512, f0_min=50, f0_max=1100, sampling_rate=44100):
+    def __init__(
+        self,
+        hop_length=512,
+        f0_min=50,
+        f0_max=1100,
+        sampling_rate=44100,
+        device: Optional[str] = None,
+    ):
         self.hop_length = hop_length
         self.f0_min = f0_min
         self.f0_max = f0_max
         self.sampling_rate = sampling_rate
+        if device is None:
+            device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        self.device = device
 
     def compute_f0(
         self,

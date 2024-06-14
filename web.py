@@ -861,9 +861,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                                 "Select the pitch extraction algorithm ('pm': faster extraction but lower-quality speech; 'harvest': better bass but extremely slow; 'crepe': better quality but GPU intensive), 'rmvpe': best quality, and little GPU requirement"
                             ),
                             choices=(
-                                ["pm", "harvest", "crepe", "rmvpe"]
-                                if config.dml == False
-                                else ["pm", "harvest", "rmvpe"]
+                                ["pm", "dio", "harvest", "rmvpe"]
+                                if config.dml
+                                else ["pm", "dio", "harvest", "crepe", "rmvpe"]
                             ),
                             value="rmvpe",
                             interactive=True,

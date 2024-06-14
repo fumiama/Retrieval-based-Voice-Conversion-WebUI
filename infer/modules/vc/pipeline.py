@@ -12,10 +12,9 @@ import librosa
 import numpy as np
 import torch
 import torch.nn.functional as F
-import torchcrepe
 from scipy import signal
 
-from rvc.f0 import PM, Harvest, RMVPE
+from rvc.f0 import PM, Harvest, RMVPE, CRePE, Dio
 
 now_dir = os.getcwd()
 sys.path.append(now_dir)
@@ -81,31 +80,24 @@ class Pipeline(object):
             if not hasattr(self, "pm"):
                 self.pm = PM(self.window, f0_min, f0_max, self.sr)
             f0 = self.pm.compute_f0(x, p_len=p_len)
+        if f0_method == "dio":
+            if not hasattr(self, "dio"):
+                self.dio = Dio(self.window, f0_min, f0_max, self.sr)
+            f0 = self.dio.compute_f0(x, p_len=p_len)
         elif f0_method == "harvest":
             if not hasattr(self, "harvest"):
                 self.harvest = Harvest(self.window, f0_min, f0_max, self.sr)
             f0 = self.harvest.compute_f0(x, p_len=p_len, filter_radius=filter_radius)
         elif f0_method == "crepe":
-            model = "full"
-            # Pick a batch size that doesn't cause memory errors on your gpu
-            batch_size = 512
-            # Compute pitch using first gpu
-            audio = torch.tensor(np.copy(x))[None].float()
-            f0, pd = torchcrepe.predict(
-                audio,
-                self.sr,
-                self.window,
-                f0_min,
-                f0_max,
-                model,
-                batch_size=batch_size,
-                device=self.device,
-                return_periodicity=True,
-            )
-            pd = torchcrepe.filter.median(pd, 3)
-            f0 = torchcrepe.filter.mean(f0, 3)
-            f0[pd < 0.1] = 0
-            f0 = f0[0].cpu().numpy()
+            if not hasattr(self, "crepe"):
+                self.crepe = CRePE(
+                    self.window,
+                    f0_min,
+                    f0_max,
+                    self.sr,
+                    self.device,
+                )
+            f0 = self.crepe.compute_f0(x, p_len=p_len)
         elif f0_method == "rmvpe":
             if not hasattr(self, "rmvpe"):
                 logger.info(
@@ -117,7 +109,7 @@ class Pipeline(object):
                     device=self.device,
                     # use_jit=self.config.use_jit,
                 )
-            f0 = self.rmvpe.compute_f0(x, filter_radius=0.03)
+            f0 = self.rmvpe.compute_f0(x, p_len=p_len, filter_radius=0.03)
 
             if "privateuseone" in str(self.device):  # clean ortruntime memory
                 del self.rmvpe.model
