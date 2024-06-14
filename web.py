@@ -269,48 +269,39 @@ def extract_f0_feature(
 ):
     gpus_list: List[str] = gpus.split("-")
 
-    Path(now_dir).joinpath("logs", exp_dir).mkdir(parents=True, exist_ok=True)
-    Path(now_dir).joinpath("logs", exp_dir, "extract_f0_feature.log").touch()
+    getlog = lambda path: open(path, "r").read()
+
+    log_dir = Path(now_dir, "logs", exp_dir)
+    log_dir.mkdir(parents=True, exist_ok=True)
+    
+    log_path = log_dir.joinpath("extract_f0_feature.log")
+    log_path.touch()
 
     if if_f0:
         if f0method != "rmvpe_gpu":
             extracting_thread = threading.Thread(
                 target=extract_features,
-                args=(
-                    str(Path(now_dir).joinpath("logs", exp_dir)),
-                    n_p,
-                    f0method,
-                ),
+                args=(str(log_dir), n_p, f0method),
             )
         else:
             if len(gpus_list):
                 for idx, n_g in enumerate(gpus_list):
                     extracting_thread = threading.Thread(
                         target=extract_rmvpe_features,
-                        args=(
-                            str(Path(now_dir).joinpath("logs", exp_dir)),
-                            config.is_half,
-                            idx,
-                            n_g,
-                        ),
+                        args=(str(log_dir), config.is_half, idx, n_g),
                     )
             else:
                 extracting_thread = threading.Thread(
                     target=extract_rmvpe_dml_features,
-                    args=(
-                        str(Path(now_dir).joinpath("logs", exp_dir)),
-                        config.device,
-                    )
+                    args=(str(log_dir), config.device)
                 )
 
         extracting_thread.start()
+        
         while extracting_thread.is_alive():
-            with open(
-                "%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "r"
-            ) as f:
-                yield (f.read())
+            yield getlog(log_path)
 
-        log = open("%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "r").read()
+        log = getlog(log_path)
         logger.info(log)
         yield log
 
