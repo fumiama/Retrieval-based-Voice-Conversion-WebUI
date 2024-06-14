@@ -40,7 +40,7 @@ import logging
 from infer.modules.train.extract.extract_f0_print import (
     extract_features,
     extract_rmvpe_features,
-    extract_rmvpe_dml_features
+    extract_rmvpe_dml_features,
 )
 
 logging.getLogger("numba").setLevel(logging.WARNING)
@@ -273,7 +273,7 @@ def extract_f0_feature(
 
     log_dir = Path(now_dir, "logs", exp_dir)
     log_dir.mkdir(parents=True, exist_ok=True)
-    
+
     log_path = log_dir.joinpath("extract_f0_feature.log")
     log_path.touch()
 
@@ -293,11 +293,11 @@ def extract_f0_feature(
             else:
                 extracting_thread = threading.Thread(
                     target=extract_rmvpe_dml_features,
-                    args=(str(log_dir), config.device)
+                    args=(str(log_dir), config.device),
                 )
 
         extracting_thread.start()
-        
+
         while extracting_thread.is_alive():
             yield getlog(log_path)
 
