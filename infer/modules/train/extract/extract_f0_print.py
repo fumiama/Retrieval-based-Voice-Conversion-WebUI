@@ -1,6 +1,8 @@
 import os
 import sys
 
+import numpy as np
+
 now_dir = os.getcwd()
 sys.path.append(now_dir)
 import logging
@@ -18,6 +20,24 @@ from multiprocessing import Process
 def printt(strr):
     logger.info(strr)
 
+def write_f0(predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str) -> None:
+    try:
+        out_features = predictor.compute_f0(inp_path)
+        out_coarse = 0  # TODO: add coarse f0
+        np.save(
+            feature_path,
+            out_features,
+            allow_pickle=False,
+        )
+        # np.save(
+        #     coarse_path,
+        #     out_coarse,
+        #     allow_pickle=False,
+        # )
+    except Exception as e:
+        printt("Failed to compute f0 for - %s: %s" % (inp_path, e))
+
+
 def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, device: str) -> None:
     """
     Extract features
@@ -27,28 +47,34 @@ def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, d
         cores: int - Number of CPU cores to use
         method_f0: str - F0 method to use { pm, harvest, dio, rmvpe }
     """
-    featureInput = predictor(device=device) if not isinstance(predictor, RMVPE) else predictor(is_half=is_half, device=device)
+    if isinstance(predictor, RMVPE):
+        predictor = predictor("assets/rmvpe/rmvpe.pt", is_half, device)
+    else:
+        predictor = predictor(device=device)
+    featureInput = predictor
 
     # TODO: rename these vars to not be confusing
     inp_root = f"{expected_dir}/1_16k_wavs"
-    opt_root1 = f"{expected_dir}/2a_f0"
-    opt_root2 = f"{expected_dir}/2b-f0nsf"
+    coarse_path = f"{expected_dir}/2a_f0"
+    feature_path = f"{expected_dir}/2b-f0nsf"
 
-    os.makedirs(opt_root1, exist_ok=True)
-    os.makedirs(opt_root2, exist_ok=True)
+    os.makedirs(coarse_path, exist_ok=True)
+    os.makedirs(feature_path, exist_ok=True)
+
+    log_f0 = lambda f0: open(f"{expected_dir}/extract_f0_feature.log").write(f"{f0}\n")
 
     paths = []
     for name in sorted(list(os.listdir(inp_root))):
         inp_path = f"{inp_root}/{name}"
         if "spec" in inp_path:
             continue
-        opt_path1 = f"{opt_root1}/{name}"
-        opt_path2 = f"{opt_root2}/{name}"
+        opt_path1 = f"{coarse_path}/{name}"
+        opt_path2 = f"{feature_path}/{name}"
         paths.append([inp_path, opt_path1, opt_path2])
 
     ps = []
-    for path in paths:
-        p = Process(target=featureInput.compute_f0, args=(path))
+    for idx, (inp_path, coarse_path, feature_path) in enumerate(paths):
+        p = Process(target=write_f0, args=(featureInput, inp_path, coarse_path, feature_path))
         p.start()
         ps.append(p)
 

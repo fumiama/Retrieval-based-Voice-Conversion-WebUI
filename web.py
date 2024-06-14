@@ -276,7 +276,7 @@ def extract_f0_feature(
     if if_f0:
         extracting_thread = threading.Thread(
             target=call_extract_features,
-            args=(str(log_dir), f0method, config.device),
+            args=(str(log_dir), f0method, config.is_half, config.device),
         )
 
         extracting_thread.start()
