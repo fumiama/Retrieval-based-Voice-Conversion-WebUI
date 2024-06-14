@@ -37,11 +37,7 @@ import threading
 import shutil
 import logging
 
-from infer.modules.train.extract.extract_f0_print import (
-    extract_features,
-    extract_rmvpe_features,
-    extract_rmvpe_dml_features,
-)
+from infer.modules.train.extract.extract_f0_print import call_extract_features
 
 logging.getLogger("numba").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -278,26 +274,12 @@ def extract_f0_feature(
     log_path.touch()
 
     if if_f0:
-        if f0method != "rmvpe_gpu":
-            extracting_thread = threading.Thread(
-                target=extract_features,
-                args=(str(log_dir), n_p, f0method),
-            )
-        else:
-            if len(gpus_list):
-                for idx, n_g in enumerate(gpus_list):
-                    extracting_thread = threading.Thread(
-                        target=extract_rmvpe_features,
-                        args=(str(log_dir), config.is_half, idx, n_g),
-                    )
-            else:
-                extracting_thread = threading.Thread(
-                    target=extract_rmvpe_dml_features,
-                    args=(str(log_dir), config.device),
-                )
+        extracting_thread = threading.Thread(
+            target=call_extract_features,
+            args=(str(log_dir), f0method, config.device),
+        )
 
         extracting_thread.start()
-
         while extracting_thread.is_alive():
             yield getlog(log_path)
 
