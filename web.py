@@ -40,6 +40,7 @@ import logging
 from infer.modules.train.extract.extract_f0_print import (
     extract_features,
     extract_rmvpe_features,
+    extract_rmvpe_dml_features
 )
 
 logging.getLogger("numba").setLevel(logging.WARNING)
@@ -276,17 +277,13 @@ def extract_f0_feature(
             extracting_thread = threading.Thread(
                 target=extract_features,
                 args=(
-                    os.path.join(now_dir, "logs", exp_dir),
+                    str(Path(now_dir).joinpath("logs", exp_dir)),
                     n_p,
                     f0method,
                 ),
             )
-
-            extracting_thread.start()
         else:
-            leng = len(gpus_list)
-            if leng:
-                ps = []
+            if len(gpus_list):
                 for idx, n_g in enumerate(gpus_list):
                     extracting_thread = threading.Thread(
                         target=extract_rmvpe_features,
@@ -297,23 +294,16 @@ def extract_f0_feature(
                             n_g,
                         ),
                     )
-
-                    extracting_thread.start()
             else:
-                cmd = (
-                    config.python_cmd
-                    + ' infer/modules/train/extract/extract_f0_rmvpe_dml.py "%s/logs/%s" '
-                    % (
-                        now_dir,
-                        exp_dir,
+                extracting_thread = threading.Thread(
+                    target=extract_rmvpe_dml_features,
+                    args=(
+                        str(Path(now_dir).joinpath("logs", exp_dir)),
+                        config.device,
                     )
                 )
-                logger.info("Execute: " + cmd)
-                p = Popen(
-                    cmd, shell=True, cwd=now_dir
-                )  # , shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, cwd=now_dir
-                p.wait()
-                done = [True]
+
+        extracting_thread.start()
         while extracting_thread.is_alive():
             with open(
                 "%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "r"
