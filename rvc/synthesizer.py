@@ -35,6 +35,7 @@ def load_synthesizer(
         device,
     )
 
+
 def synthesizer_jit_export(
     model_path: str,
     mode: str = "script",

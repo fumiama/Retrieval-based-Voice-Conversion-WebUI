@@ -36,6 +36,7 @@ def rmvpe_jit_export(
     save_pickle(ckpt, save_path)
     return ckpt
 
+
 class RMVPE(F0Predictor):
     def __init__(
         self,
@@ -80,6 +81,7 @@ class RMVPE(F0Predictor):
                 providers=["DmlExecutionProvider"],
             )
         else:
+
             def rmvpe_jit_model():
                 ckpt = get_jit_model(model_path, is_half, self.device, rmvpe_jit_export)
                 model = torch.jit.load(BytesIO(ckpt["model"]), map_location=self.device)

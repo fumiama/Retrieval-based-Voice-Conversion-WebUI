@@ -1,6 +1,9 @@
 import torch
 
-def get_rmvpe(model_path="assets/rmvpe/rmvpe.pt", device=torch.device("cpu"), is_half=False):
+
+def get_rmvpe(
+    model_path="assets/rmvpe/rmvpe.pt", device=torch.device("cpu"), is_half=False
+):
     from rvc.f0.e2e import E2E
 
     model = E2E(4, 1, (2, 2))

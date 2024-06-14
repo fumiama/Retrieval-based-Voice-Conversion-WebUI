@@ -15,6 +15,7 @@ def save_pickle(ckpt: dict, save_path: str):
     with open(save_path, "wb") as f:
         pickle.dump(ckpt, f)
 
+
 def load_inputs(path: torch.serialization.FILE_LIKE, device: str, is_half=False):
     parm = torch.load(path, map_location=torch.device("cpu"))
     for key in parm.keys():
@@ -24,6 +25,7 @@ def load_inputs(path: torch.serialization.FILE_LIKE, device: str, is_half=False)
         elif not is_half and parm[key].dtype == torch.float16:
             parm[key] = parm[key].float()
     return parm
+
 
 def export_jit_model(
     model: torch.nn.Module,
