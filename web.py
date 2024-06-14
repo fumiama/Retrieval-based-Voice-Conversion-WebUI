@@ -55,7 +55,7 @@ os.makedirs(os.path.join(now_dir, "logs"), exist_ok=True)
 os.makedirs(os.path.join(now_dir, "assets/weights"), exist_ok=True)
 os.environ["TEMP"] = tmp
 warnings.filterwarnings("ignore")
-torch.manual_seed(114514)  # ????
+torch.manual_seed(114514)
 
 
 config = Config()
