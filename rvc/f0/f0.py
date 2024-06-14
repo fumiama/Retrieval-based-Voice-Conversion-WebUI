@@ -23,12 +23,12 @@ class F0Predictor(object):
 
     def compute_f0(
         self,
-        wav: np.ndarray[Any, np.dtype],
+        wav: np.ndarray,
         p_len: Optional[int] = None,
         filter_radius: Optional[Union[int, float]] = None,
     ): ...
 
-    def _interpolate_f0(self, f0: np.ndarray[Any, np.dtype]):
+    def _interpolate_f0(self, f0: np.ndarray):
         """
         对F0进行插值处理
         """
@@ -66,7 +66,7 @@ class F0Predictor(object):
 
         return ip_data[:, 0], vuv_vector[:, 0]
 
-    def _resize_f0(self, x: np.ndarray[Any, np.dtype], target_len: int):
+    def _resize_f0(self, x: np.ndarray, target_len: int):
         source = np.array(x)
         source[source < 0.001] = np.nan
         target = np.interp(
