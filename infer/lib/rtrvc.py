@@ -294,6 +294,7 @@ class RVC:
             return self.get_f0(x, f0_up_key, 1, "fcpe")
         if hasattr(self, "model_crepe") == False:
             from rvc.f0 import CRePE
+
             self.model_crepe = CRePE(
                 160,
                 self.f0_min,
