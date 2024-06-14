@@ -132,6 +132,7 @@ class FeatureInput(object):
                 except:
                     printt("f0fail-%s-%s-%s" % (idx, inp_path, traceback.format_exc()))
 
+
 class FeatureInputRMVPE(object):
     def __init__(self, is_half: bool, samplerate=16000, hop_size=160):
         self.is_half = is_half
@@ -204,6 +205,7 @@ class FeatureInputRMVPE(object):
                 except:
                     printt("f0fail-%s-%s-%s" % (idx, inp_path, traceback.format_exc()))
 
+
 def default_extract_features(expected_dir: str, cores: int, method_f0: str) -> None:
     """
     Extract features
@@ -215,9 +217,13 @@ def default_extract_features(expected_dir: str, cores: int, method_f0: str) -> N
     """
     featureInput = FeatureInput()
 
-    inp_root = f"{expected_dir}/1_16k_wavs" # TODO: rename these vars to not be confusing
-    opt_root1 = f"{expected_dir}/2a_f0"     # TODO: rename these vars to not be confusing
-    opt_root2 = f"{expected_dir}/2b-f0nsf"  # TODO: rename these vars to not be confusing
+    inp_root = (
+        f"{expected_dir}/1_16k_wavs"  # TODO: rename these vars to not be confusing
+    )
+    opt_root1 = f"{expected_dir}/2a_f0"  # TODO: rename these vars to not be confusing
+    opt_root2 = (
+        f"{expected_dir}/2b-f0nsf"  # TODO: rename these vars to not be confusing
+    )
 
     os.makedirs(opt_root1, exist_ok=True)
     os.makedirs(opt_root2, exist_ok=True)
@@ -239,13 +245,18 @@ def default_extract_features(expected_dir: str, cores: int, method_f0: str) -> N
     for p in ps:
         p.join()
 
+
 def extract_rmvpe_features(expected_dir: str, is_half: bool, i_gpu: int, n_gpu: str):
     featureInput = FeatureInputRMVPE(is_half=is_half)
 
-    inp_root = f"{expected_dir}/1_16k_wavs" # TODO: rename these vars to not be confusing
-    opt_root1 = f"{expected_dir}/2a_f0"     # TODO: rename these vars to not be confusing
-    opt_root2 = f"{expected_dir}/2b-f0nsf"  # TODO: rename these vars to not be confusing
-    
+    inp_root = (
+        f"{expected_dir}/1_16k_wavs"  # TODO: rename these vars to not be confusing
+    )
+    opt_root1 = f"{expected_dir}/2a_f0"  # TODO: rename these vars to not be confusing
+    opt_root2 = (
+        f"{expected_dir}/2b-f0nsf"  # TODO: rename these vars to not be confusing
+    )
+
     os.makedirs(opt_root1, exist_ok=True)
     os.makedirs(opt_root2, exist_ok=True)
 
@@ -263,12 +274,14 @@ def extract_rmvpe_features(expected_dir: str, is_half: bool, i_gpu: int, n_gpu: 
     except:
         printt("f0_all_fail-%s" % (traceback.format_exc()))
 
+
 extraction_methods = {
-           "pm": default_extract_features,
-      "harvest": default_extract_features,
-          "dio": default_extract_features,
-        "rmvpe": default_extract_features,
+    "pm": default_extract_features,
+    "harvest": default_extract_features,
+    "dio": default_extract_features,
+    "rmvpe": default_extract_features,
 }
+
 
 def extract_features(expected_dir: str, cores: int, method_f0: str) -> None:
     """
@@ -280,8 +293,7 @@ def extract_features(expected_dir: str, cores: int, method_f0: str) -> None:
         method_f0: str - F0 method to use { pm, harvest, dio, rmvpe }
     """
 
-    if method_f0 not in extraction_methods: # Check if the method is valid
+    if method_f0 not in extraction_methods:  # Check if the method is valid
         raise ValueError(f"Unknown feature extraction method: {method_f0}")
-    
-    extraction_methods[method_f0](expected_dir, cores, method_f0)
 
+    extraction_methods[method_f0](expected_dir, cores, method_f0)
