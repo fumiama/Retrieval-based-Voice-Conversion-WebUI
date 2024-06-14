@@ -1,3 +1,7 @@
+# A hack, fix later
+if __name__ != "__main__":
+    exit(0)
+
 import os
 import sys
 from typing import List

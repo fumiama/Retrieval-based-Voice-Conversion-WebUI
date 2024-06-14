@@ -10,11 +10,12 @@ import logging
 logging.getLogger("numba").setLevel(logging.WARNING)
 logger = logging.getLogger("rvc.F0Print")
 
-from rvc.f0 import F0Predictor, CRePE, PM, Dio, Harvest, RMVPE
+from rvc.f0 import F0Predictor, CRePE, PM, Dio, Harvest, RMVPE, FCPE
 
 from infer.lib.audio import load_audio
 
-from multiprocessing import Process
+from torch.multiprocessing import Process, set_start_method
+set_start_method("spawn", force=True)
 
 # exp_dir = sys.argv[1]
 # f = open("%s/extract_f0_feature.log" % exp_dir, "a+")
@@ -51,8 +52,10 @@ def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, d
     """
     if predictor is RMVPE:
         predictor = predictor("assets/rmvpe/rmvpe.pt", is_half, device)
-    else:
+    elif predictor is CRePE or predictor is FCPE:
         predictor = predictor(device=device)
+    else:
+        predictor = predictor()
     featureInput = predictor
 
     inp_root = f"{expected_dir}/1_16k_wavs"
@@ -75,7 +78,8 @@ def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, d
 
     ps = []
     for idx, (inp_path, coarse_path, feature_path) in enumerate(paths):
-        p = Process(target=save_f0, args=(featureInput, inp_path, coarse_path, feature_path))
+        p = Process(name=f"extract_f0_feature_{idx}", target=save_f0, args=(featureInput, inp_path, coarse_path, feature_path))
+        logger.info(f"Starting extract_f0_feature_{idx} thread for {inp_path}")
         p.start()
         ps.append(p)
 
@@ -90,6 +94,7 @@ predictors = {
     "rmvpe": RMVPE,
     "rmvpe_gpu": RMVPE,
     "crepe": CRePE,
+    "fcpe": FCPE,
 }
 
 
