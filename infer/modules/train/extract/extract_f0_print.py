@@ -12,6 +12,8 @@ logger = logging.getLogger("rvc.F0Print")
 
 from rvc.f0 import F0Predictor, CRePE, PM, Dio, Harvest, RMVPE
 
+from infer.lib.audio import load_audio
+
 from multiprocessing import Process
 
 # exp_dir = sys.argv[1]
@@ -22,7 +24,7 @@ def printt(strr):
 
 def save_f0(predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str) -> None:
     try:
-        out_features = predictor.compute_f0(inp_path)
+        out_features = predictor.compute_f0(load_audio(inp_path, 16000))
         out_coarse = 0  # TODO: add coarse f0
         np.save(
             feature_path,
