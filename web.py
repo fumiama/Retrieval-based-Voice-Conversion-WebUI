@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import List
 from dotenv import load_dotenv
 
 now_dir = os.getcwd()
@@ -25,7 +26,7 @@ import numpy as np
 import gradio as gr
 import faiss
 import fairseq
-import pathlib
+from pathlib import Path
 import json
 from time import sleep
 from subprocess import Popen
@@ -36,8 +37,7 @@ import threading
 import shutil
 import logging
 
-from infer.modules.train.extract.extract_f0_print import extract_features
-
+from infer.modules.train.extract.extract_f0_print import extract_features, extract_rmvpe_features
 
 logging.getLogger("numba").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -51,7 +51,7 @@ os.makedirs(os.path.join(now_dir, "logs"), exist_ok=True)
 os.makedirs(os.path.join(now_dir, "assets/weights"), exist_ok=True)
 os.environ["TEMP"] = tmp
 warnings.filterwarnings("ignore")
-torch.manual_seed(114514)
+torch.manual_seed(114514) # ????
 
 
 config = Config()
@@ -260,11 +260,14 @@ def preprocess_dataset(trainset_dir: str, exp_dir: str, sr: int, n_p: int):
 
 
 # but2.click(extract_f0,[gpus6,np7,f0method8,if_f0_3,trainset_dir4],[info2])
-def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvpe):
-    gpus = gpus.split("-")
-    os.makedirs("%s/logs/%s" % (now_dir, exp_dir), exist_ok=True)
-    f = open("%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "w")
-    f.close()
+def extract_f0_feature(
+    gpus: str, n_p: int, f0method: str, if_f0: bool, exp_dir: str, version19: str
+):
+    gpus_list: List[str] = gpus.split("-")
+
+    Path(now_dir).joinpath("logs", exp_dir).mkdir(parents=True, exist_ok=True)
+    Path(now_dir).joinpath("logs", exp_dir, "extract_f0_feature.log").touch()
+
     if if_f0:
         if f0method != "rmvpe_gpu":
             extracting_thread = threading.Thread(
@@ -278,37 +281,21 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
 
             extracting_thread.start()
         else:
-            if gpus_rmvpe != "-":
-                gpus_rmvpe = gpus_rmvpe.split("-")
-                leng = len(gpus_rmvpe)
+            leng = len(gpus_list)
+            if leng:
                 ps = []
-                for idx, n_g in enumerate(gpus_rmvpe):
-                    cmd = (
-                        '"%s" infer/modules/train/extract/extract_f0_rmvpe.py %s %s %s "%s/logs/%s" %s '
-                        % (
-                            config.python_cmd,
-                            leng,
+                for idx, n_g in enumerate(gpus_list):
+                    extracting_thread = threading.Thread(
+                        target=extract_rmvpe_features,
+                        args=(
+                            str(Path(now_dir).joinpath("logs", exp_dir)),
+                            config.is_half,
                             idx,
                             n_g,
-                            now_dir,
-                            exp_dir,
-                            config.is_half,
-                        )
+                        ),
                     )
-                    logger.info("Execute: " + cmd)
-                    p = Popen(
-                        cmd, shell=True, cwd=now_dir
-                    )  # , shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, cwd=now_dir
-                    ps.append(p)
-                # 煞笔gr, popen read都非得全跑完了再一次性读取, 不用gr就正常读一句输出一句;只能额外弄出一个文本流定时读
-                done = [False]
-                threading.Thread(
-                    target=if_done_multi,  #
-                    args=(
-                        done,
-                        ps,
-                    ),
-                ).start()
+
+                    extracting_thread.start()
             else:
                 cmd = (
                     config.python_cmd
@@ -334,9 +321,9 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
         logger.info(log)
         yield log
 
-    leng = len(gpus)
+    leng = len(gpus_list)
     ps = []
-    for idx, n_g in enumerate(gpus):
+    for idx, n_g in enumerate(gpus_list):
         cmd = (
             '"%s" infer/modules/train/extract_feature_print.py %s %s %s %s "%s/logs/%s" %s %s'
             % (
@@ -538,7 +525,7 @@ def click_train(
     else:
         config_path = "v2/%s.json" % sr2
     config_save_path = os.path.join(exp_dir, "config.json")
-    if not pathlib.Path(config_save_path).exists():
+    if not Path(config_save_path).exists():
         with open(config_save_path, "w", encoding="utf-8") as f:
             json.dump(
                 config.json_config[config_path],
@@ -714,7 +701,7 @@ def train1key(
     [
         get_info_str(_)
         for _ in extract_f0_feature(
-            gpus16, np7, f0method8, if_f0_3, exp_dir1, version19, gpus_rmvpe
+            gpus16, np7, f0method8, if_f0_3, exp_dir1, version19
         )
     ]
 
@@ -1282,7 +1269,6 @@ with gr.Blocks(title="RVC WebUI") as app:
                         if_f0_3,
                         exp_dir1,
                         version19,
-                        gpus_rmvpe,
                     ],
                     [info2],
                     api_name="train_extract_f0_feature",
