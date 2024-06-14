@@ -13,7 +13,6 @@ import scipy.signal as signal
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torchcrepe
 from torchaudio.transforms import Resample
 
 from rvc.synthesizer import load_synthesizer
@@ -323,20 +322,17 @@ class RVC:
 
     def get_f0_fcpe(self, x, f0_up_key):
         if hasattr(self, "model_fcpe") == False:
-            from torchfcpe import spawn_bundled_infer_model
+            from rvc.f0 import FCPE
 
             printt("Loading fcpe model")
-            if "privateuseone" in str(self.device):
-                self.device_fcpe = "cpu"
-            else:
-                self.device_fcpe = self.device
-            self.model_fcpe = spawn_bundled_infer_model(self.device_fcpe)
-        f0 = self.model_fcpe.infer(
-            x.to(self.device_fcpe).unsqueeze(0).float(),
-            sr=16000,
-            decoder_mode="local_argmax",
-            threshold=0.006,
-        )
+            self.model_fcpe = FCPE(
+                160,
+                self.f0_min,
+                self.f0_max,
+                16000,
+                self.device,
+            )
+        f0 = self.model_fcpe.compute_f0(x)
         f0 *= pow(2, f0_up_key / 12)
         return self.get_f0_post(f0)
 
