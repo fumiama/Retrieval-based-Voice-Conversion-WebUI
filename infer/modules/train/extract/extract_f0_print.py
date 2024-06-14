@@ -16,18 +16,12 @@ from infer.lib.audio import load_audio
 logging.getLogger("numba").setLevel(logging.WARNING)
 from multiprocessing import Process
 
-exp_dir = sys.argv[1]
-f = open("%s/extract_f0_feature.log" % exp_dir, "a+")
+# exp_dir = sys.argv[1]
+# f = open("%s/extract_f0_feature.log" % exp_dir, "a+")
 
 
 def printt(strr):
     print(strr)
-    f.write("%s\n" % strr)
-    f.flush()
-
-
-n_p = int(sys.argv[2])
-f0method = sys.argv[3]
 
 
 class FeatureInput(object):
@@ -138,38 +132,29 @@ class FeatureInput(object):
                 except:
                     printt("f0fail-%s-%s-%s" % (idx, inp_path, traceback.format_exc()))
 
-
-if __name__ == "__main__":
-    # exp_dir=r"E:\codes\py39\dataset\mi-test"
-    # n_p=16
-    # f = open("%s/log_extract_f0.log"%exp_dir, "w")
-    printt(" ".join(sys.argv))
+def extract_features(expected_dir: str, cores: int, method_f0: str):
     featureInput = FeatureInput()
-    paths = []
-    inp_root = "%s/1_16k_wavs" % (exp_dir)
-    opt_root1 = "%s/2a_f0" % (exp_dir)
-    opt_root2 = "%s/2b-f0nsf" % (exp_dir)
+
+    inp_root = f"{expected_dir}/1_16k_wavs" # TODO: rename these vars to not be confusing
+    opt_root1 = f"{expected_dir}/2a_f0"     # TODO: rename these vars to not be confusing
+    opt_root2 = f"{expected_dir}/2b-f0nsf"  # TODO: rename these vars to not be confusing
 
     os.makedirs(opt_root1, exist_ok=True)
     os.makedirs(opt_root2, exist_ok=True)
+
+    paths = []
     for name in sorted(list(os.listdir(inp_root))):
-        inp_path = "%s/%s" % (inp_root, name)
+        inp_path = f"{inp_root}/{name}"
         if "spec" in inp_path:
             continue
-        opt_path1 = "%s/%s" % (opt_root1, name)
-        opt_path2 = "%s/%s" % (opt_root2, name)
+        opt_path1 = f"{opt_root1}/{name}"
+        opt_path2 = f"{opt_root2}/{name}"
         paths.append([inp_path, opt_path1, opt_path2])
 
     ps = []
-    for i in range(n_p):
-        p = Process(
-            target=featureInput.go,
-            args=(
-                paths[i::n_p],
-                f0method,
-            ),
-        )
-        ps.append(p)
+    for i in range(cores):
+        p = Process(target=featureInput.go, args=(paths[i::cores], method_f0))
         p.start()
-    for i in range(n_p):
-        ps[i].join()
+        ps.append(p)
+    for p in ps:
+        p.join()

@@ -36,6 +36,8 @@ import threading
 import shutil
 import logging
 
+from infer.modules.train.extract.extract_f0_print import extract_features
+
 
 logging.getLogger("numba").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -218,7 +220,7 @@ def if_done_multi(done, ps):
     done[0] = True
 
 
-def preprocess_dataset(trainset_dir, exp_dir, sr, n_p):
+def preprocess_dataset(trainset_dir: str, exp_dir: str, sr: int, n_p: int):
     sr = sr_dict[sr]
     os.makedirs("%s/logs/%s" % (now_dir, exp_dir), exist_ok=True)
     f = open("%s/logs/%s/preprocess.log" % (now_dir, exp_dir), "w")
@@ -265,29 +267,16 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
     f.close()
     if if_f0:
         if f0method != "rmvpe_gpu":
-            cmd = (
-                '"%s" infer/modules/train/extract/extract_f0_print.py "%s/logs/%s" %s %s'
-                % (
-                    config.python_cmd,
-                    now_dir,
-                    exp_dir,
+            extracting_thread = threading.Thread(
+                target=extract_features,
+                args=(
+                    os.path.join(now_dir, "logs", exp_dir),
                     n_p,
                     f0method,
-                )
-            )
-            logger.info("Execute: " + cmd)
-            p = Popen(
-                cmd, shell=True, cwd=now_dir
-            )  # , stdin=PIPE, stdout=PIPE,stderr=PIPE
-            # 煞笔gr, popen read都非得全跑完了再一次性读取, 不用gr就正常读一句输出一句;只能额外弄出一个文本流定时读
-            done = [False]
-            threading.Thread(
-                target=if_done,
-                args=(
-                    done,
-                    p,
                 ),
-            ).start()
+            )
+
+            extracting_thread.start()
         else:
             if gpus_rmvpe != "-":
                 gpus_rmvpe = gpus_rmvpe.split("-")
@@ -335,26 +324,16 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
                 )  # , shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, cwd=now_dir
                 p.wait()
                 done = [True]
-        while 1:
+        while extracting_thread.is_alive():
             with open(
                 "%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "r"
             ) as f:
                 yield (f.read())
-            sleep(1)
-            if done[0]:
-                break
-        with open("%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "r") as f:
-            log = f.read()
+
+        log = open("%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "r").read()
         logger.info(log)
         yield log
-    # 对不同part分别开多进程
-    """
-    n_part=int(sys.argv[1])
-    i_part=int(sys.argv[2])
-    i_gpu=sys.argv[3]
-    exp_dir=sys.argv[4]
-    os.environ["CUDA_VISIBLE_DEVICES"]=str(i_gpu)
-    """
+
     leng = len(gpus)
     ps = []
     for idx, n_g in enumerate(gpus):
