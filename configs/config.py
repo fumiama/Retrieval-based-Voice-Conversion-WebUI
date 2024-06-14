@@ -6,6 +6,7 @@ import shutil
 from multiprocessing import cpu_count
 
 import torch
+
 # TODO: move device selection into rvc
 import logging
 
