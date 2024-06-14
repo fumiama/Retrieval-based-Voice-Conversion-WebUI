@@ -385,6 +385,7 @@ extraction_methods = {
     "harvest": default_extract_features,
     "dio": default_extract_features,
     "rmvpe": default_extract_features,
+    "rmvpe_gpu": extract_rmvpe_features
 }
 
 
