@@ -18,18 +18,32 @@ from torch.multiprocessing import Process, set_start_method
 
 set_start_method("spawn", force=True)
 
-# exp_dir = sys.argv[1]
-# f = open("%s/extract_f0_feature.log" % exp_dir, "a+")
-
-
-def printt(strr):
-    logger.info(strr)
-
+# A helper function to log in both the terminal and the logfile
+def __log(logfile, data: str) -> None:
+    logger.info(data)
+    logfile.write(f"{data}\n")
 
 def save_f0(
-    predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str
+    predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str, logfile: str
 ) -> None:
+    """
+    Compute the F0 and save the results in a log file
+
+    Args:
+        inp_path: str - Input path for the audio
+        coarse_path: str - Path to save f0 coarse to
+        feature_path: str - Path to save f0 features to
+        logfile: str - The main log file of the f0 extraction
+    """
+
     try:
+        # So fun fact:
+        # As it turns out, you just can't pickle the TextIOWrappers, for some reason?
+        # Why is that? Who knows! But this unfortunately means that we have to
+        # Open the logfiles within each thread in order to have anything done here...
+        # This makes the code I/O bound and there's not a lot to do about it, i think
+        __logfile = open(logfile, "w+")
+
         out_features = predictor.compute_f0(load_audio(inp_path, 16000))
         out_coarse = 0  # TODO: add coarse f0
         np.save(
@@ -43,8 +57,7 @@ def save_f0(
         #     allow_pickle=False,
         # )
     except Exception as e:
-        printt("Failed to compute f0 for - %s: %s" % (inp_path, e))
-
+        __log(__logfile, f"Failed to compute f0 for - {inp_path}: {e}")
 
 def extract_features(
     predictor: F0Predictor, expected_dir: str, is_half: bool, device: str
@@ -72,8 +85,6 @@ def extract_features(
     os.makedirs(coarse_path, exist_ok=True)
     os.makedirs(feature_path, exist_ok=True)
 
-    log_f0 = lambda f0: open(f"{expected_dir}/extract_f0_feature.log").write(f"{f0}\n")
-
     paths = []
     for name in sorted(list(os.listdir(inp_root))):
         inp_path = f"{inp_root}/{name}"
@@ -88,9 +99,9 @@ def extract_features(
         p = Process(
             name=f"extract_f0_feature_{idx}",
             target=save_f0,
-            args=(featureInput, inp_path, coarse_path, feature_path),
+            args=(featureInput, inp_path, coarse_path, feature_path, f"{expected_dir}/extract_f0_feature.log"),
         )
-        logger.info(f"Starting extract_f0_feature_{idx} thread for {inp_path}")
+        logger.debug(f"Starting extract_f0_feature_{idx} thread for {inp_path}")
         p.start()
         ps.append(p)
 
