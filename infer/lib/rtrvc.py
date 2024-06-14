@@ -125,27 +125,10 @@ class RVC:
                     self.net_g = self.net_g.float()
 
             def set_jit_model():
-                jit_pth_path = self.pth_path.rstrip(".pth")
-                jit_pth_path += ".half.jit" if self.is_half else ".jit"
-                reload = False
-                if str(self.device) == "cuda":
-                    self.device = torch.device("cuda:0")
-                if os.path.exists(jit_pth_path):
-                    cpt = jit.load(jit_pth_path)
-                    model_device = cpt["device"]
-                    if model_device != str(self.device):
-                        reload = True
-                else:
-                    reload = True
+                from rvc.jit import get_jit_model
+                from rvc.synthesizer import synthesizer_jit_export
 
-                if reload:
-                    cpt = jit.synthesizer_jit_export(
-                        self.pth_path,
-                        "script",
-                        None,
-                        device=self.device,
-                        is_half=self.is_half,
-                    )
+                cpt = get_jit_model(self.pth_path, self.is_half, synthesizer_jit_export)
 
                 self.tgt_sr = cpt["config"][-1]
                 self.if_f0 = cpt.get("f0", 1)
