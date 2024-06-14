@@ -12,7 +12,7 @@ class PM(F0Predictor):
 
     def compute_f0(
         self,
-        wav: np.ndarray[Any, np.dtype],
+        wav: np.ndarray,
         p_len: Optional[int] = None,
         filter_radius: Optional[int] = None,
     ):
