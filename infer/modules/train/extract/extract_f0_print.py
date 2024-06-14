@@ -47,7 +47,7 @@ def extract_features(predictor: F0Predictor, expected_dir: str, is_half: bool, d
         cores: int - Number of CPU cores to use
         method_f0: str - F0 method to use { pm, harvest, dio, rmvpe }
     """
-    if type(predictor) == type(RMVPE):
+    if predictor is RMVPE:
         predictor = predictor("assets/rmvpe/rmvpe.pt", is_half, device)
     else:
         predictor = predictor(device=device)
