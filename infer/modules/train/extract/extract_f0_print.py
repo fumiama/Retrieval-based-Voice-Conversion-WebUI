@@ -18,13 +18,19 @@ from torch.multiprocessing import Process, set_start_method
 
 set_start_method("spawn", force=True)
 
+
 # A helper function to log in both the terminal and the logfile
 def __log(logfile, data: str) -> None:
     logger.info(data)
     logfile.write(f"{data}\n")
 
+
 def save_f0(
-    predictor: F0Predictor, inp_path: str, coarse_path: str, feature_path: str, logfile: str
+    predictor: F0Predictor,
+    inp_path: str,
+    coarse_path: str,
+    feature_path: str,
+    logfile: str,
 ) -> None:
     """
     Compute the F0 and save the results in a log file
@@ -58,6 +64,7 @@ def save_f0(
         # )
     except Exception as e:
         __log(__logfile, f"Failed to compute f0 for - {inp_path}: {e}")
+
 
 def extract_features(
     predictor: F0Predictor, expected_dir: str, is_half: bool, device: str
@@ -99,7 +106,13 @@ def extract_features(
         p = Process(
             name=f"extract_f0_feature_{idx}",
             target=save_f0,
-            args=(featureInput, inp_path, coarse_path, feature_path, f"{expected_dir}/extract_f0_feature.log"),
+            args=(
+                featureInput,
+                inp_path,
+                coarse_path,
+                feature_path,
+                f"{expected_dir}/extract_f0_feature.log",
+            ),
         )
         logger.debug(f"Starting extract_f0_feature_{idx} thread for {inp_path}")
         p.start()
