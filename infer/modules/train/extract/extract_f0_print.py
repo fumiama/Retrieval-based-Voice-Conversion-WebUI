@@ -112,9 +112,6 @@ def extract_features(
         feature_path = f"{feature_path}/{name}"
         paths.append([inp_path, coarse_path, feature_path])
 
-    # a hack, but multiprocessing doesn't allow simultaneous IO access to a file :)
-    open(f"{expected_dir}/extract_f0_feature.log", "w").close()
-
     ps = []
     for idx, (inp_path, coarse_path, feature_path) in enumerate(paths):
         p = Process(
