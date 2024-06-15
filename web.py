@@ -290,7 +290,7 @@ def extract_f0_feature(
                 lines = f.readlines()
                 for line in lines:
                     logger.info(line.rstrip())
-                
+
                 yield from lines
 
             yield f.read()
