@@ -269,13 +269,14 @@ def extract_f0_feature(
 ):
     gpus_list: List[str] = gpus.split("-")
 
-    getlog = lambda path: open(path, "r").read()
-
     log_dir = Path(now_dir, "logs", exp_dir)
     log_dir.mkdir(parents=True, exist_ok=True)
 
     log_path = log_dir.joinpath("extract_f0_feature.log")
     log_path.touch()
+
+    # ugly way to clear the file
+    open(log_path, "w").close()
 
     if if_f0:
         extracting_thread = threading.Thread(
@@ -284,12 +285,15 @@ def extract_f0_feature(
         )
 
         extracting_thread.start()
-        while extracting_thread.is_alive():
-            yield getlog(log_path)
+        with open(log_path, "r") as f:
+            while extracting_thread.is_alive():
+                lines = f.readlines()
+                for line in lines:
+                    logger.info(line.rstrip())
+                
+                yield from lines
 
-        log = getlog(log_path)
-        logger.info(log)
-        yield log
+            yield f.read()
 
     leng = len(gpus_list)
     ps = []
