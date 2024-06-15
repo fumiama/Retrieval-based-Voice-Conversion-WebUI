@@ -81,18 +81,11 @@ def extract_features(
         predictor = predictor("assets/rmvpe/rmvpe.pt", is_half, device)
     elif predictor is CRePE or predictor is FCPE:
         predictor = predictor(
-            hop_length=512,
-            f0_min=50,
-            f0_max=1100,
-            sampling_rate=44100,
-            device=device
+            hop_length=512, f0_min=50, f0_max=1100, sampling_rate=44100, device=device
         )
     else:
         predictor = predictor(
-            hop_length=512,
-            f0_min=50,
-            f0_max=1100,
-            sampling_rate=44100
+            hop_length=512, f0_min=50, f0_max=1100, sampling_rate=44100
         )
     featureInput = predictor
 
