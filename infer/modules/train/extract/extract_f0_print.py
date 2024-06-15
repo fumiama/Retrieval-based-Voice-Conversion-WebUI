@@ -48,7 +48,7 @@ def save_f0(
         # Why is that? Who knows! But this unfortunately means that we have to
         # Open the logfiles within each thread in order to have anything done here...
         # This makes the code I/O bound and there's not a lot to do about it, i think
-        __logfile = open(logfile, "w+")
+        __logfile = open(logfile, "w")
 
         out_features = predictor.compute_f0(load_audio(inp_path, 16000))
         out_coarse = 0  # TODO: add coarse f0
@@ -111,6 +111,9 @@ def extract_features(
         coarse_path = f"{coarse_path}/{name}"
         feature_path = f"{feature_path}/{name}"
         paths.append([inp_path, coarse_path, feature_path])
+
+    # a hack, but multiprocessing doesn't allow simultaneous IO access to a file :)
+    open(f"{expected_dir}/extract_f0_feature.log", "w").close()
 
     ps = []
     for idx, (inp_path, coarse_path, feature_path) in enumerate(paths):
