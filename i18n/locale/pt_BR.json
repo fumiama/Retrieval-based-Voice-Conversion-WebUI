@@ -114,7 +114,7 @@
     "Save only the latest '.ckpt' file to save disk space": "Só deve salvar apenas o arquivo ckpt mais recente para economizar espaço em disco:",
     "Saved model name (without extension)": "Nome do modelo salvo (sem extensão):",
     "Sealing date": "封装时间",
-    "Search feature ratio (controls accent strength, too high has artifacting)": "Taxa de recurso de recuperação:",
+    "Feature searching ratio": "Taxa de recurso de recuperação:",
     "Select Speaker/Singer ID": "Selecione Palestrantes/Cantores ID:",
     "Select the .index file": "Selecione o Index",
     "Select the .pth file": "Selecione o Arquivo",

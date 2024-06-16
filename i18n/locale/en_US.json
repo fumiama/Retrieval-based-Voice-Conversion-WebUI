@@ -114,7 +114,7 @@
     "Save only the latest '.ckpt' file to save disk space": "Save only the latest '.ckpt' file to save disk space",
     "Saved model name (without extension)": "Saved model name (without extension)",
     "Sealing date": "Sealing date",
-    "Search feature ratio (controls accent strength, too high has artifacting)": "Search feature ratio (controls accent strength, too high has artifacting)",
+    "Feature searching ratio": "Feature searching ratio",
     "Select Speaker/Singer ID": "Select Speaker/Singer ID",
     "Select the .index file": "Select the .index file",
     "Select the .pth file": "Select the .pth file",

@@ -114,7 +114,7 @@
     "Save only the latest '.ckpt' file to save disk space": "Сохранять только последний файл '.ckpt', чтобы сохранить место на диске:",
     "Saved model name (without extension)": "Имя файла модели для сохранения (без расширения):",
     "Sealing date": "Sealing date",
-    "Search feature ratio (controls accent strength, too high has artifacting)": "Соотношение поиска черт:",
+    "Feature searching ratio": "Соотношение поиска черт:",
     "Select Speaker/Singer ID": "Номер говорящего:",
     "Select the .index file": "Выбрать файл .index",
     "Select the .pth file": "Выбрать файл .pth",

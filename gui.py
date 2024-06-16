@@ -373,7 +373,7 @@ if __name__ == "__main__":
                             [
                                 sg.Text(
                                     i18n(
-                                        "Search feature ratio (controls accent strength, too high has artifacting)"
+                                        "Feature searching ratio"
                                     )
                                 ),
                                 sg.Slider(

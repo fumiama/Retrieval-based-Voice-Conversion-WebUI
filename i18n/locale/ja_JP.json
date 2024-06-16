@@ -114,7 +114,7 @@
     "Save only the latest '.ckpt' file to save disk space": "ハードディスク容量を節約するため、最新のckptファイルのみを保存しますか？",
     "Saved model name (without extension)": "拡張子のない保存するモデル名",
     "Sealing date": "締め日付",
-    "Search feature ratio (controls accent strength, too high has artifacting)": "検索特徴率",
+    "Feature searching ratio": "検索特徴率",
     "Select Speaker/Singer ID": "話者IDを選択してください",
     "Select the .index file": ".indexファイルを選択",
     "Select the .pth file": ".pthファイルを選択",

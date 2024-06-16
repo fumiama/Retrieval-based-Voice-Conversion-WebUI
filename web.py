@@ -911,7 +911,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                             minimum=0,
                             maximum=1,
                             label=i18n(
-                                "Search feature ratio (controls accent strength, too high has artifacting)"
+                                "Feature searching ratio"
                             ),
                             value=0.75,
                             interactive=True,
@@ -1068,7 +1068,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                             minimum=0,
                             maximum=1,
                             label=i18n(
-                                "Search feature ratio (controls accent strength, too high has artifacting)"
+                                "Feature searching ratio"
                             ),
                             value=1,
                             interactive=True,

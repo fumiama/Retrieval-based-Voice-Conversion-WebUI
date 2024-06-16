@@ -106,7 +106,7 @@ with app:
                 minimum=0,
                 maximum=1,
                 label=i18n(
-                    "Search feature ratio (controls accent strength, too high has artifacting)"
+                    "Feature searching ratio"
                 ),
                 value=0.88,
                 interactive=True,

@@ -114,7 +114,7 @@
     "Save only the latest '.ckpt' file to save disk space": "是否僅保存最新的ckpt檔案以節省硬碟空間",
     "Saved model name (without extension)": "儲存的模型名不帶副檔名",
     "Sealing date": "封装时间",
-    "Search feature ratio (controls accent strength, too high has artifacting)": "檢索特徵佔比",
+    "Feature searching ratio": "檢索特徵佔比",
     "Select Speaker/Singer ID": "請選擇說話人ID",
     "Select the .index file": "選擇 .index 檔案",
     "Select the .pth file": "選擇 .pth 檔案",
