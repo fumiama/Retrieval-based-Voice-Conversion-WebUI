@@ -61,9 +61,7 @@ class RVC:
         self.cache_pitch: torch.Tensor = torch.zeros(
             1024, device=self.device, dtype=torch.long
         )
-        self.cache_pitchf = torch.zeros(
-            1024, device=self.device, dtype=torch.float32
-        )
+        self.cache_pitchf = torch.zeros(1024, device=self.device, dtype=torch.float32)
 
         self.resample_kernel = {}
 
@@ -111,13 +109,15 @@ class RVC:
             self.tgt_sr = cpt["config"][-1]
             self.if_f0 = cpt.get("f0", 1)
             self.version = cpt.get("version", "v1")
-            self.net_g = torch.jit.load(
-                BytesIO(cpt["model"]), map_location=self.device
-            )
+            self.net_g = torch.jit.load(BytesIO(cpt["model"]), map_location=self.device)
             self.net_g.infer = self.net_g.forward
             self.net_g.eval().to(self.device)
 
-        if self.use_jit and not is_dml and not (self.is_half and "cpu" in str(self.device)):
+        if (
+            self.use_jit
+            and not is_dml
+            and not (self.is_half and "cpu" in str(self.device))
+        ):
             set_jit_model()
         else:
             set_default_model()
@@ -202,9 +202,13 @@ class RVC:
         elif self.if_f0 == 1:
             f0_extractor_frame = block_frame_16k + 800
             if f0method == "rmvpe":
-                f0_extractor_frame = 5120 * ((f0_extractor_frame - 1) // 5120 + 1) - self.window
+                f0_extractor_frame = (
+                    5120 * ((f0_extractor_frame - 1) // 5120 + 1) - self.window
+                )
             if inp_f0 is not None:
-                pitch, pitchf = self._get_f0_post(inp_f0, self.f0_up_key - self.formant_shift)
+                pitch, pitchf = self._get_f0_post(
+                    inp_f0, self.f0_up_key - self.formant_shift
+                )
             else:
                 pitch, pitchf = self._get_f0(
                     input_wav[-f0_extractor_frame:],
@@ -272,12 +276,12 @@ class RVC:
         x: torch.Tensor,
         f0_up_key: Union[int, float],
         filter_radius: Union[int, float],
-        method: Literal["crepe", "rmvpe", "fcpe", "pm", "harvest", "dio"]="fcpe",
+        method: Literal["crepe", "rmvpe", "fcpe", "pm", "harvest", "dio"] = "fcpe",
     ):
         if method not in self.f0_methods.keys():
-            raise RuntimeError("Not supported f0 method: "+method)
+            raise RuntimeError("Not supported f0 method: " + method)
         return self.f0_methods[method](x, f0_up_key, filter_radius)
-    
+
     def _get_f0_post(self, f0, f0_up_key):
         f0 *= pow(2, f0_up_key / 12)
         if not torch.is_tensor(f0):
@@ -297,7 +301,7 @@ class RVC:
             self.pm = PM(hop_length=160, sampling_rate=16000)
         f0 = self.pm.compute_f0(x)
         return self._get_f0_post(f0, f0_up_key)
-    
+
     def _get_f0_harvest(self, x, f0_up_key, filter_radius):
         if not hasattr(self, "harvest"):
             self.harvest = Harvest(
@@ -308,7 +312,7 @@ class RVC:
             )
         f0 = self.harvest.compute_f0(x, filter_radius=filter_radius)
         return self._get_f0_post(f0, f0_up_key)
-    
+
     def _get_f0_dio(self, x, f0_up_key, filter_radius):
         if not hasattr(self, "dio"):
             self.dio = Dio(
@@ -341,7 +345,8 @@ class RVC:
                 use_jit=self.use_jit,
             )
         return self._get_f0_post(
-            self.rmvpe.compute_f0(x, thred=filter_radius), f0_up_key,
+            self.rmvpe.compute_f0(x, thred=filter_radius),
+            f0_up_key,
         )
 
     def _get_f0_fcpe(self, x, f0_up_key, filter_radius):
