@@ -20,9 +20,9 @@ def slice_on_last_dim(
     start_indices: List[int],
     segment_size=4,
 ) -> torch.Tensor:
-    new_shape = x.shape
+    new_shape = [*x.shape]
     new_shape[-1] = segment_size
-    ret = torch.empty(new_shape)
+    ret = torch.empty(new_shape, device=x.device)
     for i in range(x.size(0)):
         idx_str = start_indices[i]
         idx_end = idx_str + segment_size

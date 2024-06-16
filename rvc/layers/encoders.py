@@ -192,7 +192,7 @@ class PosteriorEncoder(nn.Module):
     def __call__(
         self, x: torch.Tensor, x_lengths: torch.Tensor, g: Optional[torch.Tensor] = None
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-        super().__call__(x, x_lengths, g=g)
+        return super().__call__(x, x_lengths, g=g)
 
     def forward(
         self, x: torch.Tensor, x_lengths: torch.Tensor, g: Optional[torch.Tensor] = None
