@@ -24,7 +24,6 @@ import torch, platform
 import numpy as np
 import gradio as gr
 import faiss
-import fairseq
 import pathlib
 import json
 from time import sleep
@@ -72,7 +71,9 @@ if config.dml == True:
         res = x.clone().detach()
         return res
 
+    import fairseq
     fairseq.modules.grad_multiply.GradMultiply.forward = forward_dml
+
 i18n = I18nAuto()
 logger.info(i18n)
 # 判断是否有能用来训练和加速推理的N卡

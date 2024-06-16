@@ -144,8 +144,6 @@ if __name__ == "__main__":
             self.input_devices_indices = None
             self.output_devices_indices = None
             self.stream = None
-            if not self.config.nocheck:
-                self.check_assets()
             self.update_devices()
             self.launcher()
 
