@@ -105,8 +105,22 @@ def extract_features(
         feature_path = f"{feature_path}/{name}"
         paths.append([inp_path, coarse_path, feature_path])
 
+
     ps = []
+
+    log_file = open(f"{expected_dir}/extract_f0_feature.log", "w")
+
+    n_paths = len(paths)
+    if n_paths == 0:
+        __log(log_file, "No f0 to do")
+    else:
+        __log(log_file, f"F0 to do: {n_paths}")
+    
+    n = max(n_paths // 5, 1)  # 每个进程最多打印5条
+    
     for idx, (inp_path, coarse_path, feature_path) in enumerate(paths):
+        if idx % n == 0:
+            __log(log_file, f"Computing f0; Current: {idx}; Total: {n_paths}; {inp_path}")
         p = Process(
             name=f"extract_f0_feature_{idx}",
             target=save_f0,
