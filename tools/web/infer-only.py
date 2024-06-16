@@ -105,9 +105,7 @@ with app:
             index_rate1 = gr.Slider(
                 minimum=0,
                 maximum=1,
-                label=i18n(
-                    "Feature searching ratio"
-                ),
+                label=i18n("Feature searching ratio"),
                 value=0.88,
                 interactive=True,
             )
