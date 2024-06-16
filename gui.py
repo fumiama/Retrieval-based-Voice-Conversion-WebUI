@@ -144,8 +144,6 @@ if __name__ == "__main__":
             self.input_devices_indices = None
             self.output_devices_indices = None
             self.stream = None
-            if not self.config.nocheck:
-                self.check_assets()
             self.update_devices()
             self.launcher()
 
@@ -172,6 +170,7 @@ if __name__ == "__main__":
                     data["sr_model"] = data["sr_type"] == "sr_model"
                     data["sr_device"] = data["sr_type"] == "sr_device"
                     data["pm"] = data["f0method"] == "pm"
+                    data["dio"] = data["f0method"] == "dio"
                     data["harvest"] = data["f0method"] == "harvest"
                     data["crepe"] = data["f0method"] == "crepe"
                     data["rmvpe"] = data["f0method"] == "rmvpe"
@@ -228,6 +227,7 @@ if __name__ == "__main__":
                     data["sr_model"] = data["sr_type"] == "sr_model"
                     data["sr_device"] = data["sr_type"] == "sr_device"
                     data["pm"] = data["f0method"] == "pm"
+                    data["dio"] = data["f0method"] == "dio"
                     data["harvest"] = data["f0method"] == "harvest"
                     data["crepe"] = data["f0method"] == "crepe"
                     data["rmvpe"] = data["f0method"] == "rmvpe"
@@ -371,11 +371,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(
-                                    i18n(
-                                        "Search feature ratio (controls accent strength, too high has artifacting)"
-                                    )
-                                ),
+                                sg.Text(i18n("Feature searching ratio")),
                                 sg.Slider(
                                     range=(0.0, 1.0),
                                     key="index_rate",
@@ -403,6 +399,13 @@ if __name__ == "__main__":
                                     "f0method",
                                     key="pm",
                                     default=data.get("pm", False),
+                                    enable_events=True,
+                                ),
+                                sg.Radio(
+                                    "dio",
+                                    "f0method",
+                                    key="dio",
+                                    default=data.get("dio", False),
                                     enable_events=True,
                                 ),
                                 sg.Radio(
@@ -614,9 +617,17 @@ if __name__ == "__main__":
                             # "use_jit": values["use_jit"],
                             "use_jit": False,
                             "use_pv": values["use_pv"],
-                            "f0method": ["pm", "harvest", "crepe", "rmvpe", "fcpe"][
+                            "f0method": [
+                                "pm",
+                                "dio",
+                                "harvest",
+                                "crepe",
+                                "rmvpe",
+                                "fcpe",
+                            ][
                                 [
                                     values["pm"],
+                                    values["dio"],
                                     values["harvest"],
                                     values["crepe"],
                                     values["rmvpe"],
@@ -645,18 +656,18 @@ if __name__ == "__main__":
                 elif event == "pitch":
                     self.gui_config.pitch = values["pitch"]
                     if hasattr(self, "rvc"):
-                        self.rvc.change_key(values["pitch"])
+                        self.rvc.set_key(values["pitch"])
                 elif event == "formant":
                     self.gui_config.formant = values["formant"]
                     if hasattr(self, "rvc"):
-                        self.rvc.change_formant(values["formant"])
+                        self.rvc.set_formant(values["formant"])
                 elif event == "index_rate":
                     self.gui_config.index_rate = values["index_rate"]
                     if hasattr(self, "rvc"):
-                        self.rvc.change_index_rate(values["index_rate"])
+                        self.rvc.set_index_rate(values["index_rate"])
                 elif event == "rms_mix_rate":
                     self.gui_config.rms_mix_rate = values["rms_mix_rate"]
-                elif event in ["pm", "harvest", "crepe", "rmvpe", "fcpe"]:
+                elif event in ["pm", "dio", "harvest", "crepe", "rmvpe", "fcpe"]:
                     self.gui_config.f0method = event
                 elif event == "I_noise_reduce":
                     self.gui_config.I_noise_reduce = values["I_noise_reduce"]
@@ -718,9 +729,17 @@ if __name__ == "__main__":
             self.gui_config.rms_mix_rate = values["rms_mix_rate"]
             self.gui_config.index_rate = values["index_rate"]
             self.gui_config.n_cpu = values["n_cpu"]
-            self.gui_config.f0method = ["pm", "harvest", "crepe", "rmvpe", "fcpe"][
+            self.gui_config.f0method = [
+                "pm",
+                "dio",
+                "harvest",
+                "crepe",
+                "rmvpe",
+                "fcpe",
+            ][
                 [
                     values["pm"],
+                    values["dio"],
                     values["harvest"],
                     values["crepe"],
                     values["rmvpe"],
@@ -738,10 +757,10 @@ if __name__ == "__main__":
                 self.gui_config.index_path,
                 self.gui_config.index_rate,
                 self.gui_config.n_cpu,
-                inp_q,
-                opt_q,
-                self.config,
-                self.rvc if hasattr(self, "rvc") else None,
+                self.config.device,
+                self.config.use_jit,
+                self.config.is_half,
+                self.config.dml,
             )
             self.gui_config.samplerate = (
                 self.rvc.tgt_sr
@@ -1003,7 +1022,7 @@ if __name__ == "__main__":
                 sola_offset = sola_offset.item()
             else:
                 sola_offset = torch.argmax(cor_nom[0, 0] / cor_den[0, 0])
-            printt("sola_offset = %d", int(sola_offset))
+            # printt("sola_offset = %d", int(sola_offset))
             infer_wav = infer_wav[sola_offset:]
             if "privateuseone" in str(self.config.device) or not self.gui_config.use_pv:
                 infer_wav[: self.sola_buffer_frame] *= self.fade_in_window
@@ -1030,7 +1049,7 @@ if __name__ == "__main__":
             total_time = time.perf_counter() - start_time
             if flag_vc:
                 self.window["infer_time"].update(int(total_time * 1000))
-            printt("Infer time: %.2f", total_time)
+            # printt("Infer time: %.2f", total_time)
 
         def update_devices(self, hostapi_name=None):
             """获取设备列表"""

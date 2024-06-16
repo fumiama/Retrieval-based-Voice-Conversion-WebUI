@@ -28,5 +28,5 @@ class Harvest(F0Predictor):
         )
         f0 = pyworld.stonemask(wav.astype(np.double), f0, t, self.sampling_rate)
         if filter_radius is not None and filter_radius > 2:
-            f0 = signal.medfilt(f0, 3)
+            f0 = signal.medfilt(f0, filter_radius)
         return self._interpolate_f0(self._resize_f0(f0, p_len))[0]

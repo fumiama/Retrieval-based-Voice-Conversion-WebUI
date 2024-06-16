@@ -78,7 +78,10 @@ if config.dml == True:
         res = x.clone().detach()
         return res
 
+    import fairseq
+
     fairseq.modules.grad_multiply.GradMultiply.forward = forward_dml
+
 i18n = I18nAuto()
 logger.info(i18n)
 # 判断是否有能用来训练和加速推理的N卡
@@ -844,9 +847,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                         index_rate1 = gr.Slider(
                             minimum=0,
                             maximum=1,
-                            label=i18n(
-                                "Search feature ratio (controls accent strength, too high has artifacting)"
-                            ),
+                            label=i18n("Feature searching ratio"),
                             value=0.75,
                             interactive=True,
                         )
@@ -956,7 +957,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                                 if config.dml == False
                                 else ["pm", "harvest", "rmvpe"]
                             ),
-                            value="rmvpe",
+__logfile                            value="rmvpe",
                             interactive=True,
                         )
                         resample_sr1 = gr.Slider(
@@ -1001,9 +1002,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                         index_rate2 = gr.Slider(
                             minimum=0,
                             maximum=1,
-                            label=i18n(
-                                "Search feature ratio (controls accent strength, too high has artifacting)"
-                            ),
+                            label=i18n("Feature searching ratio"),
                             value=1,
                             interactive=True,
                         )

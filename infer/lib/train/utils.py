@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import sys
+from copy import deepcopy
 
 import codecs
 import numpy as np
@@ -444,6 +445,9 @@ class HParams:
 
     def values(self):
         return self.__dict__.values()
+
+    def copy(self):
+        return deepcopy(self)
 
     def __len__(self):
         return len(self.__dict__)

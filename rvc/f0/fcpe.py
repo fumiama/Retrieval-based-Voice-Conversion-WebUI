@@ -1,8 +1,7 @@
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 import torch
-from torchfcpe import spawn_bundled_infer_model
 
 from .f0 import F0Predictor
 
@@ -23,6 +22,10 @@ class FCPE(F0Predictor):
             sampling_rate,
             device,
         )
+
+        from torchfcpe import (
+            spawn_bundled_infer_model,
+        )  # must be imported at here, or it will cause fairseq crash on training
 
         self.model = spawn_bundled_infer_model(self.device)
 

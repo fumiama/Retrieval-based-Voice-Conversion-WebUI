@@ -105,9 +105,7 @@ with app:
             index_rate1 = gr.Slider(
                 minimum=0,
                 maximum=1,
-                label=i18n(
-                    "Search feature ratio (controls accent strength, too high has artifacting)"
-                ),
+                label=i18n("Feature searching ratio"),
                 value=0.88,
                 interactive=True,
             )
