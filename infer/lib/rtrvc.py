@@ -213,8 +213,7 @@ class RVC:
                 pitch, pitchf = self._get_f0(
                     input_wav[-f0_extractor_frame:],
                     self.f0_up_key - self.formant_shift,
-                    3,
-                    f0method,
+                    method=f0method,
                 )
             shift = block_frame_16k // self.window
             self.cache_pitch[:-shift] = self.cache_pitch[shift:].clone()
@@ -297,7 +296,7 @@ class RVC:
     def _get_f0_pm(self, x, f0_up_key, filter_radius):
         if not hasattr(self, "pm"):
             self.pm = PM(hop_length=160, sampling_rate=16000)
-        f0 = self.pm.compute_f0(x)
+        f0 = self.pm.compute_f0(x.cpu().numpy())
         return self._get_f0_post(f0, f0_up_key)
 
     def _get_f0_harvest(self, x, f0_up_key, filter_radius=3):
@@ -309,7 +308,7 @@ class RVC:
                 self.sr,
             )
         if filter_radius is None: filter_radius=3
-        f0 = self.harvest.compute_f0(x, filter_radius=filter_radius)
+        f0 = self.harvest.compute_f0(x.cpu().numpy(), filter_radius=filter_radius)
         return self._get_f0_post(f0, f0_up_key)
 
     def _get_f0_dio(self, x, f0_up_key, filter_radius):
@@ -320,7 +319,7 @@ class RVC:
                 self.f0_max,
                 self.sr,
             )
-        f0 = self.dio.compute_f0(x)
+        f0 = self.dio.compute_f0(x.cpu().numpy())
         return self._get_f0_post(f0, f0_up_key)
 
     def _get_f0_crepe(self, x, f0_up_key, filter_radius):
