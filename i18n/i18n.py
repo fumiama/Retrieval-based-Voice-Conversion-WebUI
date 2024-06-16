@@ -17,7 +17,8 @@ class I18nAuto:
             language = locale.getdefaultlocale(
                 envvars=("LANG", "LC_ALL", "LC_CTYPE", "LANGUAGE")
             )[0]
-        language = "en_US"
+        if not os.path.exists(f"./i18n/locale/{language}.json"):
+            language = "en_US"
         self.language = language
         self.language_map = load_language_list(language)
 
