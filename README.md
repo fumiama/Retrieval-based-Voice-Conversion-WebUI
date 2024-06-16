@@ -29,7 +29,7 @@ An easy-to-use voice conversion framework based on VITS.
 
 | Training and inference Webui | Real-time voice changing GUI |
 | :--------: | :---------: |
-| ![web](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630) | ![realtime-gui](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/730b4114-8805-44a1-ab1a-04668f3c30a6) |
+| ![web](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/129054828/092e5c12-0d49-4168-a590-0b0ef6a4f630) | ![realtime-gui](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/assets/41315874/95b36866-b92d-40c7-b5db-6a35ca5caeac) |
 | go-web.bat | go-realtime-gui.bat |
 | You can freely choose the action you want to perform. | We have achieved an end-to-end latency of 170ms. With the use of ASIO input and output devices, we have managed to achieve an end-to-end latency of 90ms, but it is highly dependent on hardware driver support. |
 
