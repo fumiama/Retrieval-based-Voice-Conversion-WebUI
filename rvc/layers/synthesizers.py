@@ -186,7 +186,8 @@ class SynthesizerTrnMsNSFsid(nn.Module):
             head = int(skip_head)
             length = int(return_length)
             flow_head = head - 24
-            if flow_head < 0: flow_head = 0
+            if flow_head < 0:
+                flow_head = 0
             dec_head = head - flow_head
             m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths, flow_head)
             z_p = (m_p + torch.exp(logs_p) * torch.randn_like(m_p) * 0.66666) * x_mask
@@ -208,11 +209,7 @@ class SynthesizerTrnMsNSFsid(nn.Module):
                 n_res=return_length2,
             )
         else:
-            o = self.dec(
-                z * x_mask,
-                g=g,
-                n_res=return_length2
-            )
+            o = self.dec(z * x_mask, g=g, n_res=return_length2)
         del x_mask, z
         return o  # , x_mask, (z, z_p, m_p, logs_p)
 

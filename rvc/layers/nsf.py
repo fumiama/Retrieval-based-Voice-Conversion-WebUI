@@ -153,7 +153,9 @@ class NSFGenerator(torch.nn.Module):
         if n_res is not None:
             n_res = int(n_res)
             if n_res * self.upp != har_source.shape[-1]:
-                har_source = F.interpolate(har_source, size=n_res * self.upp, mode="linear")
+                har_source = F.interpolate(
+                    har_source, size=n_res * self.upp, mode="linear"
+                )
             if n_res != x.shape[-1]:
                 x = F.interpolate(x, size=n_res, mode="linear")
 

@@ -307,7 +307,8 @@ class RVC:
                 self.f0_max,
                 self.sr,
             )
-        if filter_radius is None: filter_radius=3
+        if filter_radius is None:
+            filter_radius = 3
         f0 = self.harvest.compute_f0(x.cpu().numpy(), filter_radius=filter_radius)
         return self._get_f0_post(f0, f0_up_key)
 
@@ -342,7 +343,8 @@ class RVC:
                 device=self.device,
                 use_jit=self.use_jit,
             )
-        if filter_radius is None: filter_radius=0.03
+        if filter_radius is None:
+            filter_radius = 0.03
         return self._get_f0_post(
             self.rmvpe.compute_f0(x, filter_radius=filter_radius),
             f0_up_key,

@@ -623,7 +623,14 @@ if __name__ == "__main__":
                             # "use_jit": values["use_jit"],
                             "use_jit": False,
                             "use_pv": values["use_pv"],
-                            "f0method": ["pm", "dio", "harvest", "crepe", "rmvpe", "fcpe"][
+                            "f0method": [
+                                "pm",
+                                "dio",
+                                "harvest",
+                                "crepe",
+                                "rmvpe",
+                                "fcpe",
+                            ][
                                 [
                                     values["pm"],
                                     values["dio"],
@@ -728,7 +735,14 @@ if __name__ == "__main__":
             self.gui_config.rms_mix_rate = values["rms_mix_rate"]
             self.gui_config.index_rate = values["index_rate"]
             self.gui_config.n_cpu = values["n_cpu"]
-            self.gui_config.f0method = ["pm", "dio", "harvest", "crepe", "rmvpe", "fcpe"][
+            self.gui_config.f0method = [
+                "pm",
+                "dio",
+                "harvest",
+                "crepe",
+                "rmvpe",
+                "fcpe",
+            ][
                 [
                     values["pm"],
                     values["dio"],
