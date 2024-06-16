@@ -287,11 +287,7 @@ def extract_f0_feature(
         extracting_thread.start()
         with open(log_path, "r") as f:
             while extracting_thread.is_alive():
-                lines = f.readlines()
-                for line in lines:
-                    logger.info(line.rstrip())
-
-                yield from lines
+                yield from f.readlines()
 
             yield f.read()
 
