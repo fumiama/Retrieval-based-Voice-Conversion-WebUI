@@ -645,15 +645,15 @@ if __name__ == "__main__":
                 elif event == "pitch":
                     self.gui_config.pitch = values["pitch"]
                     if hasattr(self, "rvc"):
-                        self.rvc.change_key(values["pitch"])
+                        self.rvc.set_key(values["pitch"])
                 elif event == "formant":
                     self.gui_config.formant = values["formant"]
                     if hasattr(self, "rvc"):
-                        self.rvc.change_formant(values["formant"])
+                        self.rvc.set_formant(values["formant"])
                 elif event == "index_rate":
                     self.gui_config.index_rate = values["index_rate"]
                     if hasattr(self, "rvc"):
-                        self.rvc.change_index_rate(values["index_rate"])
+                        self.rvc.set_index_rate(values["index_rate"])
                 elif event == "rms_mix_rate":
                     self.gui_config.rms_mix_rate = values["rms_mix_rate"]
                 elif event in ["pm", "harvest", "crepe", "rmvpe", "fcpe"]:
@@ -738,10 +738,10 @@ if __name__ == "__main__":
                 self.gui_config.index_path,
                 self.gui_config.index_rate,
                 self.gui_config.n_cpu,
-                inp_q,
-                opt_q,
-                self.config,
-                self.rvc if hasattr(self, "rvc") else None,
+                self.config.device,
+                self.config.use_jit,
+                self.config.is_half,
+                self.config.dml,
             )
             self.gui_config.samplerate = (
                 self.rvc.tgt_sr
