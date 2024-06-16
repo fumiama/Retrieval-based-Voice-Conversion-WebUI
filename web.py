@@ -957,7 +957,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                                 if config.dml == False
                                 else ["pm", "harvest", "rmvpe"]
                             ),
-__logfile                            value="rmvpe",
+                            value="rmvpe",
                             interactive=True,
                         )
                         resample_sr1 = gr.Slider(
