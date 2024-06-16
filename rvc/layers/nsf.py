@@ -136,28 +136,27 @@ class NSFGenerator(torch.nn.Module):
         x: torch.Tensor,
         f0: torch.Tensor,
         g: Optional[torch.Tensor] = None,
-        # n_res: Optional[torch.Tensor] = None,
+        n_res: Optional[int] = None,
     ) -> torch.Tensor:
-        return super().__call__(x, f0, g=g)
+        return super().__call__(x, f0, g=g, n_res=n_res)
 
     def forward(
         self,
         x: torch.Tensor,
         f0: torch.Tensor,
         g: Optional[torch.Tensor] = None,
-        # n_res: Optional[torch.Tensor] = None,
+        n_res: Optional[int] = None,
     ) -> torch.Tensor:
         har_source = self.m_source(f0, self.upp)
         har_source = har_source.transpose(1, 2)
-        """
+
         if n_res is not None:
-            assert isinstance(n_res, torch.Tensor)
-            n = int(n_res.item())
-            if n * self.upp != har_source.shape[-1]:
-                har_source = F.interpolate(har_source, size=n * self.upp, mode="linear")
-            if n != x.shape[-1]:
-                x = F.interpolate(x, size=n, mode="linear")
-        """
+            n_res = int(n_res)
+            if n_res * self.upp != har_source.shape[-1]:
+                har_source = F.interpolate(har_source, size=n_res * self.upp, mode="linear")
+            if n_res != x.shape[-1]:
+                x = F.interpolate(x, size=n_res, mode="linear")
+
         x = self.conv_pre(x)
         if g is not None:
             x = x + self.cond(g)

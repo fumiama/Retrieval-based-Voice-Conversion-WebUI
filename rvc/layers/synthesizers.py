@@ -177,17 +177,18 @@ class SynthesizerTrnMsNSFsid(nn.Module):
         sid: torch.Tensor,
         pitch: Optional[torch.Tensor] = None,
         pitchf: Optional[torch.Tensor] = None,  # nsff0
-        skip_head: Optional[torch.Tensor] = None,
-        return_length: Optional[torch.Tensor] = None,
-        # return_length2: Optional[torch.Tensor] = None,
+        skip_head: Optional[int] = None,
+        return_length: Optional[int] = None,
+        return_length2: Optional[int] = None,
     ):
         g = self.emb_g(sid).unsqueeze(-1)
         if skip_head is not None and return_length is not None:
-            head = int(skip_head.item())
-            length = int(return_length.item())
-            flow_head = torch.clamp(skip_head - 24, min=0)
-            dec_head = head - int(flow_head.item())
-            m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths)
+            head = int(skip_head)
+            length = int(return_length)
+            flow_head = head - 24
+            if flow_head < 0: flow_head = 0
+            dec_head = head - flow_head
+            m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths, head)
             z_p = (m_p + torch.exp(logs_p) * torch.randn_like(m_p) * 0.66666) * x_mask
             z = self.flow(z_p, x_mask, g=g, reverse=True)
             z = z[:, :, dec_head : dec_head + length]
@@ -204,13 +205,13 @@ class SynthesizerTrnMsNSFsid(nn.Module):
                 z * x_mask,
                 pitchf,
                 g=g,
-                # n_res=return_length2,
+                n_res=return_length2,
             )
         else:
             o = self.dec(
                 z * x_mask,
                 g=g,
-                # n_res=return_length2
+                n_res=return_length2
             )
         del x_mask, z
         return o  # , x_mask, (z, z_p, m_p, logs_p)

@@ -138,7 +138,7 @@ class RVC:
         self,
         input_wav: torch.Tensor,
         block_frame_16k: int,
-        skip_head: torch.Tensor,
+        skip_head: int,
         return_length: int,
         f0method: Union[tuple, str],
         inp_f0: Optional[np.ndarray] = None,
@@ -241,8 +241,6 @@ class RVC:
             feats = feats.to(feats0.dtype)
         p_len = torch.LongTensor([p_len]).to(self.device)
         sid = torch.LongTensor([0]).to(self.device)
-        skip_head = torch.LongTensor([skip_head])
-        return_length = torch.LongTensor([return_length])
         with torch.no_grad():
             infered_audio = (
                 self.net_g.infer(
@@ -253,6 +251,7 @@ class RVC:
                     pitchf=cache_pitchf,
                     skip_head=skip_head,
                     return_length=return_length,
+                    return_length2=return_length2,
                 )
                 .squeeze(1)
                 .float()

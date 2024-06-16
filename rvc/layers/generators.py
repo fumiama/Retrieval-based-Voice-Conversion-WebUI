@@ -61,23 +61,21 @@ class Generator(torch.nn.Module):
         self,
         x: torch.Tensor,
         g: Optional[torch.Tensor] = None,
-        # n_res: Optional[torch.Tensor] = None,
+        n_res: Optional[int] = None,
     ) -> torch.Tensor:
-        return super().__call__(x, g=g)
+        return super().__call__(x, g=g, n_res=n_res)
 
     def forward(
         self,
         x: torch.Tensor,
         g: Optional[torch.Tensor] = None,
-        # n_res: Optional[torch.Tensor] = None,
+        n_res: Optional[int] = None,
     ):
-        """
         if n_res is not None:
-            assert isinstance(n_res, torch.Tensor)
-            n = int(n_res.item())
+            n = int(n_res)
             if n != x.shape[-1]:
                 x = F.interpolate(x, size=n, mode="linear")
-        """
+
         x = self.conv_pre(x)
         if g is not None:
             x = x + self.cond(g)
