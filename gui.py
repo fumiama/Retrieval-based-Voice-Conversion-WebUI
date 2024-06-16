@@ -371,11 +371,7 @@ if __name__ == "__main__":
                                 ),
                             ],
                             [
-                                sg.Text(
-                                    i18n(
-                                        "Feature searching ratio"
-                                    )
-                                ),
+                                sg.Text(i18n("Feature searching ratio")),
                                 sg.Slider(
                                     range=(0.0, 1.0),
                                     key="index_rate",
