@@ -187,7 +187,7 @@ class SynthesizerTrnMsNSFsid(nn.Module):
             length = int(return_length.item())
             flow_head = torch.clamp(skip_head - 24, min=0)
             dec_head = head - int(flow_head.item())
-            m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths, flow_head)
+            m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths)
             z_p = (m_p + torch.exp(logs_p) * torch.randn_like(m_p) * 0.66666) * x_mask
             z = self.flow(z_p, x_mask, g=g, reverse=True)
             z = z[:, :, dec_head : dec_head + length]

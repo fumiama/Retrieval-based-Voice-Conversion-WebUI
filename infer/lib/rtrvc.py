@@ -213,7 +213,6 @@ class RVC:
                 pitch, pitchf = self._get_f0(
                     input_wav[-f0_extractor_frame:],
                     self.f0_up_key - self.formant_shift,
-                    self.n_cpu,
                     3,
                     f0method,
                 )
@@ -275,7 +274,7 @@ class RVC:
         self,
         x: torch.Tensor,
         f0_up_key: Union[int, float],
-        filter_radius: Union[int, float],
+        filter_radius: Optional[Union[int, float]] = None,
         method: Literal["crepe", "rmvpe", "fcpe", "pm", "harvest", "dio"] = "fcpe",
     ):
         if method not in self.f0_methods.keys():
@@ -302,7 +301,7 @@ class RVC:
         f0 = self.pm.compute_f0(x)
         return self._get_f0_post(f0, f0_up_key)
 
-    def _get_f0_harvest(self, x, f0_up_key, filter_radius):
+    def _get_f0_harvest(self, x, f0_up_key, filter_radius=3):
         if not hasattr(self, "harvest"):
             self.harvest = Harvest(
                 self.window,
@@ -310,6 +309,7 @@ class RVC:
                 self.f0_max,
                 self.sr,
             )
+        if filter_radius is None: filter_radius=3
         f0 = self.harvest.compute_f0(x, filter_radius=filter_radius)
         return self._get_f0_post(f0, f0_up_key)
 
@@ -344,8 +344,9 @@ class RVC:
                 device=self.device,
                 use_jit=self.use_jit,
             )
+        if filter_radius is None: filter_radius=0.03
         return self._get_f0_post(
-            self.rmvpe.compute_f0(x, thred=filter_radius),
+            self.rmvpe.compute_f0(x, filter_radius=filter_radius),
             f0_up_key,
         )
 
