@@ -72,6 +72,7 @@ if config.dml == True:
         return res
 
     import fairseq
+
     fairseq.modules.grad_multiply.GradMultiply.forward = forward_dml
 
 i18n = I18nAuto()

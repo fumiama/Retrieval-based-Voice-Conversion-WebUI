@@ -445,7 +445,7 @@ class HParams:
 
     def values(self):
         return self.__dict__.values()
-    
+
     def copy(self):
         return deepcopy(self)
 

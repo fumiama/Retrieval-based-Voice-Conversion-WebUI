@@ -23,7 +23,9 @@ class FCPE(F0Predictor):
             device,
         )
 
-        from torchfcpe import spawn_bundled_infer_model  # must be imported at here, or it will cause fairseq crash on training
+        from torchfcpe import (
+            spawn_bundled_infer_model,
+        )  # must be imported at here, or it will cause fairseq crash on training
 
         self.model = spawn_bundled_infer_model(self.device)
 
