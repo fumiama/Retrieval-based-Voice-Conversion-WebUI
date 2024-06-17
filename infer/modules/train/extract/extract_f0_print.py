@@ -8,7 +8,7 @@ sys.path.append(now_dir)
 import logging
 
 logging.getLogger("numba").setLevel(logging.WARNING)
-logger = logging.getLogger("rvc.F0Print")
+logger = logging.getLogger(__name__)
 
 from rvc.f0 import F0Predictor, CRePE, PM, Dio, Harvest, RMVPE, FCPE
 
@@ -23,6 +23,23 @@ set_start_method("spawn", force=True)
 def __log(logfile, data: str) -> None:
     logger.info(data)
     logfile.write(f"{data}\n")
+
+
+def coarse_f0(f0: np.ndarray, f0_bin: int, f0_mel_min, f0_mel_max) -> np.ndarray:
+    f0_mel = 1127 * np.log(1 + f0 / 700)
+    f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - f0_mel_min) * (
+        f0_bin - 2
+    ) / (f0_mel_max - f0_mel_min) + 1
+
+    # use 0 or 1
+    f0_mel[f0_mel <= 1] = 1
+    f0_mel[f0_mel > f0_bin - 1] = f0_bin - 1
+    f0_coarse = np.rint(f0_mel).astype(int)
+    assert f0_coarse.max() <= 255 and f0_coarse.min() >= 1, (
+        f0_coarse.max(),
+        f0_coarse.min(),
+    )
+    return f0_coarse
 
 
 def save_f0(
@@ -50,18 +67,21 @@ def save_f0(
         # This makes the code I/O bound and there's not a lot to do about it, i think
         __logfile = open(logfile, "w")
 
+        f0_mel_min = 1127 * np.log(1 + predictor.f0_min / 700)
+        f0_mel_max = 1127 * np.log(1 + predictor.f0_max / 700)
+
         out_features = predictor.compute_f0(load_audio(inp_path, 16000))
-        out_coarse = 0  # TODO: add coarse f0
         np.save(
             feature_path,
             out_features,
             allow_pickle=False,
         )
-        # np.save(
-        #     coarse_path,
-        #     out_coarse,
-        #     allow_pickle=False,
-        # )
+        out_coarse = coarse_f0(out_features, 256, f0_mel_min, f0_mel_max)
+        np.save(
+            coarse_path,
+            out_coarse,
+            allow_pickle=False,
+        )
     except Exception as e:
         __log(__logfile, f"Failed to compute f0 for - {inp_path}: {e}")
 
