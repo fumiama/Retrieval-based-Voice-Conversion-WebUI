@@ -17,6 +17,7 @@ from infer.lib.audio import load_audio
 from torch.multiprocessing import Process, set_start_method
 
 set_start_method("spawn", force=True)
+from pathlib import PurePath
 
 
 # A helper function to log in both the terminal and the logfile
@@ -109,20 +110,20 @@ def extract_features(
         )
     featureInput = predictor
 
-    inp_root = f"{expected_dir}/1_16k_wavs"
-    coarse_path = f"{expected_dir}/2a_f0"
-    feature_path = f"{expected_dir}/2b-f0nsf"
+    inp_root = str(PurePath(expected_dir, "1_16k_wavs"))
+    coarse_root = str(PurePath(expected_dir, "2a_f0"))
+    feature_root = str(PurePath(expected_dir, "2b-f0nsf"))
 
-    os.makedirs(coarse_path, exist_ok=True)
-    os.makedirs(feature_path, exist_ok=True)
+    os.makedirs(coarse_root, exist_ok=True)
+    os.makedirs(feature_root, exist_ok=True)
 
     paths = []
-    for name in sorted(list(os.listdir(inp_root))):
-        inp_path = f"{inp_root}/{name}"
+    for name in sorted(os.listdir(inp_root)):
+        inp_path = str(PurePath(inp_root, name))
         if "spec" in inp_path:
             continue
-        coarse_path = f"{coarse_path}/{name}"
-        feature_path = f"{feature_path}/{name}"
+        coarse_path = str(PurePath(coarse_root, name))
+        feature_path = str(PurePath(feature_root, name))
         paths.append([inp_path, coarse_path, feature_path])
 
     ps = []
