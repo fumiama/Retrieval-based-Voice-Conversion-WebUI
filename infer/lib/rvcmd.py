@@ -170,7 +170,7 @@ def download_dns_yaml(url: str, folder: str):
         logger.info(f"downloaded into {folder}")
 
 
-def download_all_assets(tmpdir: str, version="0.2.3"):
+def download_all_assets(tmpdir: str, version="0.2.5"):
     import subprocess
     import platform
 
@@ -205,17 +205,17 @@ def download_all_assets(tmpdir: str, version="0.2.3"):
         else:
             download_and_extract_tar_gz(RVCMD_URL, tmpdir)
             os.chmod(cmdfile, 0o755)
-        subprocess.run([cmdfile, "-notui", "-w", "0", "assets/all"])
+        subprocess.run([cmdfile, "-notui", "-w", "0", "assets/rvc"])
     except Exception:
         BASE_URL = "https://raw.gitcode.com/u011570312/RVC-Models-Downloader/assets/"
         suffix = {
-            "darwin_amd64": "460",
-            "darwin_arm64": "461",
-            "linux_386": "462",
-            "linux_amd64": "463",
-            "linux_arm64": "464",
-            "windows_386": "465",
-            "windows_amd64": "466",
+            "darwin_amd64": "555",
+            "darwin_arm64": "556",
+            "linux_386": "557",
+            "linux_amd64": "558",
+            "linux_arm64": "559",
+            "windows_386": "562",
+            "windows_amd64": "563",
         }[f"{system_type}_{architecture}"]
         RVCMD_URL = BASE_URL + suffix
         download_dns_yaml(
@@ -236,6 +236,6 @@ def download_all_assets(tmpdir: str, version="0.2.3"):
                 "0",
                 "-dns",
                 os.path.join(tmpdir, "dns.yaml"),
-                "assets/all",
+                "assets/rvc",
             ]
         )

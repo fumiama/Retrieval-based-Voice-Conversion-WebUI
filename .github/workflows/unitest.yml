@@ -18,14 +18,14 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        wget https://github.com/fumiama/RVC-Models-Downloader/releases/download/v0.2.3/rvcmd_linux_amd64.deb
+        wget https://github.com/fumiama/RVC-Models-Downloader/releases/download/v0.2.5/rvcmd_linux_amd64.deb
         sudo apt -y install ./rvcmd_linux_amd64.deb
         python -m pip install --upgrade pip
         python -m pip install --upgrade setuptools
         python -m pip install --upgrade wheel
         pip install torch torchvision torchaudio
         pip install -r requirements/main.txt
-        rvcmd -notrs -w 1 -notui assets/all
+        rvcmd -notrs -w 1 -notui assets/rvc
     - name: Test step 1 & 2
       run: |
         mkdir -p logs/mi-test
