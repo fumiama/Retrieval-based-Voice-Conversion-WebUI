@@ -205,7 +205,7 @@ def download_all_assets(tmpdir: str, version="0.2.5"):
         else:
             download_and_extract_tar_gz(RVCMD_URL, tmpdir)
             os.chmod(cmdfile, 0o755)
-        subprocess.run([cmdfile, "-notui", "-w", "0", "assets/all"])
+        subprocess.run([cmdfile, "-notui", "-w", "0", "assets/rvc"])
     except Exception:
         BASE_URL = "https://raw.gitcode.com/u011570312/RVC-Models-Downloader/assets/"
         suffix = {
