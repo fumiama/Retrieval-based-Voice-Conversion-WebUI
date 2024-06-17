@@ -17,7 +17,7 @@ VITS'e dayalı kullanımı kolay bir Ses Dönüşümü çerçevesi.
 </div>
 
 ------
-[**Değişiklik Geçmişi**](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/docs/Changelog_TR.md) | [**SSS (Sıkça Sorulan Sorular)**](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/wiki/SSS-(Sıkça-Sorulan-Sorular)) 
+[**SSS (Sıkça Sorulan Sorular)**](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/wiki/SSS-(Sıkça-Sorulan-Sorular)) 
 
 [**İngilizce**](../en/README.en.md) | [**中文简体**](../../README.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
 
