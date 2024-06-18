@@ -73,13 +73,13 @@ def save_f0(
 
         out_features = predictor.compute_f0(load_audio(inp_path, 16000))
         np.save(
-            feature_path,
+            feature_path.replace(".wav", ".npy"),
             out_features,
             allow_pickle=False,
         )
         out_coarse = coarse_f0(out_features, 256, f0_mel_min, f0_mel_max)
         np.save(
-            coarse_path,
+            coarse_path.replace(".wav", ".npy"),
             out_coarse,
             allow_pickle=False,
         )
