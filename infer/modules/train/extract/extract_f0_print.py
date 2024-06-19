@@ -14,7 +14,7 @@ from rvc.f0 import F0Predictor, CRePE, PM, Dio, Harvest, RMVPE, FCPE
 
 from infer.lib.audio import load_audio
 
-from torch.multiprocessing import Process, set_start_method
+from torch.multiprocessing import set_start_method
 
 set_start_method("spawn", force=True)
 from pathlib import PurePath
@@ -48,7 +48,7 @@ def save_f0(
     inp_path: str,
     coarse_path: str,
     feature_path: str,
-    logfile: str,
+    logfile: sys.TextIOWrapper,
 ) -> None:
     """
     Compute the F0 and save the results in a log file
@@ -61,30 +61,23 @@ def save_f0(
     """
 
     try:
-        # So fun fact:
-        # As it turns out, you just can't pickle the TextIOWrappers, for some reason?
-        # Why is that? Who knows! But this unfortunately means that we have to
-        # Open the logfiles within each thread in order to have anything done here...
-        # This makes the code I/O bound and there's not a lot to do about it, i think
-        __logfile = open(logfile, "w")
-
         f0_mel_min = 1127 * np.log(1 + predictor.f0_min / 700)
         f0_mel_max = 1127 * np.log(1 + predictor.f0_max / 700)
 
         out_features = predictor.compute_f0(load_audio(inp_path, 16000))
         np.save(
-            feature_path.replace(".wav", ".npy"),
+            feature_path,
             out_features,
             allow_pickle=False,
         )
         out_coarse = coarse_f0(out_features, 256, f0_mel_min, f0_mel_max)
         np.save(
-            coarse_path.replace(".wav", ".npy"),
+            coarse_path,
             out_coarse,
             allow_pickle=False,
         )
     except Exception as e:
-        __log(__logfile, f"Failed to compute f0 for - {inp_path}: {e}")
+        __log(logfile, f"Failed to compute f0 for - {inp_path}: {e}")
 
 
 def extract_features(
@@ -143,23 +136,8 @@ def extract_features(
             __log(
                 log_file, f"Computing f0; Current: {idx}; Total: {n_paths}; {inp_path}"
             )
-        p = Process(
-            name=f"extract_f0_feature_{idx}",
-            target=save_f0,
-            args=(
-                featureInput,
-                inp_path,
-                coarse_path,
-                feature_path,
-                f"{expected_dir}/extract_f0_feature.log",
-            ),
-        )
+        save_f0(featureInput, inp_path, coarse_path, feature_path, log_file)
         logger.debug(f"Starting extract_f0_feature_{idx} thread for {inp_path}")
-        p.start()
-        ps.append(p)
-
-    for p in ps:
-        p.join()
 
 
 predictors = {
