@@ -728,14 +728,6 @@ def change_info_(ckpt_path):
 F0GPUVisible = config.dml == False
 
 
-def change_f0_method(f0method8):
-    if f0method8 == "rmvpe_gpu":
-        visible = F0GPUVisible
-    else:
-        visible = False
-    return {"visible": visible, "__type__": "update"}
-
-
 with gr.Blocks(title="RVC WebUI") as app:
     gr.Markdown("## RVC WebUI")
     gr.Markdown(
@@ -1215,18 +1207,13 @@ with gr.Blocks(title="RVC WebUI") as app:
                         label=i18n(
                             "Select the pitch extraction algorithm: when extracting singing, you can use 'pm' to speed up. For high-quality speech with fast performance, but worse CPU usage, you can use 'dio'. 'harvest' results in better quality but is slower.  'rmvpe' has the best results and consumes less CPU/GPU"
                         ),
-                        choices=["pm", "harvest", "dio", "rmvpe", "rmvpe_gpu"],
-                        value="rmvpe_gpu",
+                        choices=["pm", "harvest", "dio", "rmvpe"],
+                        value="rmvpe",
                         interactive=True,
                     )
                 with gr.Column():
                     but2 = gr.Button(i18n("Feature extraction"), variant="primary")
                     info2 = gr.Textbox(label=i18n("Output information"), value="")
-                f0method8.change(
-                    fn=change_f0_method,
-                    inputs=[f0method8],
-                    outputs=[gpus_rmvpe],
-                )
                 but2.click(
                     extract_f0_feature,
                     [
