@@ -145,7 +145,6 @@ predictors = {
     "harvest": Harvest,
     "dio": Dio,
     "rmvpe": RMVPE,
-    "rmvpe_gpu": RMVPE,
     "crepe": CRePE,
     "fcpe": FCPE,
 }
