@@ -48,7 +48,7 @@ def save_f0(
     inp_path: str,
     coarse_path: str,
     feature_path: str,
-    logfile: sys.TextIOWrapper,
+    logfile,
 ) -> None:
     """
     Compute the F0 and save the results in a log file
