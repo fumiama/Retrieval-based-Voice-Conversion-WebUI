@@ -155,6 +155,8 @@ class RMVPE(F0Predictor):
             return hidden[:, :n_frames]
 
     def _decode(self, hidden, thred=0.03):
+        if thred is None:
+            thred = 0.03
         cents_pred = self._to_local_average_cents(hidden, threshold=thred)
         f0 = 10 * (2 ** (cents_pred / 1200))
         f0[f0 == 10] = 0
