@@ -39,7 +39,7 @@ pyworld==0.3.2
 httpx
 onnxruntime; sys_platform == 'darwin'
 onnxruntime-gpu; sys_platform != 'darwin'
-torchcrepe==0.0.20
+torchcrepe>=0.0.23
 fastapi
 torchfcpe
 python-dotenv>=1.0.0

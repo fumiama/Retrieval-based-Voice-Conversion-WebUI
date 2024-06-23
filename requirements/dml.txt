@@ -38,7 +38,7 @@ colorama>=0.4.5
 pyworld==0.3.2
 httpx
 onnxruntime-directml
-torchcrepe==0.0.20
+torchcrepe>=0.0.23
 fastapi
 python-dotenv>=1.0.0
 av
