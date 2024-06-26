@@ -40,7 +40,7 @@ pyworld==0.3.2
 httpx
 onnxruntime
 onnxruntime-gpu
-torchcrepe==0.0.20
+torchcrepe>=0.0.23
 fastapi
 python-dotenv>=1.0.0
 av
