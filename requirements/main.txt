@@ -2,7 +2,7 @@ joblib>=1.1.0
 numba
 numpy==1.23.5
 scipy
-librosa==0.9.1
+librosa==0.10.2
 llvmlite
 fairseq
 faiss-cpu
