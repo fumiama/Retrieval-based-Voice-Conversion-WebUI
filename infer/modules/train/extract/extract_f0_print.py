@@ -1,175 +1,168 @@
 import os
 import sys
-import traceback
 
-import parselmouth
+import numpy as np
 
 now_dir = os.getcwd()
 sys.path.append(now_dir)
 import logging
 
-import numpy as np
-import pyworld
+logging.getLogger("numba").setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
+
+from rvc.f0 import F0Predictor, CRePE, PM, Dio, Harvest, RMVPE, FCPE
 
 from infer.lib.audio import load_audio
 
-logging.getLogger("numba").setLevel(logging.WARNING)
-from multiprocessing import Process
+from torch.multiprocessing import set_start_method
 
-exp_dir = sys.argv[1]
-f = open("%s/extract_f0_feature.log" % exp_dir, "a+")
-
-
-def printt(strr):
-    print(strr)
-    f.write("%s\n" % strr)
-    f.flush()
+set_start_method("spawn", force=True)
+from pathlib import PurePath
 
 
-n_p = int(sys.argv[2])
-f0method = sys.argv[3]
+# A helper function to log in both the terminal and the logfile
+def __log(logfile, data: str) -> None:
+    logger.info(data)
+    logfile.write(f"{data}\n")
 
 
-class FeatureInput(object):
-    def __init__(self, samplerate=16000, hop_size=160):
-        self.fs = samplerate
-        self.hop = hop_size
+def coarse_f0(f0: np.ndarray, f0_bin: int, f0_mel_min, f0_mel_max) -> np.ndarray:
+    f0_mel = 1127 * np.log(1 + f0 / 700)
+    f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - f0_mel_min) * (
+        f0_bin - 2
+    ) / (f0_mel_max - f0_mel_min) + 1
 
-        self.f0_bin = 256
-        self.f0_max = 1100.0
-        self.f0_min = 50.0
-        self.f0_mel_min = 1127 * np.log(1 + self.f0_min / 700)
-        self.f0_mel_max = 1127 * np.log(1 + self.f0_max / 700)
+    # use 0 or 1
+    f0_mel[f0_mel <= 1] = 1
+    f0_mel[f0_mel > f0_bin - 1] = f0_bin - 1
+    f0_coarse = np.rint(f0_mel).astype(int)
+    assert f0_coarse.max() <= 255 and f0_coarse.min() >= 1, (
+        f0_coarse.max(),
+        f0_coarse.min(),
+    )
+    return f0_coarse
 
-    def compute_f0(self, path, f0_method):
-        x = load_audio(path, self.fs)
-        p_len = x.shape[0] // self.hop
-        if f0_method == "pm":
-            time_step = 160 / 16000 * 1000
-            f0_min = 50
-            f0_max = 1100
-            f0 = (
-                parselmouth.Sound(x, self.fs)
-                .to_pitch_ac(
-                    time_step=time_step / 1000,
-                    voicing_threshold=0.6,
-                    pitch_floor=f0_min,
-                    pitch_ceiling=f0_max,
-                )
-                .selected_array["frequency"]
-            )
-            pad_size = (p_len - len(f0) + 1) // 2
-            if pad_size > 0 or p_len - len(f0) - pad_size > 0:
-                f0 = np.pad(
-                    f0, [[pad_size, p_len - len(f0) - pad_size]], mode="constant"
-                )
-        elif f0_method == "harvest":
-            f0, t = pyworld.harvest(
-                x.astype(np.double),
-                fs=self.fs,
-                f0_ceil=self.f0_max,
-                f0_floor=self.f0_min,
-                frame_period=1000 * self.hop / self.fs,
-            )
-            f0 = pyworld.stonemask(x.astype(np.double), f0, t, self.fs)
-        elif f0_method == "dio":
-            f0, t = pyworld.dio(
-                x.astype(np.double),
-                fs=self.fs,
-                f0_ceil=self.f0_max,
-                f0_floor=self.f0_min,
-                frame_period=1000 * self.hop / self.fs,
-            )
-            f0 = pyworld.stonemask(x.astype(np.double), f0, t, self.fs)
-        elif f0_method == "rmvpe":
-            if hasattr(self, "model_rmvpe") == False:
-                from rvc.f0.rmvpe import RMVPE
 
-                print("Loading rmvpe model")
-                self.model_rmvpe = RMVPE(
-                    "assets/rmvpe/rmvpe.pt", is_half=False, device="cpu"
-                )
-            f0 = self.model_rmvpe.compute_f0(x, filter_radius=0.03)
-        return f0
+def save_f0(
+    predictor: F0Predictor,
+    inp_path: str,
+    coarse_path: str,
+    feature_path: str,
+    logfile,
+) -> None:
+    """
+    Compute the F0 and save the results in a log file
 
-    def coarse_f0(self, f0):
-        f0_mel = 1127 * np.log(1 + f0 / 700)
-        f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - self.f0_mel_min) * (
-            self.f0_bin - 2
-        ) / (self.f0_mel_max - self.f0_mel_min) + 1
+    Args:
+        inp_path: str - Input path for the audio
+        coarse_path: str - Path to save f0 coarse to
+        feature_path: str - Path to save f0 features to
+        logfile: str - The main log file of the f0 extraction
+    """
 
-        # use 0 or 1
-        f0_mel[f0_mel <= 1] = 1
-        f0_mel[f0_mel > self.f0_bin - 1] = self.f0_bin - 1
-        f0_coarse = np.rint(f0_mel).astype(int)
-        assert f0_coarse.max() <= 255 and f0_coarse.min() >= 1, (
-            f0_coarse.max(),
-            f0_coarse.min(),
+    try:
+        f0_mel_min = 1127 * np.log(1 + predictor.f0_min / 700)
+        f0_mel_max = 1127 * np.log(1 + predictor.f0_max / 700)
+
+        out_features = predictor.compute_f0(load_audio(inp_path, 16000))
+        np.save(
+            feature_path,
+            out_features,
+            allow_pickle=False,
         )
-        return f0_coarse
-
-    def go(self, paths, f0_method):
-        if len(paths) == 0:
-            printt("no-f0-todo")
-        else:
-            printt("todo-f0-%s" % len(paths))
-            n = max(len(paths) // 5, 1)  # 每个进程最多打印5条
-            for idx, (inp_path, opt_path1, opt_path2) in enumerate(paths):
-                try:
-                    if idx % n == 0:
-                        printt("f0ing,now-%s,all-%s,-%s" % (idx, len(paths), inp_path))
-                    if (
-                        os.path.exists(opt_path1 + ".npy") == True
-                        and os.path.exists(opt_path2 + ".npy") == True
-                    ):
-                        continue
-                    featur_pit = self.compute_f0(inp_path, f0_method)
-                    np.save(
-                        opt_path2,
-                        featur_pit,
-                        allow_pickle=False,
-                    )  # nsf
-                    coarse_pit = self.coarse_f0(featur_pit)
-                    np.save(
-                        opt_path1,
-                        coarse_pit,
-                        allow_pickle=False,
-                    )  # ori
-                except:
-                    printt("f0fail-%s-%s-%s" % (idx, inp_path, traceback.format_exc()))
+        out_coarse = coarse_f0(out_features, 256, f0_mel_min, f0_mel_max)
+        np.save(
+            coarse_path,
+            out_coarse,
+            allow_pickle=False,
+        )
+    except Exception as e:
+        __log(logfile, f"Failed to compute f0 for - {inp_path}: {e}")
 
 
-if __name__ == "__main__":
-    # exp_dir=r"E:\codes\py39\dataset\mi-test"
-    # n_p=16
-    # f = open("%s/log_extract_f0.log"%exp_dir, "w")
-    printt(" ".join(sys.argv))
-    featureInput = FeatureInput()
+def extract_features(
+    predictor: F0Predictor, expected_dir: str, is_half: bool, device: str
+) -> None:
+    """
+    Extract features
+
+    Args:
+        expected_dir: str - Directory to store extracted features
+        cores: int - Number of CPU cores to use
+        method_f0: str - F0 method to use { pm, harvest, dio, rmvpe }
+    """
+    if predictor is RMVPE:
+        predictor = predictor("assets/rmvpe/rmvpe.pt", is_half, device)
+    elif predictor is CRePE or predictor is FCPE:
+        predictor = predictor(
+            hop_length=160, f0_min=50, f0_max=1100, sampling_rate=16000, device=device
+        )
+    else:
+        predictor = predictor(
+            hop_length=160, f0_min=50, f0_max=1100, sampling_rate=16000
+        )
+    featureInput = predictor
+
+    inp_root = str(PurePath(expected_dir, "1_16k_wavs"))
+    coarse_root = str(PurePath(expected_dir, "2a_f0"))
+    feature_root = str(PurePath(expected_dir, "2b-f0nsf"))
+
+    os.makedirs(coarse_root, exist_ok=True)
+    os.makedirs(feature_root, exist_ok=True)
+
     paths = []
-    inp_root = "%s/1_16k_wavs" % (exp_dir)
-    opt_root1 = "%s/2a_f0" % (exp_dir)
-    opt_root2 = "%s/2b-f0nsf" % (exp_dir)
-
-    os.makedirs(opt_root1, exist_ok=True)
-    os.makedirs(opt_root2, exist_ok=True)
-    for name in sorted(list(os.listdir(inp_root))):
-        inp_path = "%s/%s" % (inp_root, name)
+    for name in sorted(os.listdir(inp_root)):
+        inp_path = str(PurePath(inp_root, name))
         if "spec" in inp_path:
             continue
-        opt_path1 = "%s/%s" % (opt_root1, name)
-        opt_path2 = "%s/%s" % (opt_root2, name)
-        paths.append([inp_path, opt_path1, opt_path2])
+        coarse_path = str(PurePath(coarse_root, name))
+        feature_path = str(PurePath(feature_root, name))
+        paths.append([inp_path, coarse_path, feature_path])
 
     ps = []
-    for i in range(n_p):
-        p = Process(
-            target=featureInput.go,
-            args=(
-                paths[i::n_p],
-                f0method,
-            ),
-        )
-        ps.append(p)
-        p.start()
-    for i in range(n_p):
-        ps[i].join()
+
+    log_file = open(f"{expected_dir}/extract_f0_feature.log", "w")
+
+    n_paths = len(paths)
+    if n_paths == 0:
+        __log(log_file, "No f0 to do")
+    else:
+        __log(log_file, f"F0 to do: {n_paths}")
+
+    n = max(n_paths // 5, 1)  # 每个进程最多打印5条
+
+    for idx, (inp_path, coarse_path, feature_path) in enumerate(paths):
+        if idx % n == 0:
+            __log(
+                log_file, f"Computing f0; Current: {idx}; Total: {n_paths}; {inp_path}"
+            )
+        save_f0(featureInput, inp_path, coarse_path, feature_path, log_file)
+        logger.debug(f"Starting extract_f0_feature_{idx} thread for {inp_path}")
+
+
+predictors = {
+    "pm": PM,
+    "harvest": Harvest,
+    "dio": Dio,
+    "rmvpe": RMVPE,
+    "crepe": CRePE,
+    "fcpe": FCPE,
+}
+
+
+def call_extract_features(
+    expected_dir: str, method_f0: str, is_half: bool, device: str
+) -> None:
+    """
+    Extract features
+
+    Args:
+        expected_dir: str - Directory to store extracted features
+        cores: int - Number of CPU cores to use
+        method_f0: str - F0 method to use { pm, harvest, dio, rmvpe }
+    """
+
+    if method_f0 not in predictors:  # Check if the method is valid
+        raise ValueError(f"Unknown feature extraction method: {method_f0}")
+
+    extract_features(predictors[method_f0], expected_dir, is_half, device)
