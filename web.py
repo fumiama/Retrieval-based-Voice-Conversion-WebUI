@@ -9,6 +9,7 @@ load_dotenv("sha256.env")
 
 if sys.platform == "darwin":
     os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
+    os.environ["OMP_NUM_THREADS"] = "1"
 
 from infer.modules.vc import VC, show_info, hash_similarity
 from infer.modules.uvr5.modules import uvr
