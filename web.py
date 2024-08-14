@@ -557,7 +557,7 @@ def click_train(
         logger.info("No pretrained Generator")
     if pretrained_D15 == "":
         logger.info("No pretrained Discriminator")
-    if version19 == "v1" or sr2 == "40k": # v2 40k falls back to v1
+    if version19 == "v1" or sr2 == "40k":  # v2 40k falls back to v1
         config_path = "v1/%s.json" % sr2
     else:
         config_path = "v2/%s.json" % sr2
