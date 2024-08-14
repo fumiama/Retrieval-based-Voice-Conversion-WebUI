@@ -449,7 +449,7 @@ def change_version19(sr2, if_f0_3, version19):
     to_return_sr2 = (
         {"choices": ["40k", "48k"], "__type__": "update", "value": sr2}
         if version19 == "v1"
-        else {"choices": ["40k", "48k", "32k"], "__type__": "update", "value": sr2}
+        else {"choices": ["32k", "40k", "48k"], "__type__": "update", "value": sr2}
     )
     f0_str = "f0" if if_f0_3 else ""
     return (
@@ -557,7 +557,7 @@ def click_train(
         logger.info("No pretrained Generator")
     if pretrained_D15 == "":
         logger.info("No pretrained Discriminator")
-    if version19 == "v1" or sr2 == "40k":
+    if version19 == "v1" or sr2 == "40k": # v2 40k falls back to v1
         config_path = "v1/%s.json" % sr2
     else:
         config_path = "v2/%s.json" % sr2
@@ -1201,8 +1201,8 @@ with gr.Blocks(title="RVC WebUI") as app:
             with gr.Row():
                 sr2 = gr.Radio(
                     label=i18n("Target sample rate"),
-                    choices=["40k", "48k"],
-                    value="40k",
+                    choices=["32k", "40k", "48k"],
+                    value="48k",
                     interactive=True,
                 )
                 if_f0_3 = gr.Radio(
@@ -1363,12 +1363,12 @@ with gr.Blocks(title="RVC WebUI") as app:
                 with gr.Column():
                     pretrained_G14 = gr.Textbox(
                         label=i18n("Load pre-trained base model G path"),
-                        value="assets/pretrained_v2/f0G40k.pth",
+                        value="assets/pretrained_v2/f0G48k.pth",
                         interactive=True,
                     )
                     pretrained_D15 = gr.Textbox(
                         label=i18n("Load pre-trained base model D path"),
-                        value="assets/pretrained_v2/f0D40k.pth",
+                        value="assets/pretrained_v2/f0D48k.pth",
                         interactive=True,
                     )
                     gpus16 = gr.Textbox(
@@ -1497,8 +1497,8 @@ with gr.Blocks(title="RVC WebUI") as app:
                 with gr.Column():
                     sr_ = gr.Radio(
                         label=i18n("Target sample rate"),
-                        choices=["40k", "48k"],
-                        value="40k",
+                        choices=["32k", "40k", "48k"],
+                        value="48k",
                         interactive=True,
                     )
                     if_f0_ = gr.Radio(
@@ -1609,7 +1609,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                         sr__ = gr.Radio(
                             label=i18n("Target sample rate"),
                             choices=["32k", "40k", "48k"],
-                            value="40k",
+                            value="48k",
                             interactive=True,
                         )
                         if_f0__ = gr.Radio(
