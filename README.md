@@ -50,7 +50,7 @@ Check out our [Demo Video](https://www.bilibili.com/video/BV1pm4y1z7Gm/) here!
 
 ## Environment Configuration
 ### Python Version Limitation
-> It is recommended to use conda to manage the Python environment.
+> It is recommended to use venv to manage the Python environment.
 
 > For the reason of the version limitation, please refer to this [bug](https://github.com/facebookresearch/fairseq/issues/5012).
 
