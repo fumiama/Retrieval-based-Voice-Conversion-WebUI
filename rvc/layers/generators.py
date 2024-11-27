@@ -166,9 +166,11 @@ class SineGenerator(torch.nn.Module):
         rad = f0 / self.sampling_rate * a
         rad2 = torch.fmod(rad[:, :-1, -1:].float() + 0.5, 1.0) - 0.5
         rad_acc = rad2.cumsum(dim=1).fmod(1.0).to(f0)
-        rad += F.pad(rad_acc, (0, 0, 1, 0), mode='constant')
+        rad += F.pad(rad_acc, (0, 0, 1, 0), mode="constant")
         rad = rad.reshape(f0.shape[0], -1, 1)
-        b = torch.arange(1, self.dim + 1, dtype=f0.dtype, device=f0.device).reshape(1, 1, -1)
+        b = torch.arange(1, self.dim + 1, dtype=f0.dtype, device=f0.device).reshape(
+            1, 1, -1
+        )
         rad *= b
         rand_ini = torch.rand(1, 1, self.dim, device=f0.device)
         rand_ini[..., 0] = 0
