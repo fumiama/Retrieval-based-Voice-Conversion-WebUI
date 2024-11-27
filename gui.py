@@ -251,7 +251,7 @@ if __name__ == "__main__":
                                 sg.FileBrowse(
                                     i18n("Select the .pth file"),
                                     initial_folder=os.path.join(
-                                        os.getcwd(), "assets/weights"
+                                        os.getcwd(), "assets", "weights"
                                     ),
                                     file_types=[("Model File", "*.pth")],
                                 ),

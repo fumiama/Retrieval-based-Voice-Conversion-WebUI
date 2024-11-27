@@ -111,7 +111,7 @@ class TextAudioLoaderMultiNSFsid(torch.utils.data.Dataset):
         spec_filename = filename.replace(".wav", ".spec.pt")
         if os.path.exists(spec_filename):
             try:
-                spec = torch.load(spec_filename)
+                spec = torch.load(spec_filename, weights_only=True)
             except:
                 logger.warning("%s %s", spec_filename, traceback.format_exc())
                 spec = spectrogram_torch(

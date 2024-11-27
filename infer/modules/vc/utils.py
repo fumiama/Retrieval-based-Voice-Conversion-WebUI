@@ -1,4 +1,4 @@
-import os
+import os, pathlib
 
 from fairseq import checkpoint_utils
 
@@ -8,7 +8,7 @@ def get_index_path_from_model(sid):
         (
             f
             for f in [
-                os.path.join(root, name)
+                str(pathlib.Path(root, name))
                 for path in [os.getenv("outside_index_root"), os.getenv("index_root")]
                 for root, _, files in os.walk(path, topdown=False)
                 for name in files

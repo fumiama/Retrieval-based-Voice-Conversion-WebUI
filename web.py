@@ -46,7 +46,7 @@ tmp = os.path.join(now_dir, "TEMP")
 shutil.rmtree(tmp, ignore_errors=True)
 os.makedirs(tmp, exist_ok=True)
 os.makedirs(os.path.join(now_dir, "logs"), exist_ok=True)
-os.makedirs(os.path.join(now_dir, "assets/weights"), exist_ok=True)
+os.makedirs(os.path.join(now_dir, "assets", "weights"), exist_ok=True)
 os.environ["TEMP"] = tmp
 warnings.filterwarnings("ignore")
 torch.manual_seed(114514)
@@ -142,20 +142,22 @@ index_root = os.getenv("index_root")
 outside_index_root = os.getenv("outside_index_root")
 
 names = []
-for name in os.listdir(weight_root):
-    if name.endswith(".pth"):
-        names.append(name)
 index_paths = []
 
+def lookup_names(weight_root):
+    global names
+    for name in os.listdir(weight_root):
+        if name.endswith(".pth"):
+            names.append(name)
 
 def lookup_indices(index_root):
     global index_paths
-    for root, dirs, files in os.walk(index_root, topdown=False):
+    for root, _, files in os.walk(index_root, topdown=False):
         for name in files:
             if name.endswith(".index") and "trained" not in name:
-                index_paths.append("%s/%s" % (root, name))
+                index_paths.append(str(pathlib.Path(root, name)))
 
-
+lookup_names(weight_root)
 lookup_indices(index_root)
 lookup_indices(outside_index_root)
 uvr5_names = []
@@ -165,15 +167,12 @@ for name in os.listdir(weight_uvr5_root):
 
 
 def change_choices():
+    global index_paths, names
     names = []
-    for name in os.listdir(weight_root):
-        if name.endswith(".pth"):
-            names.append(name)
+    lookup_names(weight_root)
     index_paths = []
-    for root, dirs, files in os.walk(index_root, topdown=False):
-        for name in files:
-            if name.endswith(".index") and "trained" not in name:
-                index_paths.append("%s/%s" % (root, name))
+    lookup_indices(index_root)
+    lookup_indices(outside_index_root)
     return {"choices": sorted(names), "__type__": "update"}, {
         "choices": sorted(index_paths),
         "__type__": "update",
@@ -223,16 +222,17 @@ def if_done_multi(done, ps):
 
 def preprocess_dataset(trainset_dir, exp_dir, sr, n_p):
     sr = sr_dict[sr]
-    os.makedirs("%s/logs/%s" % (now_dir, exp_dir), exist_ok=True)
-    f = open("%s/logs/%s/preprocess.log" % (now_dir, exp_dir), "w")
+    exp_path = pathlib.Path(now_dir, "logs", exp_dir)
+    os.makedirs(exp_path, exist_ok=True)
+    log_file_path = exp_path / "preprocess.log"
+    f = open(log_file_path, "w")
     f.close()
-    cmd = '"%s" infer/modules/train/preprocess.py "%s" %s %s "%s/logs/%s" %s %.1f' % (
+    cmd = '"%s" infer/modules/train/preprocess.py "%s" %s %s "%s" %s %.1f' % (
         config.python_cmd,
         trainset_dir,
         sr,
         n_p,
-        now_dir,
-        exp_dir,
+        str(exp_path),
         config.noparallel,
         config.preprocess_per,
     )
@@ -249,12 +249,12 @@ def preprocess_dataset(trainset_dir, exp_dir, sr, n_p):
         ),
     ).start()
     while 1:
-        with open("%s/logs/%s/preprocess.log" % (now_dir, exp_dir), "r") as f:
+        with open(log_file_path, "r") as f:
             yield (f.read())
         sleep(1)
         if done[0]:
             break
-    with open("%s/logs/%s/preprocess.log" % (now_dir, exp_dir), "r") as f:
+    with open(log_file_path, "r") as f:
         log = f.read()
     logger.info(log)
     yield log

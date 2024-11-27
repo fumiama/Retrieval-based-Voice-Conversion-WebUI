@@ -71,9 +71,7 @@ def load_checkpoint_d(checkpoint_path, combd, sbd, optimizer=None, load_opt=1):
 
 def load_checkpoint(checkpoint_path, model, optimizer=None, load_opt=1):
     assert os.path.isfile(checkpoint_path)
-    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
-
-    saved_state_dict = checkpoint_dict["model"]
+    saved_state_dict = torch.load(checkpoint_path, map_location="cpu", weights_only=True)["model"]
     if hasattr(model, "module"):
         state_dict = model.module.state_dict()
     else:
