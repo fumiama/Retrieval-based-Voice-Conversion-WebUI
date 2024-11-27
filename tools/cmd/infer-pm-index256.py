@@ -18,7 +18,6 @@ from time import time as ttime
 # import pyworld
 import librosa
 import numpy as np
-import soundfile as sf
 import torch.nn.functional as F
 from fairseq import checkpoint_utils
 
@@ -33,6 +32,7 @@ from scipy.io import wavfile
 # from models import SynthesizerTrn256NSFsim as SynthesizerTrn256#hifigan_nsf
 # from models import SynthesizerTrn256NSFsimFlow as SynthesizerTrn256#hifigan_nsf
 
+from infer.lib.audio import load_audio
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model_path = r"E:\codes\py39\vits_vc_gpu_train\assets\hubert\hubert_base.pt"  #
@@ -132,7 +132,7 @@ for idx, name in enumerate(
 ):  ##
     wav_path = "todo-songs/%s" % name  #
     f0_up_key = -2  #
-    audio, sampling_rate = sf.read(wav_path)
+    audio, sampling_rate = load_audio(wav_path)
     if len(audio.shape) > 1:
         audio = librosa.to_mono(audio.transpose(1, 0))
     if sampling_rate != 16000:

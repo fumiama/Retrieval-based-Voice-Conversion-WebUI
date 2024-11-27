@@ -9,7 +9,6 @@ faiss-cpu
 gradio
 Cython
 pydub>=0.25.1
-soundfile>=0.12.1
 tensorboardX
 Jinja2>=3.1.2
 json5

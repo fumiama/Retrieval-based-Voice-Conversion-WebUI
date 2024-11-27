@@ -1,9 +1,12 @@
 from io import BufferedWriter, BytesIO
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional, Union
 import os
+import math
+import wave
 
 import numpy as np
+from numba import jit
 import av
 from av.audio.resampler import AudioResampler
 
@@ -16,6 +19,26 @@ audio_format_dict: Dict[str, str] = {
     "mp4": "aac",
 }
 
+
+@jit(nopython=True)
+def float_to_int16(audio: np.ndarray) -> np.ndarray:
+    am = int(math.ceil(float(np.abs(audio).max())) * 32768)
+    am = 32767 * 32768 // am
+    return np.multiply(audio, am).astype(np.int16)
+
+def float_np_array_to_wav_buf(wav: np.ndarray, sr: int) -> BytesIO:
+    buf = BytesIO()
+    with wave.open(buf, "wb") as wf:
+        wf.setnchannels(1)  # Mono channel
+        wf.setsampwidth(2)  # Sample width in bytes
+        wf.setframerate(sr)  # Sample rate in Hz
+        wf.writeframes(float_to_int16(wav))
+    buf.seek(0, 0)
+    return buf
+
+def save_audio(path: str, audio: np.ndarray, sr: int):
+    with open(path, "wb") as f:
+        f.write(float_np_array_to_wav_buf(audio, sr).getbuffer())
 
 def wav2(i: BytesIO, o: BufferedWriter, format: str):
     inp = av.open(i, "r")
@@ -36,17 +59,20 @@ def wav2(i: BytesIO, o: BufferedWriter, format: str):
     inp.close()
 
 
-def load_audio(file: str, sr: int) -> np.ndarray:
-    if not Path(file).exists():
+def load_audio(file: Union[str, BytesIO, Path], sr: Optional[int]=None, format: Optional[str]=None) -> Union[np.ndarray, Tuple[np.ndarray, int]]:
+    """
+    load audio to mono channel
+    """
+    if (isinstance(file, str) and not Path(file).exists()) or (isinstance(file, Path) and not file.exists()):
         raise FileNotFoundError(f"File not found: {file}")
-
+    rate = 0
     try:
-        container = av.open(file)
+        container = av.open(file, format=format)
         resampler = AudioResampler(format="fltp", layout="mono", rate=sr)
 
         # Estimated maximum total number of samples to pre-allocate the array
         # AV stores length in microseconds by default
-        estimated_total_samples = int(container.duration * sr // 1_000_000)
+        estimated_total_samples = int(container.duration * sr // 1_000_000) if sr is not None else 48000
         decoded_audio = np.zeros(estimated_total_samples + 1, dtype=np.float32)
 
         offset = 0
@@ -54,6 +80,7 @@ def load_audio(file: str, sr: int) -> np.ndarray:
             frame.pts = None  # Clear presentation timestamp to avoid resampling issues
             resampled_frames = resampler.resample(frame)
             for resampled_frame in resampled_frames:
+                rate = resampled_frame.rate
                 frame_data = resampled_frame.to_ndarray()[0]
                 end_index = offset + len(frame_data)
 
@@ -69,10 +96,15 @@ def load_audio(file: str, sr: int) -> np.ndarray:
     except Exception as e:
         raise RuntimeError(f"Failed to load audio: {e}")
 
-    return decoded_audio
+    if sr is not None:
+        return decoded_audio
+    return decoded_audio, rate
 
 
-def downsample_audio(input_path: str, output_path: str, format: str) -> None:
+def downsample_audio(input_path: str, output_path: str, format: str, br=128_000) -> None:
+    """
+    default to 128kb/s (equivalent to -q:a 2)
+    """
     if not os.path.exists(input_path):
         return
 
@@ -83,7 +115,7 @@ def downsample_audio(input_path: str, output_path: str, format: str) -> None:
     input_stream = input_container.streams.audio[0]
     output_stream = output_container.add_stream(format)
 
-    output_stream.bit_rate = 128_000  # 128kb/s (equivalent to -q:a 2)
+    output_stream.bit_rate = br
 
     # Copy packets from the input file to the output file
     for packet in input_container.demux(input_stream):

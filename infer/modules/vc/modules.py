@@ -5,11 +5,10 @@ import os
 logger = logging.getLogger(__name__)
 
 import numpy as np
-import soundfile as sf
 import torch
 from io import BytesIO
 
-from infer.lib.audio import load_audio, wav2
+from infer.lib.audio import load_audio, wav2, save_audio, float_np_array_to_wav_buf
 from rvc.synthesizer import get_synthesizer, load_synthesizer
 from .info import show_model_info
 from .pipeline import Pipeline
@@ -253,23 +252,16 @@ class VC:
                     try:
                         tgt_sr, audio_opt = opt
                         if format1 in ["wav", "flac"]:
-                            sf.write(
-                                "%s/%s.%s"
-                                % (opt_root, os.path.basename(path), format1),
-                                audio_opt,
-                                tgt_sr,
-                            )
+                            save_audio("%s/%s.%s"
+                                % (opt_root, os.path.basename(path), format1), audio_opt, tgt_sr)
                         else:
                             path = "%s/%s.%s" % (
                                 opt_root,
                                 os.path.basename(path),
                                 format1,
                             )
-                            with BytesIO() as wavf:
-                                sf.write(wavf, audio_opt, tgt_sr, format="wav")
-                                wavf.seek(0, 0)
-                                with open(path, "wb") as outf:
-                                    wav2(wavf, outf, format1)
+                            with open(path, "wb") as outf:
+                                wav2(float_np_array_to_wav_buf(audio_opt, tgt_sr), outf, format1)
                     except:
                         info += traceback.format_exc()
                 infos.append("%s->%s" % (os.path.basename(path), info))

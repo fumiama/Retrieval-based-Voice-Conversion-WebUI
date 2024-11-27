@@ -183,8 +183,7 @@ def main():
     import os.path
     from argparse import ArgumentParser
 
-    import librosa
-    import soundfile
+    from .audio import load_audio, save_audio
 
     parser = ArgumentParser()
     parser.add_argument("audio", type=str, help="The audio to be sliced")
@@ -230,7 +229,7 @@ def main():
     out = args.out
     if out is None:
         out = os.path.dirname(os.path.abspath(args.audio))
-    audio, sr = librosa.load(args.audio, sr=None, mono=False)
+    audio, sr = load_audio(args.audio)
     slicer = Slicer(
         sr=sr,
         threshold=args.db_thresh,
@@ -245,15 +244,11 @@ def main():
     for i, chunk in enumerate(chunks):
         if len(chunk.shape) > 1:
             chunk = chunk.T
-        soundfile.write(
-            os.path.join(
-                out,
-                f"%s_%d.wav"
-                % (os.path.basename(args.audio).rsplit(".", maxsplit=1)[0], i),
-            ),
-            chunk,
-            sr,
-        )
+        save_audio(os.path.join(
+            out,
+            f"%s_%d.wav"
+            % (os.path.basename(args.audio).rsplit(".", maxsplit=1)[0], i),
+        ), chunk, sr)
 
 
 if __name__ == "__main__":

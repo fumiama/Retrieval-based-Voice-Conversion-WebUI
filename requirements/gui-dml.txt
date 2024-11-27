@@ -18,7 +18,6 @@ PyYAML
 resampy
 scikit_learn
 scipy
-SoundFile
 tensorboard
 tqdm
 wave

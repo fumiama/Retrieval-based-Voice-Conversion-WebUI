@@ -5,12 +5,10 @@ logger = logging.getLogger(__name__)
 
 import librosa
 import numpy as np
-import soundfile as sf
 import torch
 from tqdm import tqdm
-import av
 
-from infer.lib.audio import downsample_audio
+from infer.lib.audio import downsample_audio, save_audio
 
 cpu = torch.device("cpu")
 
@@ -210,15 +208,13 @@ class Predictor:
         sources = self.demix(mix.T)
         opt = sources[0].T
         if format in ["wav", "flac"]:
-            sf.write(
-                "%s/%s_main_vocal.%s" % (vocal_root, basename, format), mix - opt, rate
-            )
-            sf.write("%s/%s_others.%s" % (others_root, basename, format), opt, rate)
+            save_audio("%s/vocal_%s.%s" % (vocal_root, basename, format), mix - opt, rate)
+            save_audio("%s/instrument_%s.%s" % (others_root, basename, format), opt, rate)
         else:
-            path_vocal = "%s/%s_main_vocal.wav" % (vocal_root, basename)
-            path_other = "%s/%s_others.wav" % (others_root, basename)
-            sf.write(path_vocal, mix - opt, rate)
-            sf.write(path_other, opt, rate)
+            path_vocal = "%s/vocal_%s.wav" % (vocal_root, basename)
+            path_other = "%s/instrument_%s.wav" % (others_root, basename)
+            save_audio(path_vocal, opt, rate)
+            save_audio(path_other, opt, rate)
             opt_path_vocal = path_vocal[:-4] + ".%s" % format
             opt_path_other = path_other[:-4] + ".%s" % format
             downsample_audio(path_vocal, opt_path_vocal, format)

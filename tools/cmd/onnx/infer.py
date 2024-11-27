@@ -1,7 +1,8 @@
-import soundfile
 import librosa
 
 from rvc.onnx import RVC
+
+from infer.lib.audio import save_audio
 
 hop_size = 512
 sampling_rate = 40000  # 采样率
@@ -19,4 +20,4 @@ wav, sr = librosa.load(wav_path, sr=sampling_rate)
 
 audio = model.infer(wav, sr, sampling_rate, sid, f0_method, f0_up_key)
 
-soundfile.write(out_path, audio, sampling_rate)
+save_audio(out_path, audio, sampling_rate)
