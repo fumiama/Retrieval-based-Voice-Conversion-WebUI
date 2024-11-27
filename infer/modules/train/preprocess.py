@@ -68,7 +68,8 @@ class PreProcess:
                 load_audio(
                     float_np_array_to_wav_buf(tmp_audio, self.sr),
                     sr=16000,
-                    format="wav"
+                    format="wav",
+                    mono=False,
                 )
             , 16000).getbuffer())
 

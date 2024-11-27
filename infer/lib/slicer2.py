@@ -229,7 +229,7 @@ def main():
     out = args.out
     if out is None:
         out = os.path.dirname(os.path.abspath(args.audio))
-    audio, sr = load_audio(args.audio)
+    audio, sr = load_audio(args.audio, mono=False)
     slicer = Slicer(
         sr=sr,
         threshold=args.db_thresh,

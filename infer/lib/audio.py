@@ -30,10 +30,10 @@ def float_to_int16(audio: np.ndarray) -> np.ndarray:
 def float_np_array_to_wav_buf(wav: np.ndarray, sr: int) -> BytesIO:
     buf = BytesIO()
     with wave.open(buf, "wb") as wf:
-        wf.setnchannels(1)  # Mono channel
+        wf.setnchannels(2 if len(wav.shape) > 1 else 1)  # Mono channel
         wf.setsampwidth(2)  # Sample width in bytes
         wf.setframerate(sr)  # Sample rate in Hz
-        wf.writeframes(float_to_int16(wav))
+        wf.writeframes(float_to_int16(wav.T if len(wav.shape) > 1 else wav))
     buf.seek(0, 0)
     return buf
 
@@ -60,10 +60,12 @@ def wav2(i: BytesIO, o: BufferedWriter, format: str):
     inp.close()
 
 
-def load_audio(file: Union[str, BytesIO, Path], sr: Optional[int]=None, format: Optional[str]=None) -> Union[np.ndarray, Tuple[np.ndarray, int]]:
-    """
-    load audio to mono channel
-    """
+def load_audio(
+        file: Union[str, BytesIO, Path],
+        sr: Optional[int]=None,
+        format: Optional[str]=None,
+        mono=True
+    ) -> Union[np.ndarray, Tuple[np.ndarray, int]]:
     if (isinstance(file, str) and not Path(file).exists()) or (isinstance(file, Path) and not file.exists()):
         raise FileNotFoundError(f"File not found: {file}")
     rate = 0
@@ -72,7 +74,7 @@ def load_audio(file: Union[str, BytesIO, Path], sr: Optional[int]=None, format: 
     audio_stream = next(s for s in container.streams if s.type == "audio")
     channels = 1 if audio_stream.layout == "mono" else 2
     container.seek(0)
-    resampler = AudioResampler(format="fltp", layout=audio_stream.layout, rate=sr)
+    resampler = AudioResampler(format="fltp", layout=audio_stream.layout, rate=sr) if sr is not None else None
 
     # Estimated maximum total number of samples to pre-allocate the array
     # AV stores length in microseconds by default
@@ -83,19 +85,22 @@ def load_audio(file: Union[str, BytesIO, Path], sr: Optional[int]=None, format: 
 
     def process_packet(packet: List[AudioFrame]):
         frames_data = []
+        rate = 0
         for frame in packet:
             frame.pts = None  # 清除时间戳，避免重新采样问题
-            resampled_frames = resampler.resample(frame)
+            resampled_frames = resampler.resample(frame) if resampler is not None else [frame]
             for resampled_frame in resampled_frames:
                 frame_data = resampled_frame.to_ndarray()
+                rate = resampled_frame.rate
                 frames_data.append(frame_data)
-        return frames_data
+        return (rate, frames_data)
 
     def frame_iter(container):
         for p in container.demux(container.streams.audio[0]):
             yield p.decode()
 
-    for frames_data in map(process_packet, frame_iter(container)):
+    for r, frames_data in map(process_packet, frame_iter(container)):
+        if not rate: rate = r
         for frame_data in frames_data:
             end_index = offset + len(frame_data[0])
 
@@ -108,6 +113,9 @@ def load_audio(file: Union[str, BytesIO, Path], sr: Optional[int]=None, format: 
 
     # Truncate the array to the actual size
     decoded_audio = decoded_audio[..., :offset]
+
+    if mono and decoded_audio.shape[0] > 1:
+        decoded_audio = decoded_audio.mean(0)
 
     if sr is not None:
         return decoded_audio

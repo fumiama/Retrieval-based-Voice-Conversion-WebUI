@@ -71,8 +71,6 @@ def readwave(wav_path, normalize=False):
     wav, sr = load_audio(wav_path)
     assert sr == 16000
     feats = torch.from_numpy(wav).float()
-    if feats.dim() == 2:  # double channels
-        feats = feats.mean(-1)
     assert feats.dim() == 1, feats.dim()
     if normalize:
         with torch.no_grad():
