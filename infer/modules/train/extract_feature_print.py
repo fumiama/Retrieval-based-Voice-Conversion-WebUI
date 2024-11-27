@@ -2,6 +2,11 @@ import os
 import sys
 import traceback
 
+now_dir = os.getcwd()
+sys.path.append(now_dir)
+
+from infer.lib.audio import load_audio
+
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
 
@@ -20,7 +25,6 @@ else:
     is_half = sys.argv[7].lower() == "true"
 import fairseq
 import numpy as np
-import soundfile as sf
 import torch
 import torch.nn.functional as F
 
@@ -64,11 +68,9 @@ os.makedirs(outPath, exist_ok=True)
 
 # wave must be 16k, hop_size=320
 def readwave(wav_path, normalize=False):
-    wav, sr = sf.read(wav_path)
+    wav, sr = load_audio(wav_path)
     assert sr == 16000
     feats = torch.from_numpy(wav).float()
-    if feats.dim() == 2:  # double channels
-        feats = feats.mean(-1)
     assert feats.dim() == 1, feats.dim()
     if normalize:
         with torch.no_grad():

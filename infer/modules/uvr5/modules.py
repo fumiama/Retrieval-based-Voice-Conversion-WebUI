@@ -9,7 +9,7 @@ import torch
 
 from configs import Config
 from infer.modules.uvr5.mdxnet import MDXNetDereverb
-from infer.modules.uvr5.vr import AudioPre, AudioPreDeEcho
+from infer.modules.uvr5.vr import AudioPre
 
 config = Config()
 
@@ -27,8 +27,7 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
         if model_name == "onnx_dereverb_By_FoxJoy":
             pre_fun = MDXNetDereverb(15, config.device)
         else:
-            func = AudioPre if "DeEcho" not in model_name else AudioPreDeEcho
-            pre_fun = func(
+            pre_fun = AudioPre(
                 agg=int(agg),
                 model_path=os.path.join(
                     os.getenv("weight_uvr5_root"), model_name + ".pth"
@@ -72,18 +71,10 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
                 infos.append("%s->Success" % (os.path.basename(inp_path)))
                 yield "\n".join(infos)
             except:
-                try:
-                    if done == 0:
-                        pre_fun._path_audio_(
-                            inp_path, save_root_ins, save_root_vocal, format0
-                        )
-                    infos.append("%s->Success" % (os.path.basename(inp_path)))
-                    yield "\n".join(infos)
-                except:
-                    infos.append(
-                        "%s->%s" % (os.path.basename(inp_path), traceback.format_exc())
-                    )
-                    yield "\n".join(infos)
+                infos.append(
+                    "%s->%s" % (os.path.basename(inp_path), traceback.format_exc())
+                )
+                yield "\n".join(infos)
     except:
         infos.append(traceback.format_exc())
         yield "\n".join(infos)
