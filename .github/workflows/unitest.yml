@@ -20,6 +20,7 @@ jobs:
         sudo apt update
         wget https://github.com/fumiama/RVC-Models-Downloader/releases/download/v0.2.5/rvcmd_linux_amd64.deb
         sudo apt -y install ./rvcmd_linux_amd64.deb
+        pip install --force pip==24.0 # fix fairseq installing issue https://github.com/facebookresearch/fairseq/issues/5552
         python -m pip install --upgrade pip
         python -m pip install --upgrade setuptools
         python -m pip install --upgrade wheel
