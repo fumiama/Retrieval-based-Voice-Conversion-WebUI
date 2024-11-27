@@ -10,6 +10,7 @@ from numba import jit
 import av
 from av.audio.resampler import AudioResampler
 from av.audio.frame import AudioFrame
+import scipy.io.wavfile as wavfile
 
 video_format_dict: Dict[str, str] = {
     "m4a": "mp4",
@@ -27,19 +28,22 @@ def float_to_int16(audio: np.ndarray) -> np.ndarray:
     am = 32767 * 32768 // am
     return np.multiply(audio, am).astype(np.int16)
 
-def float_np_array_to_wav_buf(wav: np.ndarray, sr: int) -> BytesIO:
+def float_np_array_to_wav_buf(wav: np.ndarray, sr: int, f32=False) -> BytesIO:
     buf = BytesIO()
-    with wave.open(buf, "wb") as wf:
-        wf.setnchannels(2 if len(wav.shape) > 1 else 1)  # Mono channel
-        wf.setsampwidth(2)  # Sample width in bytes
-        wf.setframerate(sr)  # Sample rate in Hz
-        wf.writeframes(float_to_int16(wav.T if len(wav.shape) > 1 else wav))
+    if f32:
+        wavfile.write(buf, sr, wav.astype(np.float32))
+    else:
+        with wave.open(buf, "wb") as wf:
+            wf.setnchannels(2 if len(wav.shape) > 1 else 1)
+            wf.setsampwidth(2)  # Sample width in bytes
+            wf.setframerate(sr)  # Sample rate in Hz
+            wf.writeframes(float_to_int16(wav.T if len(wav.shape) > 1 else wav))
     buf.seek(0, 0)
     return buf
 
-def save_audio(path: str, audio: np.ndarray, sr: int):
+def save_audio(path: str, audio: np.ndarray, sr: int, f32=False):
     with open(path, "wb") as f:
-        f.write(float_np_array_to_wav_buf(audio, sr).getbuffer())
+        f.write(float_np_array_to_wav_buf(audio, sr, f32).getbuffer())
 
 def wav2(i: BytesIO, o: BufferedWriter, format: str):
     inp = av.open(i, "r")

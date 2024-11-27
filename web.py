@@ -141,8 +141,8 @@ weight_uvr5_root = os.getenv("weight_uvr5_root")
 index_root = os.getenv("index_root")
 outside_index_root = os.getenv("outside_index_root")
 
-names = []
-index_paths = []
+names = [""]
+index_paths = [""]
 
 def lookup_names(weight_root):
     global names
@@ -168,9 +168,9 @@ for name in os.listdir(weight_uvr5_root):
 
 def change_choices():
     global index_paths, names
-    names = []
+    names = [""]
     lookup_names(weight_root)
-    index_paths = []
+    index_paths = [""]
     lookup_indices(index_root)
     lookup_indices(outside_index_root)
     return {"choices": sorted(names), "__type__": "update"}, {
