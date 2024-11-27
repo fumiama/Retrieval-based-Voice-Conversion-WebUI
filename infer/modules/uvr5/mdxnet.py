@@ -208,8 +208,12 @@ class Predictor:
         sources = self.demix(mix.T)
         opt = sources[0].T
         if format in ["wav", "flac"]:
-            save_audio("%s/vocal_%s.%s" % (vocal_root, basename, format), mix - opt, rate)
-            save_audio("%s/instrument_%s.%s" % (others_root, basename, format), opt, rate)
+            save_audio(
+                "%s/vocal_%s.%s" % (vocal_root, basename, format), mix - opt, rate
+            )
+            save_audio(
+                "%s/instrument_%s.%s" % (others_root, basename, format), opt, rate
+            )
         else:
             path_vocal = "%s/vocal_%s.wav" % (vocal_root, basename)
             path_other = "%s/instrument_%s.wav" % (others_root, basename)

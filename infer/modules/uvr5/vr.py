@@ -48,9 +48,7 @@ class AudioPre:
         self.mp = mp
         self.model = model
 
-    def _path_audio_(
-        self, music_file, ins_root=None, vocal_root=None, format="flac"
-    ):
+    def _path_audio_(self, music_file, ins_root=None, vocal_root=None, format="flac"):
         if ins_root is None and vocal_root is None:
             return "No save root."
         name = os.path.basename(music_file)
@@ -134,10 +132,14 @@ class AudioPre:
             else:
                 head = "instrument_"
             if format in ["wav", "flac"]:
-                save_audio(os.path.join(
+                save_audio(
+                    os.path.join(
                         ins_root,
                         head + "{}_{}.{}".format(name, self.data["agg"], format),
-                    ), wav_instrument, self.mp.param["sr"])
+                    ),
+                    wav_instrument,
+                    self.mp.param["sr"],
+                )
             else:
                 path = os.path.join(
                     ins_root, head + "{}_{}.wav".format(name, self.data["agg"])
@@ -162,10 +164,14 @@ class AudioPre:
                 wav_vocals = spec_utils.cmb_spectrogram_to_wave(v_spec_m, self.mp)
             logger.info("%s vocals done" % name)
             if format in ["wav", "flac"]:
-                save_audio(os.path.join(
+                save_audio(
+                    os.path.join(
                         vocal_root,
                         head + "{}_{}.{}".format(name, self.data["agg"], format),
-                    ), wav_vocals, self.mp.param["sr"])
+                    ),
+                    wav_vocals,
+                    self.mp.param["sr"],
+                )
             else:
                 path = os.path.join(
                     vocal_root, head + "{}_{}.wav".format(name, self.data["agg"])

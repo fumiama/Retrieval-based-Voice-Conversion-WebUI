@@ -62,15 +62,24 @@ class PreProcess:
         tmp_audio = (tmp_audio / tmp_max * (self.max * self.alpha)) + (
             1 - self.alpha
         ) * tmp_audio
-        save_audio("%s/%s_%s.wav" % (self.gt_wavs_dir, idx0, idx1), tmp_audio, self.sr, f32=True)  
+        save_audio(
+            "%s/%s_%s.wav" % (self.gt_wavs_dir, idx0, idx1),
+            tmp_audio,
+            self.sr,
+            f32=True,
+        )
         with open("%s/%s_%s.wav" % (self.wavs16k_dir, idx0, idx1), "wb") as f:
-            f.write(float_np_array_to_wav_buf(
-                load_audio(
-                    float_np_array_to_wav_buf(tmp_audio, self.sr, f32=True),
-                    sr=16000,
-                    format="wav",
-                )
-            , 16000, True).getbuffer())
+            f.write(
+                float_np_array_to_wav_buf(
+                    load_audio(
+                        float_np_array_to_wav_buf(tmp_audio, self.sr, f32=True),
+                        sr=16000,
+                        format="wav",
+                    ),
+                    16000,
+                    True,
+                ).getbuffer()
+            )
 
     def pipeline(self, path, idx0):
         try:

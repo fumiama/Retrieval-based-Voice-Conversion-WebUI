@@ -244,11 +244,15 @@ def main():
     for i, chunk in enumerate(chunks):
         if len(chunk.shape) > 1:
             chunk = chunk.T
-        save_audio(os.path.join(
-            out,
-            f"%s_%d.wav"
-            % (os.path.basename(args.audio).rsplit(".", maxsplit=1)[0], i),
-        ), chunk, sr)
+        save_audio(
+            os.path.join(
+                out,
+                f"%s_%d.wav"
+                % (os.path.basename(args.audio).rsplit(".", maxsplit=1)[0], i),
+            ),
+            chunk,
+            sr,
+        )
 
 
 if __name__ == "__main__":

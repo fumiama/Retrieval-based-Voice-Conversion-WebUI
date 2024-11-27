@@ -144,11 +144,13 @@ outside_index_root = os.getenv("outside_index_root")
 names = [""]
 index_paths = [""]
 
+
 def lookup_names(weight_root):
     global names
     for name in os.listdir(weight_root):
         if name.endswith(".pth"):
             names.append(name)
+
 
 def lookup_indices(index_root):
     global index_paths
@@ -156,6 +158,7 @@ def lookup_indices(index_root):
         for name in files:
             if name.endswith(".index") and "trained" not in name:
                 index_paths.append(str(pathlib.Path(root, name)))
+
 
 lookup_names(weight_root)
 lookup_indices(index_root)
