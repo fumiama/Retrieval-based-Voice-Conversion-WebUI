@@ -1,6 +1,6 @@
 from io import BufferedWriter, BytesIO
 from pathlib import Path
-from typing import Dict, Tuple, Optional, Union
+from typing import Dict, Tuple, Optional, Union, List
 import os
 import math
 import wave
@@ -9,6 +9,7 @@ import numpy as np
 from numba import jit
 import av
 from av.audio.resampler import AudioResampler
+from av.audio.frame import AudioFrame
 
 video_format_dict: Dict[str, str] = {
     "m4a": "mp4",
@@ -66,35 +67,47 @@ def load_audio(file: Union[str, BytesIO, Path], sr: Optional[int]=None, format: 
     if (isinstance(file, str) and not Path(file).exists()) or (isinstance(file, Path) and not file.exists()):
         raise FileNotFoundError(f"File not found: {file}")
     rate = 0
-    try:
-        container = av.open(file, format=format)
-        resampler = AudioResampler(format="fltp", layout="mono", rate=sr)
 
-        # Estimated maximum total number of samples to pre-allocate the array
-        # AV stores length in microseconds by default
-        estimated_total_samples = int(container.duration * sr // 1_000_000) if sr is not None else 48000
-        decoded_audio = np.zeros(estimated_total_samples + 1, dtype=np.float32)
+    container = av.open(file, format=format)
+    audio_stream = next(s for s in container.streams if s.type == "audio")
+    channels = 1 if audio_stream.layout == "mono" else 2
+    container.seek(0)
+    resampler = AudioResampler(format="fltp", layout=audio_stream.layout, rate=sr)
 
-        offset = 0
-        for frame in container.decode(audio=0):
-            frame.pts = None  # Clear presentation timestamp to avoid resampling issues
+    # Estimated maximum total number of samples to pre-allocate the array
+    # AV stores length in microseconds by default
+    estimated_total_samples = int(container.duration * sr // 1_000_000) if sr is not None else 48000
+    decoded_audio = np.zeros(estimated_total_samples + 1 if channels == 1 else (channels, estimated_total_samples + 1), dtype=np.float32)
+
+    offset = 0
+
+    def process_packet(packet: List[AudioFrame]):
+        frames_data = []
+        for frame in packet:
+            frame.pts = None  # 清除时间戳，避免重新采样问题
             resampled_frames = resampler.resample(frame)
             for resampled_frame in resampled_frames:
-                rate = resampled_frame.rate
-                frame_data = resampled_frame.to_ndarray()[0]
-                end_index = offset + len(frame_data)
+                frame_data = resampled_frame.to_ndarray()
+                frames_data.append(frame_data)
+        return frames_data
 
-                # Check if decoded_audio has enough space, and resize if necessary
-                if end_index > decoded_audio.shape[0]:
-                    decoded_audio = np.resize(decoded_audio, end_index + 1)
+    def frame_iter(container):
+        for p in container.demux(container.streams.audio[0]):
+            yield p.decode()
 
-                decoded_audio[offset:end_index] = frame_data
-                offset += len(frame_data)
+    for frames_data in map(process_packet, frame_iter(container)):
+        for frame_data in frames_data:
+            end_index = offset + len(frame_data[0])
 
-        # Truncate the array to the actual size
-        decoded_audio = decoded_audio[:offset]
-    except Exception as e:
-        raise RuntimeError(f"Failed to load audio: {e}")
+            # 检查 decoded_audio 是否有足够的空间，并在必要时调整大小
+            if end_index > decoded_audio.shape[1]:
+                decoded_audio = np.resize(decoded_audio, (decoded_audio.shape[0], end_index*4))
+
+            np.copyto(decoded_audio[..., offset:end_index], frame_data)
+            offset += len(frame_data[0])
+
+    # Truncate the array to the actual size
+    decoded_audio = decoded_audio[..., :offset]
 
     if sr is not None:
         return decoded_audio
@@ -173,7 +186,7 @@ def resample_audio(
         print(f"Failed to remove the original file: {e}")
 
 
-def get_audio_properties(input_path: str) -> Tuple:
+def get_audio_properties(input_path: str) -> Tuple[int, int]:
     container = av.open(input_path)
     audio_stream = next(s for s in container.streams if s.type == "audio")
     channels = 1 if audio_stream.layout == "mono" else 2
