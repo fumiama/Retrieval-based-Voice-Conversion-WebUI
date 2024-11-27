@@ -48,7 +48,7 @@ def check_model(
 def check_all_assets(update=False) -> bool:
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-    logger.info("checking hubret & rmvpe...")
+    logger.info("checking hubert & rmvpe...")
 
     if not check_model(
         BASE_DIR / "assets" / "hubert",

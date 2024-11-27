@@ -2,7 +2,7 @@ joblib>=1.1.0
 numba
 numpy
 scipy
-librosa==0.10.2
+librosa>=0.10.2
 llvmlite
 fairseq @ git+https://github.com/One-sixth/fairseq.git
 faiss-cpu

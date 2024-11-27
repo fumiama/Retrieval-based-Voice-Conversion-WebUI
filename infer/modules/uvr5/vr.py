@@ -43,7 +43,7 @@ class AudioPre:
         self.model = model
 
     def _path_audio_(
-        self, music_file, ins_root=None, vocal_root=None, format="flac", is_hp3=False
+        self, music_file, ins_root=None, vocal_root=None, format="flac"
     ):
         if ins_root is None and vocal_root is None:
             return "No save root."
@@ -123,10 +123,7 @@ class AudioPre:
             else:
                 wav_instrument = spec_utils.cmb_spectrogram_to_wave(y_spec_m, self.mp)
             logger.info("%s instruments done" % name)
-            if is_hp3 == True:
-                head = "vocal_"
-            else:
-                head = "instrument_"
+            head = "instrument_"
             if format in ["wav", "flac"]:
                 sf.write(
                     os.path.join(
@@ -149,10 +146,7 @@ class AudioPre:
                     opt_format_path = path[:-4] + ".%s" % format
                     downsample_audio(path, opt_format_path, format)
         if vocal_root is not None:
-            if is_hp3 == True:
-                head = "instrument_"
-            else:
-                head = "vocal_"
+            head = "vocal_"
             if self.data["high_end_process"].startswith("mirroring"):
                 input_high_end_ = spec_utils.mirroring(
                     self.data["high_end_process"], v_spec_m, input_high_end, self.mp
@@ -213,7 +207,7 @@ class AudioPreDeEcho:
         self.model = model
 
     def _path_audio_(
-        self, music_file, vocal_root=None, ins_root=None, format="flac", is_hp3=False
+        self, music_file, vocal_root=None, ins_root=None, format="flac"
     ):  # 3个VR模型vocal和ins是反的
         if ins_root is None and vocal_root is None:
             return "No save root."

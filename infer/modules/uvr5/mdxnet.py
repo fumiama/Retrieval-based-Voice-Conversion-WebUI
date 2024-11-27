@@ -239,5 +239,5 @@ class MDXNetDereverb:
         self.pred = Predictor(self)
         self.device = device
 
-    def _path_audio_(self, input, vocal_root, others_root, format, is_hp3=False):
+    def _path_audio_(self, input, vocal_root, others_root, format):
         self.pred.prediction(input, vocal_root, others_root, format)
