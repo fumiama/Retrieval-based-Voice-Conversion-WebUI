@@ -25,7 +25,6 @@
     "Convert": "转换",
     "Device type": "设备类型",
     "Enable phase vocoder": "启用相位声码器",
-    "Enter the GPU index(es) separated by '-', e.g., 0-0-1 to use 2 processes in GPU0 and 1 process in GPU1": "rmvpe卡号配置：以-分隔输入使用的不同进程卡号,例如0-0-1使用在卡0上跑2个进程并在卡1上跑1个进程",
     "Enter the GPU index(es) separated by '-', e.g., 0-1-2 to use GPU 0, 1, and 2": "以-分隔输入使用的卡号, 例如   0-1-2   使用卡0和卡1和卡2",
     "Enter the experiment name": "输入实验名",
     "Enter the path of the audio folder to be processed": "输入待处理音频文件夹路径",
