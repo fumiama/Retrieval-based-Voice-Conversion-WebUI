@@ -964,9 +964,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                                 "Select the pitch extraction algorithm ('pm': faster extraction but lower-quality speech; 'harvest': better bass but extremely slow; 'crepe': better quality but GPU intensive), 'rmvpe': best quality, and little GPU requirement"
                             ),
                             choices=(
-                                ["pm", "harvest", "crepe", "rmvpe"]
-                                if config.dml == False
-                                else ["pm", "harvest", "rmvpe"]
+                                ["pm", "dio", "harvest", "crepe", "rmvpe", "fcpe"]
                             ),
                             value="rmvpe",
                             interactive=True,
@@ -1209,7 +1207,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                         label=i18n(
                             "Select the pitch extraction algorithm: when extracting singing, you can use 'pm' to speed up. For high-quality speech with fast performance, but worse CPU usage, you can use 'dio'. 'harvest' results in better quality but is slower.  'rmvpe' has the best results and consumes less CPU/GPU"
                         ),
-                        choices=["pm", "harvest", "dio", "rmvpe"],
+                        choices=["pm", "dio", "harvest", "crepe", "rmvpe", "fcpe"],
                         value="rmvpe",
                         interactive=True,
                     )

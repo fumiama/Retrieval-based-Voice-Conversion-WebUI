@@ -31,7 +31,7 @@ def load_synthesizer(
     pth_path: torch.serialization.FILE_LIKE, device=torch.device("cpu")
 ):
     return get_synthesizer(
-        torch.load(pth_path, map_location=torch.device("cpu")),
+        torch.load(pth_path, map_location=torch.device("cpu"), weights_only=True),
         device,
     )
 

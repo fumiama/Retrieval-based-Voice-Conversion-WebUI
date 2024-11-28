@@ -1,6 +1,7 @@
 from io import BytesIO
 import os
 from typing import Union, Literal, Optional
+from pathlib import Path
 
 import fairseq
 import faiss
@@ -10,7 +11,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchaudio.transforms import Resample
 
-from rvc.f0 import PM, Harvest, RMVPE, CRePE, Dio, FCPE
+from rvc.f0 import Generator
 from rvc.synthesizer import load_synthesizer
 
 
@@ -65,14 +66,7 @@ class RVC:
 
         self.resample_kernel = {}
 
-        self.f0_methods = {
-            "crepe": self._get_f0_crepe,
-            "rmvpe": self._get_f0_rmvpe,
-            "fcpe": self._get_f0_fcpe,
-            "pm": self._get_f0_pm,
-            "harvest": self._get_f0_harvest,
-            "dio": self._get_f0_dio,
-        }
+        self.f0_gen = Generator(Path(os.environ["rmvpe_root"]), is_half, 0, device, self.window, self.sr)
 
         models, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task(
             ["assets/hubert/hubert_base.pt"],
@@ -141,7 +135,6 @@ class RVC:
         skip_head: int,
         return_length: int,
         f0method: Union[tuple, str],
-        inp_f0: Optional[np.ndarray] = None,
         protect: float = 1.0,
     ) -> np.ndarray:
         with torch.no_grad():
@@ -205,16 +198,11 @@ class RVC:
                 f0_extractor_frame = (
                     5120 * ((f0_extractor_frame - 1) // 5120 + 1) - self.window
                 )
-            if inp_f0 is not None:
-                pitch, pitchf = self._get_f0_post(
-                    inp_f0, self.f0_up_key - self.formant_shift
-                )
-            else:
-                pitch, pitchf = self._get_f0(
-                    input_wav[-f0_extractor_frame:],
-                    self.f0_up_key - self.formant_shift,
-                    method=f0method,
-                )
+            pitch, pitchf = self._get_f0(
+                input_wav[-f0_extractor_frame:],
+                self.f0_up_key - self.formant_shift,
+                method=f0method,
+            )
             shift = block_frame_16k // self.window
             self.cache_pitch[:-shift] = self.cache_pitch[shift:].clone()
             self.cache_pitchf[:-shift] = self.cache_pitchf[shift:].clone()
@@ -275,89 +263,9 @@ class RVC:
         filter_radius: Optional[Union[int, float]] = None,
         method: Literal["crepe", "rmvpe", "fcpe", "pm", "harvest", "dio"] = "fcpe",
     ):
-        if method not in self.f0_methods.keys():
-            raise RuntimeError("Not supported f0 method: " + method)
-        return self.f0_methods[method](x, f0_up_key, filter_radius)
-
-    def _get_f0_post(self, f0, f0_up_key):
-        f0 *= pow(2, f0_up_key / 12)
-        if not torch.is_tensor(f0):
-            f0 = torch.from_numpy(f0)
-        f0 = f0.float().to(self.device).squeeze()
-        f0_mel = 1127 * torch.log(1 + f0 / 700)
-        f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - self.f0_mel_min) * 254 / (
-            self.f0_mel_max - self.f0_mel_min
-        ) + 1
-        f0_mel[f0_mel <= 1] = 1
-        f0_mel[f0_mel > 255] = 255
-        f0_coarse = torch.round(f0_mel).long()
-        return f0_coarse, f0
-
-    def _get_f0_pm(self, x, f0_up_key, filter_radius):
-        if not hasattr(self, "pm"):
-            self.pm = PM(hop_length=160, sampling_rate=16000)
-        f0 = self.pm.compute_f0(x.cpu().numpy())
-        return self._get_f0_post(f0, f0_up_key)
-
-    def _get_f0_harvest(self, x, f0_up_key, filter_radius=3):
-        if not hasattr(self, "harvest"):
-            self.harvest = Harvest(
-                self.window,
-                self.f0_min,
-                self.f0_max,
-                self.sr,
-            )
-        if filter_radius is None:
-            filter_radius = 3
-        f0 = self.harvest.compute_f0(x.cpu().numpy(), filter_radius=filter_radius)
-        return self._get_f0_post(f0, f0_up_key)
-
-    def _get_f0_dio(self, x, f0_up_key, filter_radius):
-        if not hasattr(self, "dio"):
-            self.dio = Dio(
-                self.window,
-                self.f0_min,
-                self.f0_max,
-                self.sr,
-            )
-        f0 = self.dio.compute_f0(x.cpu().numpy())
-        return self._get_f0_post(f0, f0_up_key)
-
-    def _get_f0_crepe(self, x, f0_up_key, filter_radius):
-        if hasattr(self, "crepe") == False:
-            self.crepe = CRePE(
-                self.window,
-                self.f0_min,
-                self.f0_max,
-                self.sr,
-                self.device,
-            )
-        f0 = self.crepe.compute_f0(x)
-        return self._get_f0_post(f0, f0_up_key)
-
-    def _get_f0_rmvpe(self, x, f0_up_key, filter_radius=0.03):
-        if hasattr(self, "rmvpe") == False:
-            self.rmvpe = RMVPE(
-                "%s/rmvpe.pt" % os.environ["rmvpe_root"],
-                is_half=self.is_half,
-                device=self.device,
-                use_jit=self.use_jit,
-            )
-        if filter_radius is None:
-            filter_radius = 0.03
-        return self._get_f0_post(
-            self.rmvpe.compute_f0(x, filter_radius=filter_radius),
-            f0_up_key,
-        )
-
-    def _get_f0_fcpe(self, x, f0_up_key, filter_radius):
-        if hasattr(self, "fcpe") == False:
-            self.fcpe = FCPE(
-                160,
-                self.f0_min,
-                self.f0_max,
-                16000,
-                self.device,
-            )
-        f0 = self.fcpe.compute_f0(x)
-        return self._get_f0_post(f0, f0_up_key)
+        c, f = self.f0_gen.calculate(x, None, f0_up_key, method, filter_radius)
+        if not torch.is_tensor(c):
+            c = torch.from_numpy(c)
+        if not torch.is_tensor(f):
+            f = torch.from_numpy(f)
+        return c.long().to(self.device), f.float().to(self.device)

@@ -4,12 +4,12 @@ from typing import Optional, Union, Literal, Tuple
 
 from numba import jit
 import numpy as np
+import torch
 
 
 @jit(nopython=True)
 def post_process(
-    sr: int,
-    window: int,
+    tf0: int, # 每秒f0点数
     f0: np.ndarray,
     f0_up_key: int,
     manual_x_pad: int,
@@ -19,7 +19,6 @@ def post_process(
 ) -> Tuple[np.ndarray, np.ndarray]:
     f0 = np.multiply(f0, pow(2, f0_up_key / 12))
     # with open("test.txt","w")as f:f.write("\n".join([str(i)for i in f0.tolist()]))
-    tf0 = sr // window  # 每秒f0点数
     if manual_f0 is not None:
         delta_t = np.round(
             (manual_f0[:, 0].max() - manual_f0[:, 0].min()) * tf0 + 1
@@ -62,12 +61,14 @@ class Generator(object):
     def calculate(
         self,
         x: np.ndarray,
-        p_len: int,
+        p_len: Optional[int],
         f0_up_key: int,
         f0_method: Literal["pm", "dio", "harvest", "crepe", "rmvpe", "fcpe"],
         filter_radius: Optional[Union[int, float]],
         manual_f0: Optional[Union[np.ndarray, list]] = None,
     ) -> Tuple[np.ndarray, np.ndarray]:
+        if torch.is_tensor(x):
+            x = x.cpu().numpy()
         f0_min = 50
         f0_max = 1100
         if f0_method == "pm":
@@ -130,8 +131,7 @@ class Generator(object):
             raise ValueError(f"f0 method {f0_method} has not yet been supported")
 
         return post_process(
-            self.sr,
-            self.window,
+            self.sr // self.window,
             f0,
             f0_up_key,
             self.x_pad,
