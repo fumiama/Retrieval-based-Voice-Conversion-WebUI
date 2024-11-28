@@ -25,7 +25,6 @@
     "Convert": "Conversión",
     "Device type": "Tipo de dispositivo",
     "Enable phase vocoder": "Habilitar vocoder de fase",
-    "Enter the GPU index(es) separated by '-', e.g., 0-0-1 to use 2 processes in GPU0 and 1 process in GPU1": "Separe los números de identificación de la GPU con '-' al ingresarlos. Por ejemplo, '0-1-2' significa usar GPU 0, GPU 1 y GPU 2.",
     "Enter the GPU index(es) separated by '-', e.g., 0-1-2 to use GPU 0, 1, and 2": "Separe los números de identificación de la GPU con '-' al ingresarlos. Por ejemplo, '0-1-2' significa usar GPU 0, GPU 1 y GPU 2.",
     "Enter the experiment name": "Ingrese el nombre del modelo",
     "Enter the path of the audio folder to be processed": "Ingrese la ruta a la carpeta de audio que se procesará",

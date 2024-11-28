@@ -25,7 +25,6 @@
     "Convert": "변환",
     "Device type": "设备类型",
     "Enable phase vocoder": "위상 보코더 활성화",
-    "Enter the GPU index(es) separated by '-', e.g., 0-0-1 to use 2 processes in GPU0 and 1 process in GPU1": "rmvpe 카드 번호 설정: -로 구분된 입력 사용 카드 번호, 예: 0-0-1은 카드 0에서 2개 프로세스, 카드 1에서 1개 프로세스 실행",
     "Enter the GPU index(es) separated by '-', e.g., 0-1-2 to use GPU 0, 1, and 2": "-로 구분하여 입력하는 카드 번호, 예: 0-1-2는 카드 0, 카드 1, 카드 2 사용",
     "Enter the experiment name": "실험명 입력",
     "Enter the path of the audio folder to be processed": "처리할 오디오 파일 폴더 경로 입력",
