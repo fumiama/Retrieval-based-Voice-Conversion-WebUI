@@ -66,7 +66,9 @@ class RVC:
 
         self.resample_kernel = {}
 
-        self.f0_gen = Generator(Path(os.environ["rmvpe_root"]), is_half, 0, device, self.window, self.sr)
+        self.f0_gen = Generator(
+            Path(os.environ["rmvpe_root"]), is_half, 0, device, self.window, self.sr
+        )
 
         models, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task(
             ["assets/hubert/hubert_base.pt"],
