@@ -207,11 +207,20 @@ class Predictor:
         sources = self.demix(mix.T)
         opt = sources[0].T
         save_audio(
-            "%s/vocal_%s.%s" % (vocal_root, basename, format), mix - opt, rate, True, format=format,
+            "%s/vocal_%s.%s" % (vocal_root, basename, format),
+            mix - opt,
+            rate,
+            True,
+            format=format,
         )
         save_audio(
-            "%s/instrument_%s.%s" % (others_root, basename, format), opt, rate, True, format=format,
+            "%s/instrument_%s.%s" % (others_root, basename, format),
+            opt,
+            rate,
+            True,
+            format=format,
         )
+
 
 class MDXNetDereverb:
     def __init__(self, chunks, device):
