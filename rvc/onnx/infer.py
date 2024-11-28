@@ -76,7 +76,9 @@ class RVC(Model):
         hubert = np.repeat(hubert, 2, axis=2).transpose(0, 2, 1).astype(np.float32)
         hubert_length = hubert.shape[1]
 
-        pitch, pitchf = self.f0_gen.calculate(wav, hubert_length, f0_up_key, f0_method, None)
+        pitch, pitchf = self.f0_gen.calculate(
+            wav, hubert_length, f0_up_key, f0_method, None
+        )
         pitch = pitch.astype(np.int64)
 
         pitchf = pitchf.reshape(1, len(pitchf)).astype(np.float32)
