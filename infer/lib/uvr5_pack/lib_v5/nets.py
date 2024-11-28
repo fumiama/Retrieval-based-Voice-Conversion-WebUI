@@ -24,7 +24,8 @@ class BaseNet(nn.Module):
         self.lstm_dec2 = layers.LSTMModule(nout * 2, nin_lstm, nout_lstm)
         self.dec1 = layers.Decoder(nout * (1 + 2) + 1, nout * 1, 3, 1, 1)
 
-    def __call__(self, x):
+    @torch.inference_mode()
+    def forward(self, x):
         e1 = self.enc1(x)
         e2 = self.enc2(e1)
         e3 = self.enc3(e2)
@@ -75,6 +76,7 @@ class CascadedNet(nn.Module):
         self.out = nn.Conv2d(nout, 2, 1, bias=False)
         self.aux_out = nn.Conv2d(3 * nout // 4, 2, 1, bias=False)
 
+    @torch.inference_mode()
     def forward(self, x):
         x = x[:, :, : self.max_bin]
 
@@ -112,22 +114,3 @@ class CascadedNet(nn.Module):
             return mask, aux
         else:
             return mask
-
-    def predict_mask(self, x):
-        mask = self.forward(x)
-
-        if self.offset > 0:
-            mask = mask[:, :, :, self.offset : -self.offset]
-            assert mask.size()[3] > 0
-
-        return mask
-
-    def predict(self, x, aggressiveness=None):
-        mask = self.forward(x)
-        pred_mag = x * mask
-
-        if self.offset > 0:
-            pred_mag = pred_mag[:, :, :, self.offset : -self.offset]
-            assert pred_mag.size()[3] > 0
-
-        return pred_mag

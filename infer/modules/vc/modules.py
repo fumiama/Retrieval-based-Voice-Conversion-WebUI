@@ -251,25 +251,13 @@ class VC:
                 if "Success" in info:
                     try:
                         tgt_sr, audio_opt = opt
-                        if format1 in ["wav", "flac"]:
-                            save_audio(
-                                "%s/%s.%s"
-                                % (opt_root, os.path.basename(path), format1),
-                                audio_opt,
-                                tgt_sr,
-                            )
-                        else:
-                            path = "%s/%s.%s" % (
-                                opt_root,
-                                os.path.basename(path),
-                                format1,
-                            )
-                            with open(path, "wb") as outf:
-                                wav2(
-                                    float_np_array_to_wav_buf(audio_opt, tgt_sr),
-                                    outf,
-                                    format1,
-                                )
+                        save_audio(
+                            "%s/%s.%s"
+                            % (opt_root, os.path.basename(path), format1),
+                            audio_opt,
+                            tgt_sr,
+                            f32=True,
+                        )
                     except:
                         info += traceback.format_exc()
                 infos.append("%s->%s" % (os.path.basename(path), info))

@@ -43,9 +43,14 @@ def float_np_array_to_wav_buf(wav: np.ndarray, sr: int, f32=False) -> BytesIO:
     return buf
 
 
-def save_audio(path: str, audio: np.ndarray, sr: int, f32=False):
+def save_audio(path: str, audio: np.ndarray, sr: int, f32=False, format="wav"):
+    buf = float_np_array_to_wav_buf(audio, sr, f32)
+    if format != "wav":
+        transbuf = BytesIO()
+        wav2(buf, transbuf, format)
+        buf = transbuf
     with open(path, "wb") as f:
-        f.write(float_np_array_to_wav_buf(audio, sr, f32).getbuffer())
+        f.write(buf.getbuffer())
 
 
 def wav2(i: BytesIO, o: BufferedWriter, format: str):
@@ -109,7 +114,7 @@ def load_audio(
         frames_data = []
         rate = 0
         for frame in packet:
-            frame.pts = None  # 清除时间戳，避免重新采样问题
+            # frame.pts = None  # 清除时间戳，避免重新采样问题
             resampled_frames = (
                 resampler.resample(frame) if resampler is not None else [frame]
             )
@@ -137,6 +142,8 @@ def load_audio(
 
             np.copyto(decoded_audio[..., offset:end_index], frame_data)
             offset += len(frame_data[0])
+    
+    container.close()
 
     # Truncate the array to the actual size
     decoded_audio = decoded_audio[..., :offset]
@@ -147,43 +154,6 @@ def load_audio(
     if sr is not None:
         return decoded_audio
     return decoded_audio, rate
-
-
-def downsample_audio(
-    input_path: str, output_path: str, format: str, br=128_000
-) -> None:
-    """
-    default to 128kb/s (equivalent to -q:a 2)
-    """
-    if not os.path.exists(input_path):
-        return
-
-    input_container = av.open(input_path)
-    output_container = av.open(output_path, "w")
-
-    # Create a stream in the output container
-    input_stream = input_container.streams.audio[0]
-    output_stream = output_container.add_stream(format)
-
-    output_stream.bit_rate = br
-
-    # Copy packets from the input file to the output file
-    for packet in input_container.demux(input_stream):
-        for frame in packet.decode():
-            for out_packet in output_stream.encode(frame):
-                output_container.mux(out_packet)
-
-    for packet in output_stream.encode():
-        output_container.mux(packet)
-
-    # Close the containers
-    input_container.close()
-    output_container.close()
-
-    try:  # Remove the original file
-        os.remove(input_path)
-    except Exception as e:
-        print(f"Failed to remove the original file: {e}")
 
 
 def resample_audio(
@@ -204,7 +174,7 @@ def resample_audio(
     # Copy packets from the input file to the output file
     for packet in input_container.demux(input_stream):
         for frame in packet.decode():
-            frame.pts = None  # Clear presentation timestamp to avoid resampling issues
+            # frame.pts = None  # Clear presentation timestamp to avoid resampling issues
             out_frames = resampler.resample(frame)
             for out_frame in out_frames:
                 for out_packet in output_stream.encode(out_frame):
@@ -217,10 +187,6 @@ def resample_audio(
     input_container.close()
     output_container.close()
 
-    try:  # Remove the original file
-        os.remove(input_path)
-    except Exception as e:
-        print(f"Failed to remove the original file: {e}")
 
 
 def get_audio_properties(input_path: str) -> Tuple[int, int]:

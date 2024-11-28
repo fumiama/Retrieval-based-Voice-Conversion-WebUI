@@ -3,12 +3,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-import librosa
 import numpy as np
 import torch
 from tqdm import tqdm
 
-from infer.lib.audio import downsample_audio, save_audio
+from infer.lib.audio import load_audio, save_audio
 
 cpu = torch.device("cpu")
 
@@ -201,29 +200,18 @@ class Predictor:
         os.makedirs(vocal_root, exist_ok=True)
         os.makedirs(others_root, exist_ok=True)
         basename = os.path.basename(m)
-        mix, rate = librosa.load(m, mono=False, sr=44100)
+        mix, rate = load_audio(m, mono=False, sr=44100)
         if mix.ndim == 1:
             mix = np.asfortranarray([mix, mix])
         mix = mix.T
         sources = self.demix(mix.T)
         opt = sources[0].T
-        if format in ["wav", "flac"]:
-            save_audio(
-                "%s/vocal_%s.%s" % (vocal_root, basename, format), mix - opt, rate
-            )
-            save_audio(
-                "%s/instrument_%s.%s" % (others_root, basename, format), opt, rate
-            )
-        else:
-            path_vocal = "%s/vocal_%s.wav" % (vocal_root, basename)
-            path_other = "%s/instrument_%s.wav" % (others_root, basename)
-            save_audio(path_vocal, opt, rate)
-            save_audio(path_other, opt, rate)
-            opt_path_vocal = path_vocal[:-4] + ".%s" % format
-            opt_path_other = path_other[:-4] + ".%s" % format
-            downsample_audio(path_vocal, opt_path_vocal, format)
-            downsample_audio(path_other, opt_path_other, format)
-
+        save_audio(
+            "%s/vocal_%s.%s" % (vocal_root, basename, format), mix - opt, rate, True, format=format,
+        )
+        save_audio(
+            "%s/instrument_%s.%s" % (others_root, basename, format), opt, rate, True, format=format,
+        )
 
 class MDXNetDereverb:
     def __init__(self, chunks, device):

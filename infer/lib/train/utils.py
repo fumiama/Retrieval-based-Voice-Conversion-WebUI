@@ -5,6 +5,7 @@ import logging
 import os
 import sys
 from copy import deepcopy
+import math
 
 import codecs
 import numpy as np
@@ -103,7 +104,7 @@ def summarize(
 
 def latest_checkpoint_path(dir_path, regex="G_*.pth"):
     f_list = glob.glob(os.path.join(dir_path, regex))
-    f_list.sort(key=lambda f: int("".join(filter(str.isdigit, f))))
+    f_list.sort(key=lambda f: 999999999999 if isinstance(f, str) and f == "latest" else int("0"+"".join(filter(str.isdigit, f))))
     x = f_list[-1]
     logger.debug(x)
     return x

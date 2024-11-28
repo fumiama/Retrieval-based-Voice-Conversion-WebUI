@@ -22,7 +22,8 @@ class Conv2DBNActiv(nn.Module):
             activ(),
         )
 
-    def __call__(self, x):
+    @torch.inference_mode()
+    def forward(self, x):
         return self.conv(x)
 
 
@@ -32,7 +33,8 @@ class Encoder(nn.Module):
         self.conv1 = Conv2DBNActiv(nin, nout, ksize, stride, pad, activ=activ)
         self.conv2 = Conv2DBNActiv(nout, nout, ksize, 1, pad, activ=activ)
 
-    def __call__(self, x):
+    @torch.inference_mode()
+    def forward(self, x):
         h = self.conv1(x)
         h = self.conv2(h)
 
@@ -48,7 +50,8 @@ class Decoder(nn.Module):
         # self.conv2 = Conv2DBNActiv(nout, nout, ksize, 1, pad, activ=activ)
         self.dropout = nn.Dropout2d(0.1) if dropout else None
 
-    def __call__(self, x, skip=None):
+    @torch.inference_mode()
+    def forward(self, x, skip=None):
         x = F.interpolate(x, scale_factor=2, mode="bilinear", align_corners=True)
 
         if skip is not None:
@@ -84,6 +87,7 @@ class ASPPModule(nn.Module):
         self.bottleneck = Conv2DBNActiv(nout * 5, nout, 1, 1, 0, activ=activ)
         self.dropout = nn.Dropout2d(0.1) if dropout else None
 
+    @torch.inference_mode()
     def forward(self, x):
         _, _, h, w = x.size()
         feat1 = F.interpolate(
@@ -113,6 +117,7 @@ class LSTMModule(nn.Module):
             nn.Linear(nout_lstm, nin_lstm), nn.BatchNorm1d(nin_lstm), nn.ReLU()
         )
 
+    @torch.inference_mode()
     def forward(self, x):
         N, _, nbins, nframes = x.size()
         h = self.conv(x)[:, 0]  # N, nbins, nframes

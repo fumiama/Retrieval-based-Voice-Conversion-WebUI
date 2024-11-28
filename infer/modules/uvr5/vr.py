@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 import librosa
 import numpy as np
-from infer.lib.audio import downsample_audio, save_audio
+from infer.lib.audio import save_audio
 import torch
 
 from infer.lib.uvr5_pack.lib_v5 import nets_123821KB as Nets
@@ -119,7 +119,7 @@ class AudioPre:
         if ins_root is not None:
             if self.data["high_end_process"].startswith("mirroring"):
                 input_high_end_ = spec_utils.mirroring(
-                    self.data["high_end_process"], y_spec_m, input_high_end, self.mp
+                    self.data["high_end_process"], y_spec_m, input_high_end, self.mp.param["pre_filter_start"]
                 )
                 wav_instrument = spec_utils.cmb_spectrogram_to_wave(
                     y_spec_m, self.mp, input_high_end_h, input_high_end_
@@ -131,23 +131,16 @@ class AudioPre:
                 head = "vocal_"
             else:
                 head = "instrument_"
-            if format in ["wav", "flac"]:
-                save_audio(
-                    os.path.join(
-                        ins_root,
-                        head + "{}_{}.{}".format(name, self.data["agg"], format),
-                    ),
-                    wav_instrument,
-                    self.mp.param["sr"],
-                )
-            else:
-                path = os.path.join(
-                    ins_root, head + "{}_{}.wav".format(name, self.data["agg"])
-                )
-                save_audio(path, wav_instrument, self.mp.param["sr"])
-                if os.path.exists(path):
-                    opt_format_path = path[:-4] + ".%s" % format
-                    downsample_audio(path, opt_format_path, format)
+            save_audio(
+                os.path.join(
+                    ins_root,
+                    head + "{}_{}.{}".format(name, self.data["agg"], format),
+                ),
+                wav_instrument,
+                self.mp.param["sr"],
+                f32=True,
+                format=format
+            )
         if vocal_root is not None:
             if self.is_reverse:
                 head = "instrument_"
@@ -155,7 +148,7 @@ class AudioPre:
                 head = "vocal_"
             if self.data["high_end_process"].startswith("mirroring"):
                 input_high_end_ = spec_utils.mirroring(
-                    self.data["high_end_process"], v_spec_m, input_high_end, self.mp
+                    self.data["high_end_process"], v_spec_m, input_high_end, self.mp.param["pre_filter_start"]
                 )
                 wav_vocals = spec_utils.cmb_spectrogram_to_wave(
                     v_spec_m, self.mp, input_high_end_h, input_high_end_
@@ -163,20 +156,13 @@ class AudioPre:
             else:
                 wav_vocals = spec_utils.cmb_spectrogram_to_wave(v_spec_m, self.mp)
             logger.info("%s vocals done" % name)
-            if format in ["wav", "flac"]:
-                save_audio(
-                    os.path.join(
-                        vocal_root,
-                        head + "{}_{}.{}".format(name, self.data["agg"], format),
-                    ),
-                    wav_vocals,
-                    self.mp.param["sr"],
-                )
-            else:
-                path = os.path.join(
-                    vocal_root, head + "{}_{}.wav".format(name, self.data["agg"])
-                )
-                save_audio(path, wav_vocals, self.mp.param["sr"])
-                if os.path.exists(path):
-                    opt_format_path = path[:-4] + ".%s" % format
-                    downsample_audio(path, opt_format_path, format)
+            save_audio(
+                os.path.join(
+                    vocal_root,
+                    head + "{}_{}.{}".format(name, self.data["agg"], format),
+                ),
+                wav_vocals,
+                self.mp.param["sr"],
+                f32=True,
+                format=format
+            )
