@@ -25,7 +25,6 @@
     "Convert": "Convertir",
     "Device type": "Type d'appareil",
     "Enable phase vocoder": "Activer le vocodeur de phase",
-    "Enter the GPU index(es) separated by '-', e.g., 0-0-1 to use 2 processes in GPU0 and 1 process in GPU1": "Configuration des numéros de carte RMVPE : séparez les index GPU par des tirets \"-\", par exemple, 0-0-1 pour utiliser 2 processus sur GPU0 et 1 processus sur GPU1.",
     "Enter the GPU index(es) separated by '-', e.g., 0-1-2 to use GPU 0, 1, and 2": "Entrez le(s) index GPU séparé(s) par '-', par exemple, 0-1-2 pour utiliser les GPU 0, 1 et 2 :",
     "Enter the experiment name": "Saisissez le nom de l'expérience :",
     "Enter the path of the audio folder to be processed": "Entrez le chemin du dossier audio à traiter :",

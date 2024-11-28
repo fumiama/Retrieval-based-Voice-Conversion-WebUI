@@ -25,7 +25,6 @@
     "Convert": "変換",
     "Device type": "デバイス種類",
     "Enable phase vocoder": "启用相位声码器",
-    "Enter the GPU index(es) separated by '-', e.g., 0-0-1 to use 2 processes in GPU0 and 1 process in GPU1": "rmvpeカード番号設定：異なるプロセスに使用するカード番号を入力する。例えば、0-0-1でカード0に2つのプロセス、カード1に1つのプロセスを実行する。",
     "Enter the GPU index(es) separated by '-', e.g., 0-1-2 to use GPU 0, 1, and 2": "ハイフンで区切って使用するGPUの番号を入力します。例えば0-1-2はGPU0、GPU1、GPU2を使用します",
     "Enter the experiment name": "モデル名",
     "Enter the path of the audio folder to be processed": "処理するオーディオファイルのフォルダパスを入力してください",
