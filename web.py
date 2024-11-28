@@ -691,7 +691,11 @@ def train1key(
     [
         get_info_str(_)
         for _ in extract_f0_feature(
-            np7, f0method8, if_f0_3, exp_dir1, version19,
+            np7,
+            f0method8,
+            if_f0_3,
+            exp_dir1,
+            version19,
         )
     ]
 
