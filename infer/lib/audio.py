@@ -142,7 +142,7 @@ def load_audio(
 
             np.copyto(decoded_audio[..., offset:end_index], frame_data)
             offset += len(frame_data[0])
-    
+
     container.close()
 
     # Truncate the array to the actual size
@@ -186,7 +186,6 @@ def resample_audio(
     # Close the containers
     input_container.close()
     output_container.close()
-
 
 
 def get_audio_properties(input_path: str) -> Tuple[int, int]:

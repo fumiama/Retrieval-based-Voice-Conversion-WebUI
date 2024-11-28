@@ -119,7 +119,10 @@ class AudioPre:
         if ins_root is not None:
             if self.data["high_end_process"].startswith("mirroring"):
                 input_high_end_ = spec_utils.mirroring(
-                    self.data["high_end_process"], y_spec_m, input_high_end, self.mp.param["pre_filter_start"]
+                    self.data["high_end_process"],
+                    y_spec_m,
+                    input_high_end,
+                    self.mp.param["pre_filter_start"],
                 )
                 wav_instrument = spec_utils.cmb_spectrogram_to_wave(
                     y_spec_m, self.mp, input_high_end_h, input_high_end_
@@ -139,7 +142,7 @@ class AudioPre:
                 wav_instrument,
                 self.mp.param["sr"],
                 f32=True,
-                format=format
+                format=format,
             )
         if vocal_root is not None:
             if self.is_reverse:
@@ -148,7 +151,10 @@ class AudioPre:
                 head = "vocal_"
             if self.data["high_end_process"].startswith("mirroring"):
                 input_high_end_ = spec_utils.mirroring(
-                    self.data["high_end_process"], v_spec_m, input_high_end, self.mp.param["pre_filter_start"]
+                    self.data["high_end_process"],
+                    v_spec_m,
+                    input_high_end,
+                    self.mp.param["pre_filter_start"],
                 )
                 wav_vocals = spec_utils.cmb_spectrogram_to_wave(
                     v_spec_m, self.mp, input_high_end_h, input_high_end_
@@ -164,5 +170,5 @@ class AudioPre:
                 wav_vocals,
                 self.mp.param["sr"],
                 f32=True,
-                format=format
+                format=format,
             )

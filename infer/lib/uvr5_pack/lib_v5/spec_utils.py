@@ -24,9 +24,7 @@ def crop_center(h1, h2):
     return h1
 
 
-def split_lr_waves(
-    wave, mid_side=False, mid_side_b2=False, reverse=False
-):
+def split_lr_waves(wave, mid_side=False, mid_side_b2=False, reverse=False):
     if reverse:
         wave_left = np.flip(np.asfortranarray(wave[0]))
         wave_right = np.flip(np.asfortranarray(wave[1]))
@@ -48,17 +46,23 @@ def run_librosa_stft(wv, n_fft, hop_length, reverse):
         return librosa.stft(wv, n_fft=n_fft, hop_length=hop_length)
     return librosa.stft(np.asfortranarray(wv), n_fft=n_fft, hop_length=hop_length)
 
+
 def wave_to_spectrogram_mt(
     wave, hop_length, n_fft, mid_side=False, mid_side_b2=False, reverse=False
 ):
 
     with ThreadPoolExecutor(max_workers=2) as tp:
         spec = np.asfortranarray(
-            [spec for spec in tp.map(
-                run_librosa_stft,
-                split_lr_waves(wave, mid_side, mid_side_b2, reverse),
-                [n_fft, n_fft], [hop_length, hop_length], [reverse, reverse]
-            )]
+            [
+                spec
+                for spec in tp.map(
+                    run_librosa_stft,
+                    split_lr_waves(wave, mid_side, mid_side_b2, reverse),
+                    [n_fft, n_fft],
+                    [hop_length, hop_length],
+                    [reverse, reverse],
+                )
+            ]
         )
 
     return spec
@@ -144,10 +148,13 @@ def mask_silence(mag, ref, thres=0.2, min_range=64, fade_size=32):
 def run_librosa_istft(specx, hop_length):
     return librosa.istft(np.asfortranarray(specx), hop_length=hop_length)
 
+
 def spectrogram_to_wave(spec, hop_length, mid_side, mid_side_b2, reverse):
 
     with ThreadPoolExecutor(max_workers=2) as tp:
-        wave_left, wave_right = tp.map(run_librosa_istft, spec, [hop_length, hop_length])
+        wave_left, wave_right = tp.map(
+            run_librosa_istft, spec, [hop_length, hop_length]
+        )
 
     if reverse:
         return np.asfortranarray([np.flip(wave_left), np.flip(wave_right)])

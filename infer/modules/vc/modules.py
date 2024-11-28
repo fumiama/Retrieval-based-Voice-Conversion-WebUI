@@ -252,8 +252,7 @@ class VC:
                     try:
                         tgt_sr, audio_opt = opt
                         save_audio(
-                            "%s/%s.%s"
-                            % (opt_root, os.path.basename(path), format1),
+                            "%s/%s.%s" % (opt_root, os.path.basename(path), format1),
                             audio_opt,
                             tgt_sr,
                             f32=True,
