@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Optional
 
 import numpy as np
 import parselmouth

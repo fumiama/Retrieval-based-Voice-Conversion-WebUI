@@ -5,12 +5,7 @@ import librosa
 import numpy as np
 import onnxruntime
 
-from rvc.f0 import (
-    PM,
-    Harvest,
-    Dio,
-    F0Predictor,
-)
+from rvc.f0 import Generator
 
 
 class Model:
@@ -51,49 +46,28 @@ class ContentVec(Model):
         return logits.transpose(0, 2, 1)
 
 
-predictors: typing.Dict[str, F0Predictor] = {
-    "pm": PM,
-    "harvest": Harvest,
-    "dio": Dio,
-}
-
-
-def get_f0_predictor(
-    f0_method: str, hop_length: int, sampling_rate: int
-) -> F0Predictor:
-    return predictors[f0_method](hop_length=hop_length, sampling_rate=sampling_rate)
-
-
 class RVC(Model):
     def __init__(
         self,
         model_path: typing.Union[str, bytes, os.PathLike],
         hop_len=512,
+        model_sr=40000,
         vec_path: typing.Union[str, bytes, os.PathLike] = "vec-768-layer-12.onnx",
         device: typing.Literal["cpu", "cuda", "dml"] = "cpu",
     ):
         super().__init__(model_path, device)
         self.vec_model = ContentVec(vec_path, device)
         self.hop_len = hop_len
+        self.f0_gen = Generator(None, False, 0, window=hop_len, sr=model_sr)
 
     def infer(
         self,
         wav: np.ndarray[typing.Any, np.dtype],
         wav_sr: int,
-        model_sr: int = 40000,
         sid: int = 0,
         f0_method="dio",
         f0_up_key=0,
     ) -> np.ndarray[typing.Any, np.dtype[np.int16]]:
-        f0_min = 50
-        f0_max = 1100
-        f0_mel_min = 1127 * np.log(1 + f0_min / 700)
-        f0_mel_max = 1127 * np.log(1 + f0_max / 700)
-        f0_predictor = get_f0_predictor(
-            f0_method,
-            self.hop_len,
-            model_sr,
-        )
         org_length = len(wav)
         if org_length / wav_sr > 50.0:
             raise RuntimeError("wav max length exceeded")
@@ -102,16 +76,8 @@ class RVC(Model):
         hubert = np.repeat(hubert, 2, axis=2).transpose(0, 2, 1).astype(np.float32)
         hubert_length = hubert.shape[1]
 
-        pitchf = f0_predictor.compute_f0(wav, hubert_length)
-        pitchf = pitchf * 2 ** (f0_up_key / 12)
-        pitch = pitchf.copy()
-        f0_mel = 1127 * np.log(1 + pitch / 700)
-        f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - f0_mel_min) * 254 / (
-            f0_mel_max - f0_mel_min
-        ) + 1
-        f0_mel[f0_mel <= 1] = 1
-        f0_mel[f0_mel > 255] = 255
-        pitch = np.rint(f0_mel).astype(np.int64)
+        pitch, pitchf = self.f0_gen.calculate(wav, hubert_length, f0_up_key, f0_method, None)
+        pitch = pitch.astype(np.int64)
 
         pitchf = pitchf.reshape(1, len(pitchf)).astype(np.float32)
         pitch = pitch.reshape(1, len(pitch))

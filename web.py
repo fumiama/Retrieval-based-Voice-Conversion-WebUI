@@ -264,28 +264,28 @@ def preprocess_dataset(trainset_dir, exp_dir, sr, n_p):
 
 
 # but2.click(extract_f0,[gpus6,np7,f0method8,if_f0_3,trainset_dir4],[info2])
-def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvpe):
-    gpus = gpus.split("-")
+def extract_f0_feature(n_p, f0method, if_f0, exp_dir, version19):
     os.makedirs("%s/logs/%s" % (now_dir, exp_dir), exist_ok=True)
     f = open("%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "w")
     f.close()
     if if_f0:
         if f0method != "rmvpe_gpu":
             cmd = (
-                '"%s" infer/modules/train/extract/extract_f0_print.py "%s/logs/%s" %s %s'
+                '"%s" infer/modules/train/extract_f0_print.py "%s/logs/%s" %s %s "%s" %s'
                 % (
                     config.python_cmd,
                     now_dir,
                     exp_dir,
                     n_p,
                     f0method,
+                    config.device,
+                    str(config.is_half),
                 )
             )
             logger.info("Execute: " + cmd)
             p = Popen(
                 cmd, shell=True, cwd=now_dir
             )  # , stdin=PIPE, stdout=PIPE,stderr=PIPE
-            # 煞笔gr, popen read都非得全跑完了再一次性读取, 不用gr就正常读一句输出一句;只能额外弄出一个文本流定时读
             done = [False]
             threading.Thread(
                 target=if_done,
@@ -294,53 +294,6 @@ def extract_f0_feature(gpus, n_p, f0method, if_f0, exp_dir, version19, gpus_rmvp
                     p,
                 ),
             ).start()
-        else:
-            if gpus_rmvpe != "-":
-                gpus_rmvpe = gpus_rmvpe.split("-")
-                leng = len(gpus_rmvpe)
-                ps = []
-                for idx, n_g in enumerate(gpus_rmvpe):
-                    cmd = (
-                        '"%s" infer/modules/train/extract/extract_f0_rmvpe.py %s %s %s "%s/logs/%s" %s '
-                        % (
-                            config.python_cmd,
-                            leng,
-                            idx,
-                            n_g,
-                            now_dir,
-                            exp_dir,
-                            config.is_half,
-                        )
-                    )
-                    logger.info("Execute: " + cmd)
-                    p = Popen(
-                        cmd, shell=True, cwd=now_dir
-                    )  # , shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, cwd=now_dir
-                    ps.append(p)
-                # 煞笔gr, popen read都非得全跑完了再一次性读取, 不用gr就正常读一句输出一句;只能额外弄出一个文本流定时读
-                done = [False]
-                threading.Thread(
-                    target=if_done_multi,  #
-                    args=(
-                        done,
-                        ps,
-                    ),
-                ).start()
-            else:
-                cmd = (
-                    config.python_cmd
-                    + ' infer/modules/train/extract/extract_f0_rmvpe_dml.py "%s/logs/%s" '
-                    % (
-                        now_dir,
-                        exp_dir,
-                    )
-                )
-                logger.info("Execute: " + cmd)
-                p = Popen(
-                    cmd, shell=True, cwd=now_dir
-                )  # , shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, cwd=now_dir
-                p.wait()
-                done = [True]
         while 1:
             with open(
                 "%s/logs/%s/extract_f0_feature.log" % (now_dir, exp_dir), "r"
@@ -464,7 +417,6 @@ def change_version19(sr2, if_f0_3, version19):
 def change_f0(if_f0_3, sr2, version19):  # f0method8,pretrained_G14,pretrained_D15
     path_str = "" if version19 == "v1" else "_v2"
     return (
-        {"visible": if_f0_3, "__type__": "update"},
         {"visible": if_f0_3, "__type__": "update"},
         *get_pretrained_models(path_str, "f0" if if_f0_3 == True else "", sr2),
     )
@@ -719,11 +671,9 @@ def train1key(
     if_save_latest13,
     pretrained_G14,
     pretrained_D15,
-    gpus16,
     if_cache_gpu17,
     if_save_every_weights18,
     version19,
-    gpus_rmvpe,
     author,
 ):
     infos = []
@@ -741,7 +691,7 @@ def train1key(
     [
         get_info_str(_)
         for _ in extract_f0_feature(
-            gpus16, np7, f0method8, if_f0_3, exp_dir1, version19, gpus_rmvpe
+            np7, f0method8, if_f0_3, exp_dir1, version19,
         )
     ]
 
@@ -790,17 +740,6 @@ def change_info_(ckpt_path):
     except:
         traceback.print_exc()
         return {"__type__": "update"}, {"__type__": "update"}, {"__type__": "update"}
-
-
-F0GPUVisible = config.dml == False
-
-
-def change_f0_method(f0method8):
-    if f0method8 == "rmvpe_gpu":
-        visible = F0GPUVisible
-    else:
-        visible = False
-    return {"visible": visible, "__type__": "update"}
 
 
 with gr.Blocks(title="RVC WebUI") as app:
@@ -1260,50 +1199,26 @@ with gr.Blocks(title="RVC WebUI") as app:
                     gpu_info9 = gr.Textbox(
                         label=i18n("GPU Information"),
                         value=gpu_info,
-                        visible=F0GPUVisible,
-                    )
-                    gpus6 = gr.Textbox(
-                        label=i18n(
-                            "Enter the GPU index(es) separated by '-', e.g., 0-1-2 to use GPU 0, 1, and 2"
-                        ),
-                        value=gpus,
-                        interactive=True,
-                        visible=F0GPUVisible,
-                    )
-                    gpus_rmvpe = gr.Textbox(
-                        label=i18n(
-                            "Enter the GPU index(es) separated by '-', e.g., 0-0-1 to use 2 processes in GPU0 and 1 process in GPU1"
-                        ),
-                        value="%s-%s" % (gpus, gpus),
-                        interactive=True,
-                        visible=F0GPUVisible,
                     )
                     f0method8 = gr.Radio(
                         label=i18n(
                             "Select the pitch extraction algorithm: when extracting singing, you can use 'pm' to speed up. For high-quality speech with fast performance, but worse CPU usage, you can use 'dio'. 'harvest' results in better quality but is slower.  'rmvpe' has the best results and consumes less CPU/GPU"
                         ),
-                        choices=["pm", "harvest", "dio", "rmvpe", "rmvpe_gpu"],
-                        value="rmvpe_gpu",
+                        choices=["pm", "harvest", "dio", "rmvpe"],
+                        value="rmvpe",
                         interactive=True,
                     )
                 with gr.Column():
                     but2 = gr.Button(i18n("Feature extraction"), variant="primary")
                     info2 = gr.Textbox(label=i18n("Output information"), value="")
-                f0method8.change(
-                    fn=change_f0_method,
-                    inputs=[f0method8],
-                    outputs=[gpus_rmvpe],
-                )
                 but2.click(
                     extract_f0_feature,
                     [
-                        gpus6,
                         np7,
                         f0method8,
                         if_f0_3,
                         exp_dir1,
                         version19,
-                        gpus_rmvpe,
                     ],
                     [info2],
                     api_name="train_extract_f0_feature",
@@ -1394,7 +1309,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                     if_f0_3.change(
                         change_f0,
                         [if_f0_3, sr2, version19],
-                        [f0method8, gpus_rmvpe, pretrained_G14, pretrained_D15],
+                        [f0method8, pretrained_G14, pretrained_D15],
                     )
 
                     but3 = gr.Button(i18n("Train model"), variant="primary")
@@ -1441,11 +1356,9 @@ with gr.Blocks(title="RVC WebUI") as app:
                         if_save_latest13,
                         pretrained_G14,
                         pretrained_D15,
-                        gpus16,
                         if_cache_gpu17,
                         if_save_every_weights18,
                         version19,
-                        gpus_rmvpe,
                         author,
                     ],
                     info3,

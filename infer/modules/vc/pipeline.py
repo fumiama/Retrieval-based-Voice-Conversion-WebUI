@@ -5,6 +5,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from pathlib import Path
 from time import time
 
 import faiss
@@ -14,7 +15,7 @@ import torch
 import torch.nn.functional as F
 from scipy import signal
 
-from rvc.f0 import PM, Harvest, RMVPE, CRePE, Dio, FCPE
+from rvc.f0 import Generator
 
 now_dir = os.getcwd()
 sys.path.append(now_dir)
@@ -63,95 +64,15 @@ class Pipeline(object):
         self.t_max = self.sr * self.x_max  # 免查询时长阈值
         self.device = config.device
 
-    def get_f0(
-        self,
-        x,
-        p_len,
-        f0_up_key,
-        f0_method,
-        filter_radius,
-        inp_f0=None,
-    ):
-        f0_min = 50
-        f0_max = 1100
-        f0_mel_min = 1127 * np.log(1 + f0_min / 700)
-        f0_mel_max = 1127 * np.log(1 + f0_max / 700)
-        if f0_method == "pm":
-            if not hasattr(self, "pm"):
-                self.pm = PM(self.window, f0_min, f0_max, self.sr)
-            f0 = self.pm.compute_f0(x, p_len=p_len)
-        if f0_method == "dio":
-            if not hasattr(self, "dio"):
-                self.dio = Dio(self.window, f0_min, f0_max, self.sr)
-            f0 = self.dio.compute_f0(x, p_len=p_len)
-        elif f0_method == "harvest":
-            if not hasattr(self, "harvest"):
-                self.harvest = Harvest(self.window, f0_min, f0_max, self.sr)
-            f0 = self.harvest.compute_f0(x, p_len=p_len, filter_radius=filter_radius)
-        elif f0_method == "crepe":
-            if not hasattr(self, "crepe"):
-                self.crepe = CRePE(
-                    self.window,
-                    f0_min,
-                    f0_max,
-                    self.sr,
-                    self.device,
-                )
-            f0 = self.crepe.compute_f0(x, p_len=p_len)
-        elif f0_method == "rmvpe":
-            if not hasattr(self, "rmvpe"):
-                logger.info(
-                    "Loading rmvpe model %s" % "%s/rmvpe.pt" % os.environ["rmvpe_root"]
-                )
-                self.rmvpe = RMVPE(
-                    "%s/rmvpe.pt" % os.environ["rmvpe_root"],
-                    is_half=self.is_half,
-                    device=self.device,
-                    # use_jit=self.config.use_jit,
-                )
-            f0 = self.rmvpe.compute_f0(x, p_len=p_len, filter_radius=0.03)
+        self.f0_gen = Generator(
+            Path(os.environ["rmvpe_root"]),
+            self.is_half,
+            self.x_pad,
+            self.device,
+            self.window,
+            self.sr,
+        )
 
-            if "privateuseone" in str(self.device):  # clean ortruntime memory
-                del self.rmvpe.model
-                del self.rmvpe
-                logger.info("Cleaning ortruntime memory")
-
-        elif f0_method == "fcpe":
-            if not hasattr(self, "model_fcpe"):
-                logger.info("Loading fcpe model")
-                self.model_fcpe = FCPE(
-                    self.window,
-                    f0_min,
-                    f0_max,
-                    self.sr,
-                    self.device,
-                )
-            f0 = self.model_fcpe.compute_f0(x, p_len=p_len)
-
-        f0 *= pow(2, f0_up_key / 12)
-        # with open("test.txt","w")as f:f.write("\n".join([str(i)for i in f0.tolist()]))
-        tf0 = self.sr // self.window  # 每秒f0点数
-        if inp_f0 is not None:
-            delta_t = np.round(
-                (inp_f0[:, 0].max() - inp_f0[:, 0].min()) * tf0 + 1
-            ).astype("int16")
-            replace_f0 = np.interp(
-                list(range(delta_t)), inp_f0[:, 0] * 100, inp_f0[:, 1]
-            )
-            shape = f0[self.x_pad * tf0 : self.x_pad * tf0 + len(replace_f0)].shape[0]
-            f0[self.x_pad * tf0 : self.x_pad * tf0 + len(replace_f0)] = replace_f0[
-                :shape
-            ]
-        # with open("test_opt.txt","w")as f:f.write("\n".join([str(i)for i in f0.tolist()]))
-        f0bak = f0.copy()
-        f0_mel = 1127 * np.log(1 + f0 / 700)
-        f0_mel[f0_mel > 0] = (f0_mel[f0_mel > 0] - f0_mel_min) * 254 / (
-            f0_mel_max - f0_mel_min
-        ) + 1
-        f0_mel[f0_mel <= 1] = 1
-        f0_mel[f0_mel > 255] = 255
-        f0_coarse = np.rint(f0_mel).astype(np.int32)
-        return f0_coarse, f0bak  # 1-0
 
     def vc(
         self,
@@ -337,7 +258,7 @@ class Pipeline(object):
         pitch, pitchf = None, None
         if if_f0:
             if if_f0 == 1:
-                pitch, pitchf = self.get_f0(
+                pitch, pitchf = self.f0_gen.calculate(
                     audio_pad,
                     p_len,
                     f0_up_key,
