@@ -73,7 +73,6 @@ class Pipeline(object):
             self.sr,
         )
 
-
     def vc(
         self,
         model,

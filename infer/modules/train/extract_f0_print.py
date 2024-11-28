@@ -40,7 +40,7 @@ is_half = sys.argv[5] == "True"
 
 
 class FeatureInput(object):
-    def __init__(self, is_half: bool, device = "cpu", samplerate=16000, hop_size=160):
+    def __init__(self, is_half: bool, device="cpu", samplerate=16000, hop_size=160):
         self.fs = samplerate
         self.hop = hop_size
 
@@ -75,7 +75,9 @@ class FeatureInput(object):
                     ):
                         continue
                     x = load_audio(inp_path, self.fs)
-                    coarse_pit, feature_pit = self.f0_gen.calculate(x, x.shape[0] // self.hop, 0, f0_method, None)
+                    coarse_pit, feature_pit = self.f0_gen.calculate(
+                        x, x.shape[0] // self.hop, 0, f0_method, None
+                    )
                     np.save(
                         opt_path2,
                         feature_pit,
