@@ -306,6 +306,12 @@ export ROCM_PATH=/opt/rocm
 export HSA_OVERRIDE_GFX_VERSION=10.3.0
 ```
 
+그리고 종속 요소를 설치한 후 PyTorch를 ROCM 버전으로 덮어씁니다.
+
+````
+pip 설치 토치 토치비전 토치오디오 --index-url https://download.pytorch.org/whl/rocm6.2
+````
+
 동시에 현재 사용자가 `render` 및 `video` 사용자 그룹에 속해 있는지 확인하세요.
 
 ```

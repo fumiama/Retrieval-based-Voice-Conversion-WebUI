@@ -142,6 +142,10 @@ Vous devrez peut-être créer ces variables d'environnement (par exemple avec RX
 export ROCM_PATH=/opt/rocm
 export HSA_OVERRIDE_GFX_VERSION=10.3.0
 ````
+Et remplacer PyTorch par sa version ROCM après l'installation des dépendances.
+````
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.2
+````
 Assurez-vous que votre utilisateur est dans les groupes `render` et `video`:
 ````
 sudo usermod -aG render $USERNAME
