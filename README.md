@@ -73,6 +73,7 @@ sh ./run.sh
 	```bash
 	pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 	```
+
 3. Install the corresponding dependencies according to your own graphics card.
 - Nvidia GPU
 	```bash
@@ -89,6 +90,11 @@ sh ./run.sh
 - Intel IPEX (Linux)
 	```bash
 	pip install -r requirements/ipex.txt
+	```
+
+4.If you are using an ROCM-capable AMD Radeon GPU, then you need to choose ROCM version of PyTorch.
+	```bash
+	pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.2
 	```
 
 ## Preparation of Other Files
@@ -156,8 +162,8 @@ pacman -S rocm-hip-sdk rocm-opencl-sdk
 ````
 For some models of graphics cards, you may need to configure the following environment variables (such as: RX6700XT).
 ````
-export ROCM_PATH=/opt/rocm
-export HSA_OVERRIDE_GFX_VERSION=10.3.0
+export ROCM_PATH=/opt/rocm #Set ROCM Executables Path
+export HSA_OVERRIDE_GFX_VERSION=10.3.0 #Spoof GPU Model for ROCM
 ````
 Also, make sure your current user is in the `render` and `video` user groups.
 ````
