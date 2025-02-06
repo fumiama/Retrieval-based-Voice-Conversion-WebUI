@@ -129,6 +129,16 @@ class Config:
         else:
             return False
 
+    @staticmethod
+    def use_insecure_load():
+        try:
+            from fairseq.data.dictionary import Dictionary
+
+            logging.warning("Using insecure weight loading for fairseq dictionary")
+            torch.serialization.add_safe_globals([Dictionary])
+        except AttributeError:
+            pass
+
     def use_fp32_config(self):
         for config_file in version_config_list:
             self.json_config[config_file]["train"]["fp16_run"] = False
@@ -210,10 +220,16 @@ class Config:
         else:
             if self.instead:
                 logger.info(f"Use {self.instead} instead")
+
         logger.info(
             "Half-precision floating-point: %s, device: %s"
             % (self.is_half, self.device)
         )
+
+        # Check if the pytorch is 2.6 or higher
+        if tuple(map(int, torch.__version__.split("+")[0].split("."))) >= (2, 6, 0):
+            self.use_insecure_load()
+
         return x_pad, x_query, x_center, x_max
 
 
