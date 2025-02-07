@@ -2,10 +2,12 @@ import numpy as np
 import torch
 import hashlib
 import pathlib
+
+from functools import lru_cache
 from scipy.fft import fft
 from pybase16384 import encode_to_string, decode_from_string
 
-from configs import CPUConfig, singleton_variable
+from configs import CPUConfig
 from rvc.synthesizer import get_synthesizer
 
 from .pipeline import Pipeline
@@ -29,27 +31,27 @@ half_hash_len = 512
 expand_factor = 65536 * 8
 
 
-@singleton_variable
+@lru_cache(None)  # None 表示无限缓存
 def original_audio_storage():
     return np.load(pathlib.Path(__file__).parent / "lgdsng.npz")
 
 
-@singleton_variable
+@lru_cache(None)
 def original_audio():
     return original_audio_storage()["a"]
 
 
-@singleton_variable
+@lru_cache(None)
 def original_audio_time_minus():
     return original_audio_storage()["t"]
 
 
-@singleton_variable
+@lru_cache(None)
 def original_audio_freq_minus():
     return original_audio_storage()["f"]
 
 
-@singleton_variable
+@lru_cache(None)
 def original_rmvpe_f0():
     x = original_audio_storage()
     return x["pitch"], x["pitchf"]

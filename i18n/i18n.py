@@ -1,7 +1,7 @@
 import json
 import locale
 import os
-from configs import singleton_variable
+from configs import Singleton
 
 
 def load_language_list(language):
@@ -10,8 +10,7 @@ def load_language_list(language):
     return language_list
 
 
-@singleton_variable
-class I18nAuto:
+class I18nAuto(metaclass=Singleton):
     def __init__(self, language=None):
         if language in ["Auto", None]:
             language = locale.getdefaultlocale(

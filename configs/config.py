@@ -22,18 +22,16 @@ version_config_list = [
 ]
 
 
-def singleton_variable(func):
-    def wrapper(*args, **kwargs):
-        if wrapper.instance is None:
-            wrapper.instance = func(*args, **kwargs)
-        return wrapper.instance
+class Singleton(type):
+    _instances = {}
 
-    wrapper.instance = None
-    return wrapper
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
 
 
-@singleton_variable
-class Config:
+class Config(metaclass=Singleton):
     def __init__(self):
         self.device = "cuda:0"
         self.is_half = True
@@ -233,8 +231,7 @@ class Config:
         return x_pad, x_query, x_center, x_max
 
 
-@singleton_variable
-class CPUConfig:
+class CPUConfig(metaclass=Singleton):
     def __init__(self):
         self.device = "cpu"
         self.is_half = False
