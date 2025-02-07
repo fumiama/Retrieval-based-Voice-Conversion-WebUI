@@ -134,8 +134,8 @@ class Config:
         try:
             from fairseq.data.dictionary import Dictionary
 
-            logging.warning("Using insecure weight loading for fairseq dictionary")
             torch.serialization.add_safe_globals([Dictionary])
+            logging.warning("Using insecure weight loading for fairseq dictionary")
         except AttributeError:
             pass
 
