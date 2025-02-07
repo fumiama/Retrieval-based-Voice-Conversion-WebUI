@@ -23,10 +23,14 @@ else:
     os.environ["CUDA_VISIBLE_DEVICES"] = str(i_gpu)
     version = sys.argv[6]
     is_half = sys.argv[7].lower() == "true"
+
 import fairseq
 import numpy as np
 import torch
 import torch.nn.functional as F
+
+from configs import Config
+Config.use_insecure_load()
 
 if "privateuseone" not in device:
     device = "cpu"

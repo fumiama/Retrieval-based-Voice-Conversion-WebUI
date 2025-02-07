@@ -1,1 +1,1 @@
-from .config import singleton_variable, Config, CPUConfig
+from .config import Singleton, Config, CPUConfig
