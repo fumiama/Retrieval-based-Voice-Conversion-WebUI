@@ -30,6 +30,7 @@ import torch
 import torch.nn.functional as F
 
 from configs import Config
+
 Config.use_insecure_load()
 
 if "privateuseone" not in device:

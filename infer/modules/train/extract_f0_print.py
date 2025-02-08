@@ -98,8 +98,9 @@ if __name__ == "__main__":
     # f = open("%s/log_extract_f0.log"%exp_dir, "w")
 
     from configs import Config
+
     Config.use_insecure_load()
-    
+
     printt(" ".join(sys.argv))
     featureInput = FeatureInput(is_half, device)
     paths = []

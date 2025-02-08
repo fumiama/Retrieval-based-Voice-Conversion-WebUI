@@ -143,5 +143,6 @@ def preprocess_trainset(inp_root, sr, n_p, exp_dir, per):
 
 if __name__ == "__main__":
     from configs import Config
+
     Config.use_insecure_load()
     preprocess_trainset(inp_root, sr, n_p, exp_dir, per)
