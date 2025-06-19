@@ -76,8 +76,11 @@ if __name__ == "__main__":
     import json
     import multiprocessing
     import re
+    import threading
     import time
     from multiprocessing import Queue, cpu_count
+    from infer.lib.audio import AudioIoProcess
+    from multiprocessing.shared_memory import SharedMemory
 
     import librosa
     from infer.modules.gui import TorchGate
@@ -144,6 +147,15 @@ if __name__ == "__main__":
             self.input_devices_indices = None
             self.output_devices_indices = None
             self.stream = None
+            self.in_mem = None
+            self.out_mem = None
+            self.in_buf = None
+            self.out_buf = None
+            self.in_ptr = None
+            self.out_ptr = None
+            self.play_ptr = None
+            self.in_evt = None
+            self.stop_evt = None
             self.update_devices()
             self.launcher()
 
@@ -564,7 +576,7 @@ if __name__ == "__main__":
                 event, values = self.window.read()
                 if event == sg.WINDOW_CLOSED:
                     self.stop_stream()
-                    exit()
+                    # exit()
                 if event == "reload_devices" or event == "sg_hostapi":
                     self.gui_config.sg_hostapi = values["sg_hostapi"]
                     self.update_devices(hostapi_name=values["sg_hostapi"])
@@ -639,7 +651,7 @@ if __name__ == "__main__":
                             json.dump(settings, j)
                         if self.stream is not None:
                             self.delay_time = (
-                                self.stream.latency[-1]
+                                self.stream.get_latency()
                                 + values["block_time"]
                                 + values["crossfade_length"]
                                 + 0.01
@@ -667,7 +679,7 @@ if __name__ == "__main__":
                         self.rvc.set_index_rate(values["index_rate"])
                 elif event == "rms_mix_rate":
                     self.gui_config.rms_mix_rate = values["rms_mix_rate"]
-                elif event in ["pm", "dio", "harvest", "crepe", "rmvpe", "fcpe"]:
+                elif event in ["pm", "harvest", "crepe", "rmvpe", "fcpe"]:
                     self.gui_config.f0method = event
                 elif event == "I_noise_reduce":
                     self.gui_config.I_noise_reduce = values["I_noise_reduce"]
@@ -867,36 +879,80 @@ if __name__ == "__main__":
                     "WASAPI" in self.gui_config.sg_hostapi
                     and self.gui_config.sg_wasapi_exclusive
                 ):
-                    extra_settings = sd.WasapiSettings(exclusive=True)
+                    wasapi_exclusive = True
                 else:
-                    extra_settings = None
-                self.stream = sd.Stream(
-                    callback=self.audio_callback,
-                    blocksize=self.block_frame,
-                    samplerate=self.gui_config.samplerate,
-                    channels=self.gui_config.channels,
-                    dtype="float32",
-                    extra_settings=extra_settings,
+                    wasapi_exclusive = False
+                self.stream = AudioIoProcess(
+                    input_device=sd.default.device[0],
+                    output_device=sd.default.device[1],
+                    input_audio_block_size = self.block_frame,
+                    sample_rate = self.gui_config.samplerate,
+                    channel_num=self.gui_config.channels,
+                    is_input_wasapi_exclusive=wasapi_exclusive,
+                    is_output_wasapi_exclusive=wasapi_exclusive,
+                    is_device_combined = True
+                    # TODO: Add control UI to allow devices with different type API & different WASAPI settings
                 )
+                self.in_mem = SharedMemory(name=self.stream.get_in_mem_name())
+                self.out_mem = SharedMemory(name=self.stream.get_out_mem_name())
+                self.in_buf = np.ndarray(
+                    self.stream.get_np_shape(),
+                    dtype=self.stream.get_np_dtype(),
+                    buffer=self.in_mem.buf,
+                    order='C'
+                )
+                self.out_buf = np.ndarray(
+                    self.stream.get_np_shape(),
+                    dtype=self.stream.get_np_dtype(),
+                    buffer=self.out_mem.buf,
+                    order='C'
+                )
+                self.in_ptr, \
+                self.out_ptr, \
+                self.play_ptr, \
+                self.in_evt, \
+                self.stop_evt = self.stream.get_ptrs_and_events()
+
                 self.stream.start()
+
+                def audio_loop():
+                    while flag_vc:
+                        self.audio_infer(self.block_frame << 1)
+
+                threading.Thread(
+                    target=audio_loop,
+                    daemon=True
+                ).start()
 
         def stop_stream(self):
             global flag_vc
             if flag_vc:
                 flag_vc = False
                 if self.stream is not None:
-                    self.stream.abort()
-                    self.stream.close()
+                    print("Exiting")
+                    self.stop_evt.set()
+                    self.in_mem.close()
+                    self.out_mem.close()
+                    self.stream.join()
                     self.stream = None
 
-        def audio_callback(
-            self, indata: np.ndarray, outdata: np.ndarray, frames, times, status
+        def audio_infer(
+            self, buf_size:int # 2 * self.block_frame
         ):
             """
             音频处理
             """
             global flag_vc
+
+            self.in_evt.wait()
+            rptr = self.in_ptr.value
+            self.in_evt.clear()
+            
             start_time = time.perf_counter()
+
+            rend = rptr + self.block_frame
+            indata = np.copy(self.in_buf[rptr:rend])
+
             indata = librosa.to_mono(indata.T)
             if self.gui_config.threhold > -60:
                 indata = np.append(self.rms_buffer, indata)
@@ -1039,13 +1095,47 @@ if __name__ == "__main__":
             self.sola_buffer[:] = infer_wav[
                 self.block_frame : self.block_frame + self.sola_buffer_frame
             ]
-            outdata[:] = (
+            outdata = (
                 infer_wav[: self.block_frame]
                 .repeat(self.gui_config.channels, 1)
                 .t()
                 .cpu()
                 .numpy()
             )
+
+            # 装填输出缓冲
+            start = self.out_ptr.value
+            play_pos = self.play_ptr.value
+
+            # 计算播放进度差（写指针距离播放指针的帧数）
+            delta = (start - play_pos + buf_size) % buf_size
+
+            if delta < self.block_frame:
+                # 装填赶不上播放，导致播放进度追上来了，
+                # 此时已产生无法挽回的破音，
+                # 只好直接卡着播放指针写入，保证接下来的尽快放出来
+                print("[W] Output underrun")
+                write_pos = play_pos
+            else:
+                # 否则按块对齐
+                write_pos = (start + self.block_frame) % buf_size
+
+            # 写入共享缓冲区
+            end = (write_pos + self.block_frame) % buf_size
+            if end > write_pos:
+                self.out_buf[write_pos:end] = outdata
+            else:
+                first = buf_size - write_pos
+                self.out_buf[write_pos:] = outdata[:first]
+                self.out_buf[:end] = outdata[first:]
+
+            # 更新写指针
+            self.out_ptr.value = write_pos
+
+            if self.in_evt.is_set():
+                print("[W] Input overrun")
+                self.in_evt.clear()
+
             total_time = time.perf_counter() - start_time
             if flag_vc:
                 self.window["infer_time"].update(int(total_time * 1000))
