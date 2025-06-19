@@ -13,6 +13,7 @@ from torchaudio.transforms import Resample
 
 from rvc.f0 import Generator
 from rvc.synthesizer import load_synthesizer
+from rvc.utils import FileLike
 
 
 class RVC:
@@ -20,7 +21,7 @@ class RVC:
         self,
         key: Union[int, float],
         formant: Union[int, float],
-        pth_path: torch.serialization.FILE_LIKE,
+        pth_path: FileLike, # type: ignore
         index_path: str,
         index_rate: Union[int, float],
         n_cpu: int = os.cpu_count(),

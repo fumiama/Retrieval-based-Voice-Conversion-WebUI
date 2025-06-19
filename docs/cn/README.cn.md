@@ -9,7 +9,7 @@
 ![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
-[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
+[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)
 
 [![Discord](https://img.shields.io/badge/RVC%20Developers-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/HcsmBBGyVk)
 
@@ -101,7 +101,7 @@ sh ./run.sh
 - 如果您希望跳过启动时的资源完整性检查，请添加`--nocheck`参数
 
 #### 手动下载资源
-> 所有资源文件均位于[Hugging Face space](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
+> 所有资源文件均位于[Hugging Face space](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)
 
 > 你可以在`tools`文件夹找到下载它们的脚本
 
@@ -132,14 +132,14 @@ sh ./run.sh
 
 如果你想使用最新的RMVPE人声音高提取算法，则你需要下载音高提取模型参数并放置于`assets/rmvpe`。
 
-- 下载[rmvpe.pt](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt)
+- 下载[rmvpe.pt](https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.pt)
 	```bash
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```
 
 #### 下载 rmvpe 的 dml 环境(可选, A卡/I卡用户)
 
-- 下载[rmvpe.onnx](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.onnx)
+- 下载[rmvpe.onnx](https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.onnx)
 	```bash
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```

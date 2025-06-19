@@ -130,24 +130,7 @@ Desative o proxy LAN do sistema/proxy global e atualize.<hr>
 Script de treinamento:
 <br>Você pode executar o treinamento em WebUI primeiro, e as versões de linha de comando do pré-processamento e treinamento do conjunto de dados serão exibidas na janela de mensagens.<br>
 
-Script de inference:
-<br>https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myinfer.py<br>
-
-
-por exemplo<br>
-
-``runtime\python.exe myinfer.py 0 "E:\audios\1111.wav" "E:\RVC\logs\minha-voz\added_IVF677_Flat_nprobe_7.index" harvest "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True``<br>
-
-
-f0up_key=sys.argv[1]<br>
-input_path=sys.argv[2]<br>
-index_path=sys.argv[3]<br>
-f0method=sys.argv[4]#harvest or pm<br>
-opt_path=sys.argv[5]<br>
-model_path=sys.argv[6]<br>
-index_rate=float(sys.argv[7])<br>
-device=sys.argv[8]<br>
-is_half=bool(sys.argv[9])<hr>
+Script de inference: tool/cmd/infer_cli.py
 
 ## <b><span style="color: #337dff;">Q7: Erro Cuda/Cuda sem memória.</span></b>
 Há uma pequena chance de que haja um problema com a configuração do CUDA ou o dispositivo não seja suportado; mais provavelmente, não há memória suficiente (falta de memória).<br>

@@ -11,7 +11,7 @@ An easy-to-use voice conversion framework based on VITS.
 ![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
-[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
+[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)
 
 [![Discord](https://img.shields.io/badge/RVC%20Developers-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/HcsmBBGyVk)
 
@@ -55,7 +55,7 @@ Check out our [Demo Video](https://www.bilibili.com/video/BV1pm4y1z7Gm/) here!
 > For the reason of the version limitation, please refer to this [bug](https://github.com/facebookresearch/fairseq/issues/5012).
 
 ```bash
-python --version # 3.8 <= Python < 3.11
+python --version # Recommend: 3.11
 ```
 
 ### Linux/MacOS One-click Dependency Installation & Startup Script
@@ -66,20 +66,35 @@ sh ./run.sh
 
 ### Manual Installation of Dependencies
 1. Install `pytorch` and its core dependencies, skip if already installed. Refer to: https://pytorch.org/get-started/locally/
+- General
 	```bash
 	pip install torch torchvision torchaudio
 	```
-2. If you are using Nvidia Ampere architecture (RTX30xx) in Windows, according to the experience of #21, you need to specify the cuda version corresponding to pytorch.
+- Nvidia GPU
+	Remember to specify the CUDA version that is the same as your platform, like
+	```bash
+	pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+	```
+	If you are using Nvidia Ampere architecture (RTX30xx) in Windows, according to the experience of #21, you need to specify the cuda version corresponding to pytorch.
 	```bash
 	pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 	```
+- AMD ROCM (Linux)
+	If you are using an ROCM-capable AMD Radeon GPU, then you need to choose ROCM version of PyTorch.
+	```bash
+	pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.2
+	```
+- AMD/Intel GPU (DML)
+	```bash
+	pip install torch_directml torchvision torchaudio
+	```
 
-3. Install the corresponding dependencies according to your own graphics card.
+2. Install the corresponding dependencies according to your own graphics card.
 - Nvidia GPU
 	```bash
 	pip install -r requirements/main.txt
 	```
-- AMD/Intel GPU
+- AMD/Intel GPU (DML)
 	```bash
 	pip install -r requirements/dml.txt
 	```
@@ -90,11 +105,6 @@ sh ./run.sh
 - Intel IPEX (Linux)
 	```bash
 	pip install -r requirements/ipex.txt
-	```
-
-4.If you are using an ROCM-capable AMD Radeon GPU, then you need to choose ROCM version of PyTorch.
-	```bash
-	pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm6.2
 	```
 
 ## Preparation of Other Files
@@ -109,7 +119,7 @@ sh ./run.sh
 - If you want to skip the resource integrity check at startup, please add the `--nocheck` parameter.
 
 #### Download Manually
-> All resource files are located in [Hugging Face space](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
+> All resource files are located in [Hugging Face space](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)
 
 > You can find some scripts to download them in the `tools` folder
 
@@ -140,14 +150,14 @@ If you want to use the v2 version of the model, you need to download additional 
 
 If you want to use the latest RMVPE vocal pitch extraction algorithm, you need to download the pitch extraction model parameters and place them in `assets/rmvpe`.
 
-- [rmvpe.pt](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt)
+- [rmvpe.pt](https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.pt)
 	```bash
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```
 
 #### Download DML environment of RMVPE (optional, for AMD/Intel GPU)
 
-- [rmvpe.onnx](https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.onnx)
+- [rmvpe.onnx](https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.onnx)
 	```bash
 	rvcmd assets/rmvpe # RVC-Models-Downloader command
 	```

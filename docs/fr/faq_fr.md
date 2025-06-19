@@ -23,22 +23,7 @@ Veuillez désactiver le proxy système LAN/proxy global puis rafraîchir.<br>
 Script d'entraînement :<br>
 Vous pouvez d'abord lancer l'entraînement dans WebUI, et les versions en ligne de commande de la préparation du jeu de données et de l'entraînement seront affichées dans la fenêtre de message.<br>
 
-Script d'inférence :<br>
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myinfer.py<br>
-
-Par exemple :<br>
-
-runtime\python.exe myinfer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" récolte "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True<br>
-
-f0up_key=sys.argv[1]<br>
-input_path=sys.argv[2]<br>
-index_path=sys.argv[3]<br>
-f0method=sys.argv[4]#récolte ou pm<br>
-opt_path=sys.argv[5]<br>
-model_path=sys.argv[6]<br>
-index_rate=float(sys.argv[7])<br>
-device=sys.argv[8]<br>
-is_half=bool(sys.argv[9])<br>
+Script d'inférence : tool/cmd/infer_cli.py
 
 ### Explication des arguments :
 

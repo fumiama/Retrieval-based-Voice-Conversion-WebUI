@@ -29,22 +29,7 @@ rvc_root/logs/実験名の下に保存されている pth は、推論に使用�
 トレーニングスクリプト：<br>
 まず WebUI を実行し、メッセージウィンドウにデータセット処理とトレーニング用のコマンドラインが表示されます。<br>
 
-推論スクリプト：<br>
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myinfer.py<br>
-
-例：<br>
-
-runtime\python.exe myinfer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" harvest "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True<br>
-
-f0up_key=sys.argv[1]<br>
-input_path=sys.argv[2]<br>
-index_path=sys.argv[3]<br>
-f0method=sys.argv[4]#harvest or pm<br>
-opt_path=sys.argv[5]<br>
-model_path=sys.argv[6]<br>
-index_rate=float(sys.argv[7])<br>
-device=sys.argv[8]<br>
-is_half=bool(sys.argv[9])<br>
+推論スクリプト：tool/cmd/infer_cli.py
 
 ## Q7: Cuda error/Cuda out of memory
 

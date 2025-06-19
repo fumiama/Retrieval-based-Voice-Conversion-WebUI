@@ -5,6 +5,8 @@ import os
 
 import torch
 
+from rvc.utils import FileLike
+
 
 def load_pickle(path: str):
     with open(path, "rb") as f:
@@ -16,7 +18,7 @@ def save_pickle(ckpt: dict, save_path: str):
         pickle.dump(ckpt, f)
 
 
-def load_inputs(path: torch.serialization.FILE_LIKE, device: str, is_half=False):
+def load_inputs(path: FileLike, device: str, is_half=False): # type: ignore
     parm = torch.load(path, map_location=torch.device("cpu"))
     for key in parm.keys():
         parm[key] = parm[key].to(device)

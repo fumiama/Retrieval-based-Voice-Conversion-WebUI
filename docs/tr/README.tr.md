@@ -10,7 +10,7 @@ VITS'e dayalı kullanımı kolay bir Ses Dönüşümü çerçevesi.
 ![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
-[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
+[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)
 
 [![Discord](https://img.shields.io/badge/RVC%20Geliştiricileri-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/HcsmBBGyVk)
 
@@ -19,7 +19,7 @@ VITS'e dayalı kullanımı kolay bir Ses Dönüşümü çerçevesi.
 ------
 [**SSS (Sıkça Sorulan Sorular)**](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/wiki/SSS-(Sıkça-Sorulan-Sorular)) 
 
-[**İngilizce**](../en/README.en.md) | [**中文简体**](../../README.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
+[**İngilizce**](../../README.md) | [**中文简体**](../cn/README.cn.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
 
 Burada [Demo Video'muzu](https://www.bilibili.com/video/BV1pm4y1z7Gm/) izleyebilirsiniz!
 
@@ -90,7 +90,7 @@ sh ./run.sh
 ## Diğer Ön Modellerin Hazırlanması
 RVC'nin çıkarım ve eğitim yapması için diğer ön modellere ihtiyacı vardır.
 
-Bu ön modelleri [Huggingface alanımızdan](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/) indirmeniz gerekecektir.
+Bu ön modelleri [Huggingface alanımızdan](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/) indirmeniz gerekecektir.
 
 İşte RVC'nin ihtiyaç duyduğu diğer ön modellerin ve dosyaların bir listesi:
 ```bash
@@ -110,11 +110,11 @@ V2 sürüm modelini test etmek isterseniz (v2 sürüm modeli, 9 katmanlı Hubert
 
 En son SOTA RMVPE vokal ton çıkarma algoritmasını kullanmak istiyorsanız, RMVPE ağırlıklarını indirip RVC kök dizinine koymalısınız.
 
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt
+https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.pt
 
     AMD/Intel grafik kartları kullanıcıları için indirmeniz gereken:
 
-    https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.onnx
+    https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.onnx
 
 ```
 

@@ -23,24 +23,7 @@ Please disable system LAN proxy/global proxy and then refresh.<br>
 Training script:<br>
 You can run training in WebUI first, and the command-line versions of dataset preprocessing and training will be displayed in the message window.<br>
 
-Inference script:<br>
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myinfer.py<br>
-
-
-e.g.<br>
-
-runtime\python.exe myinfer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" harvest "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True<br>
-
-
-f0up_key=sys.argv[1]<br>
-input_path=sys.argv[2]<br>
-index_path=sys.argv[3]<br>
-f0method=sys.argv[4]#harvest or pm<br>
-opt_path=sys.argv[5]<br>
-model_path=sys.argv[6]<br>
-index_rate=float(sys.argv[7])<br>
-device=sys.argv[8]<br>
-is_half=bool(sys.argv[9])<br>
+Inference script: tool/cmd/infer_cli.py
 
 ## Q7:Cuda error/Cuda out of memory.
 There is a small chance that there is a problem with the CUDA configuration or the device is not supported; more likely, there is not enough memory (out of memory).<br>

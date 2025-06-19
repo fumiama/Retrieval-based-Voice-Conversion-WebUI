@@ -35,34 +35,7 @@
 可先跑通WebUI，消息窗内会显示数据集处理和训练用命令行；
 
 
-推理脚本：
-
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myinfer.py
-
-
-例子：
-
-
-runtime\python.exe myinfer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" harvest "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True
-
-
-f0up_key=sys.argv[1]
-
-input_path=sys.argv[2]
-
-index_path=sys.argv[3]
-
-f0method=sys.argv[4]#harvest or pm
-
-opt_path=sys.argv[5]
-
-model_path=sys.argv[6]
-
-index_rate=float(sys.argv[7])
-
-device=sys.argv[8]
-
-is_half=bool(sys.argv[9])
+推理脚本：tool/cmd/infer_cli.py
 
 
 ## Q7:Cuda error/Cuda out of memory.

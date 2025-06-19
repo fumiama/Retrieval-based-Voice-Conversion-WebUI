@@ -31,22 +31,7 @@ logs 폴더 아래 수백 MB의 pth 파일을 weights 폴더에 복사/공유하
 트레이닝 스크립트: <br>
 먼저 WebUI를 실행하여 데이터 세트 처리 및 트레이닝에 사용되는 명령줄을 메시지 창에서 확인할 수 있습니다. <br>
 
-추론 스크립트: <br>
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/myinfer.py <br>
-
-예제: <br>
-
-runtime\python.exe myinfer.py 0 "E:\codes\py39\RVC-beta\todo-songs\1111.wav" "E:\codes\py39\logs\mi-test\added_IVF677_Flat_nprobe_7.index" harvest "test.wav" "weights/mi-test.pth" 0.6 cuda:0 True <br>
-
-f0up_key=sys.argv[1] <br>
-input_path=sys.argv[2] <br>
-index_path=sys.argv[3] <br>
-f0method=sys.argv[4]#harvest 또는 pm <br>
-opt_path=sys.argv[5] <br>
-model_path=sys.argv[6] <br>
-index_rate=float(sys.argv[7]) <br>
-device=sys.argv[8] <br>
-is_half=bool(sys.argv[9]) <br>
+추론 스크립트: tool/cmd/infer_cli.py
 
 ## Q7:Cuda 오류/Cuda 메모리 부족
 

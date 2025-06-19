@@ -9,7 +9,7 @@ Uma estrutura de conversão de voz fácil de usar baseada em VITS.
 ![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
-[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
+[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)
 
 [![Discord](https://img.shields.io/badge/RVC%20Developers-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/HcsmBBGyVk)
 
@@ -18,7 +18,7 @@ Uma estrutura de conversão de voz fácil de usar baseada em VITS.
 ------
 [**FAQ (Frequently Asked Questions)**](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/wiki/FAQ-(Frequently-Asked-Questions)) 
 
-[**English**](../en/README.en.md) | [**中文简体**](../../README.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
+[**English**](../../README.md) | [**中文简体**](../cn/README.cn.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
 
 
 Confira nosso [Vídeo de demonstração](https://www.bilibili.com/video/BV1pm4y1z7Gm/) aqui!
@@ -101,11 +101,10 @@ sh ./run.sh
 RVC requer outros pré-modelos para inferir e treinar.
 
 ```bash
-#Baixe todos os modelos necessários em https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/
 python tools/download_models.py
 ```
 
-Ou apenas baixe-os você mesmo em nosso [Huggingface space](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/).
+Ou apenas baixe-os você mesmo em nosso [Huggingface space](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/).
 
 Aqui está uma lista de pré-modelos e outros arquivos que o RVC precisa:
 ```bash
@@ -125,11 +124,11 @@ Se você deseja testar o modelo da versão v2 (o modelo da versão v2 alterou a 
 
 Se quiser usar o algoritmo de extração de tom vocal SOTA RMVPE mais recente, você precisa baixar os pesos RMVPE e colocá-los no diretório raiz RVC
 
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt
+https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.pt
 
     Para usuários de placas gráficas AMD/Intel, você precisa baixar:
 
-    https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.onnx
+    https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.onnx
 
 ```
 

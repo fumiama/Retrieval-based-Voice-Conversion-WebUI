@@ -1,10 +1,10 @@
 joblib>=1.1.0
 numba
-numpy==1.23.5
+numpy
 scipy
 librosa>=0.10.2
 llvmlite
-fairseq
+fairseq @ git+https://github.com/One-sixth/fairseq.git
 faiss-cpu
 gradio
 Cython

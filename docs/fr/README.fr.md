@@ -11,7 +11,7 @@ Un framework simple et facile à utiliser pour la conversion vocale (modificateu
 ![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
-[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
+[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)
 
 [![Discord](https://img.shields.io/badge/RVC%20Developers-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/HcsmBBGyVk)
 
@@ -21,7 +21,7 @@ Un framework simple et facile à utiliser pour la conversion vocale (modificateu
 
 ------
 
-[**English**](../en/README.en.md) | [ **中文简体**](../../README.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Turc**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
+[**English**](../../README.md) | [ **中文简体**](../cn/README.cn.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Turc**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
 
 Cliquez ici pour voir notre [vidéo de démonstration](https://www.bilibili.com/video/BV1pm4y1z7Gm/) !
 
@@ -94,11 +94,10 @@ sh ./run.sh
 RVC nécessite d'autres modèles pré-entraînés pour l'inférence et la formation.
 
 ```bash
-#Télécharger tous les modèles depuis https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/
 python tools/download_models.py
 ```
 
-Ou vous pouvez télécharger ces modèles depuis notre [espace Hugging Face](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/).
+Ou vous pouvez télécharger ces modèles depuis notre [espace Hugging Face](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/).
 
 Voici une liste des modèles et autres fichiers requis par RVC :
 ```bash
@@ -114,11 +113,11 @@ Voici une liste des modèles et autres fichiers requis par RVC :
 
 # Si vous souhaitez utiliser le dernier algorithme RMVPE de pitch vocal, téléchargez les paramètres du modèle de pitch et placez-les dans le répertoire racine de RVC.
 
-https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.pt
+https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.pt
 
     # Les utilisateurs de cartes AMD/Intel nécessitant l'environnement DML doivent télécharger :
 
-    https://huggingface.co/lj1995/VoiceConversionWebUI/blob/main/rmvpe.onnx
+    https://huggingface.co/fumiama/RVC-Pretrained-Models/blob/main/rmvpe/rmvpe.onnx
 
 ```
 Pour les utilisateurs d'Intel ARC avec IPEX, exécutez d'abord `source /opt/intel/oneapi/setvars.sh`.

@@ -11,7 +11,7 @@ VITS基盤의 簡單하고使用하기 쉬운音聲變換틀
 ![moe](https://counter.seku.su/cmoe?name=rvc&theme=r34)
 
 [![Licence](https://img.shields.io/github/license/fumiama/Retrieval-based-Voice-Conversion-WebUI?style=for-the-badge)](https://github.com/fumiama/Retrieval-based-Voice-Conversion-WebUI/blob/main/LICENSE)
-[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)
+[![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)
 
 [![Discord](https://img.shields.io/badge/RVC%20Developers-Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/HcsmBBGyVk)
 
@@ -19,7 +19,7 @@ VITS基盤의 簡單하고使用하기 쉬운音聲變換틀
 
 ------
 
-[**English**](../en/README.en.md) | [**中文简体**](../../README.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
+[**English**](../../README.md) | [**中文简体**](../cn/README.cn.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
 
 > [示範映像](https://www.bilibili.com/video/BV1pm4y1z7Gm/)을 確認해 보세요!
 
@@ -66,7 +66,7 @@ pip install -r requirements/main.txt
 ## 其他預備모델準備
 RVC 모델은 推論과訓練을 依하여 다른 預備모델이 必要합니다.
 
-[Huggingface space](https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/)를 通해서 다운로드 할 수 있습니다.
+[Huggingface space](https://huggingface.co/fumiama/RVC-Pretrained-Models/tree/main/)를 通해서 다운로드 할 수 있습니다.
 
 다음은 RVC에 必要한 預備모델 및 其他 파일 目錄입니다:
 ```bash
