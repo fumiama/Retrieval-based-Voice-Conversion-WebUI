@@ -40,7 +40,7 @@ if "privateuseone" not in device:
     elif torch.backends.mps.is_available():
         device = "mps"
 else:
-    import torch_directml # type: ignore
+    import torch_directml  # type: ignore
 
     device = torch_directml.device(torch_directml.default_device())
 
@@ -88,10 +88,7 @@ def readwave(wav_path, normalize=False):
 printt("load model(s) from {}".format(model_path))
 # if hubert model is exist
 if os.access(model_path, os.F_OK) == False:
-    printt(
-        "Error: Extracting is shut down because %s does not exist."
-        % model_path
-    )
+    printt("Error: Extracting is shut down because %s does not exist." % model_path)
     exit(0)
 models, saved_cfg, task = fairseq.checkpoint_utils.load_model_ensemble_and_task(
     [model_path],

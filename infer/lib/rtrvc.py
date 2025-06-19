@@ -21,7 +21,7 @@ class RVC:
         self,
         key: Union[int, float],
         formant: Union[int, float],
-        pth_path: FileLike, # type: ignore
+        pth_path: FileLike,  # type: ignore
         index_path: str,
         index_rate: Union[int, float],
         n_cpu: int = os.cpu_count(),

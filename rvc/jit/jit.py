@@ -18,7 +18,7 @@ def save_pickle(ckpt: dict, save_path: str):
         pickle.dump(ckpt, f)
 
 
-def load_inputs(path: FileLike, device: str, is_half=False): # type: ignore
+def load_inputs(path: FileLike, device: str, is_half=False):  # type: ignore
     parm = torch.load(path, map_location=torch.device("cpu"))
     for key in parm.keys():
         parm[key] = parm[key].to(device)
