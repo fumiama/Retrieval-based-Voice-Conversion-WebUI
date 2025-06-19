@@ -199,17 +199,19 @@ def get_audio_properties(input_path: str) -> Tuple[int, int]:
     container.close()
     return channels, rate
 
+
 class AudioIoProcess(Process):
-    def __init__(self,
-                 input_device,
-                 output_device,
-                 input_audio_block_size: int,
-                 sample_rate: int,
-                 channel_num: int = 2,
-                 is_device_combined: bool = True,
-                 is_input_wasapi_exclusive: bool = False,
-                 is_output_wasapi_exclusive: bool = False
-                 ):
+    def __init__(
+        self,
+        input_device,
+        output_device,
+        input_audio_block_size: int,
+        sample_rate: int,
+        channel_num: int = 2,
+        is_device_combined: bool = True,
+        is_input_wasapi_exclusive: bool = False,
+        is_output_wasapi_exclusive: bool = False,
+    ):
         super().__init__()
         self.in_dev = input_device
         self.out_dev = output_device
@@ -222,18 +224,19 @@ class AudioIoProcess(Process):
         self.is_output_wasapi_exclusive: bool = is_output_wasapi_exclusive
 
         self.__rec_ptr = 0
-        self.in_ptr = Value('i', 0)  # 当收满一个block时由本进程设置
-        self.out_ptr = Value('i', 0)  # 由主进程设置，指示下一次预期写入位置
-        self.play_ptr = Value('i', 0)  # 由本进程设置，指示当前音频已经播放到哪里
+        self.in_ptr = Value("i", 0)  # 当收满一个block时由本进程设置
+        self.out_ptr = Value("i", 0)  # 由主进程设置，指示下一次预期写入位置
+        self.play_ptr = Value("i", 0)  # 由本进程设置，指示当前音频已经播放到哪里
         self.in_evt = Event()  # 当收满一个block时由本进程设置
         self.stop_evt = Event()  # 当主进程停止音频活动时由主进程设置
 
-        self.latency = Value('d', 114514.1919810)
+        self.latency = Value("d", 114514.1919810)
 
         self.buf_shape: tuple = (self.buf_size, self.channels)
         self.buf_dtype: np.dtype = np.float32
         self.buf_nbytes: int = int(
-            np.prod(self.buf_shape) * np.dtype(self.buf_dtype).itemsize)
+            np.prod(self.buf_shape) * np.dtype(self.buf_dtype).itemsize
+        )
 
         self.in_mem = SharedMemory(create=True, size=self.buf_nbytes)
         self.out_mem = SharedMemory(create=True, size=self.buf_nbytes)
@@ -256,11 +259,7 @@ class AudioIoProcess(Process):
         return self.buf_dtype
 
     def get_ptrs_and_events(self):
-        return self.in_ptr, \
-            self.out_ptr,\
-            self.play_ptr,\
-            self.in_evt, \
-            self.stop_evt\
+        return self.in_ptr, self.out_ptr, self.play_ptr, self.in_evt, self.stop_evt
 
     def get_latency(self) -> float:
         return self.latency.value
@@ -272,12 +271,14 @@ class AudioIoProcess(Process):
 
         in_mem = SharedMemory(name=self.in_mem_name)
         self.in_buf = np.ndarray(
-            self.buf_shape, dtype=self.buf_dtype, buffer=in_mem.buf, order='C')
+            self.buf_shape, dtype=self.buf_dtype, buffer=in_mem.buf, order="C"
+        )
         self.in_buf.fill(0.0)
 
         out_mem = SharedMemory(name=self.out_mem_name)
         self.out_buf = np.ndarray(
-            self.buf_shape, dtype=self.buf_dtype, buffer=out_mem.buf, order='C')
+            self.buf_shape, dtype=self.buf_dtype, buffer=out_mem.buf, order="C"
+        )
         self.out_buf.fill(0.0)
 
         exclusive_settings = sd.WasapiSettings(exclusive=True)
@@ -302,11 +303,11 @@ class AudioIoProcess(Process):
             # 收录输入数据
             end_ptr = self.__rec_ptr + frames
             if end_ptr <= self.buf_size:  # 整块拷贝
-                self.in_buf[self.__rec_ptr:end_ptr] = indata
+                self.in_buf[self.__rec_ptr : end_ptr] = indata
             else:  # 处理回绕
                 first = self.buf_size - self.__rec_ptr
                 second = end_ptr - self.buf_size
-                self.in_buf[self.__rec_ptr:] = indata[:first]
+                self.in_buf[self.__rec_ptr :] = indata[:first]
                 self.in_buf[:second] = indata[first:]
             write_pos = self.__rec_ptr
             self.__rec_ptr = end_ptr % self.buf_size
@@ -328,11 +329,14 @@ class AudioIoProcess(Process):
                 samplerate=self.sample_rate,
                 channels=self.channels,
                 dtype=self.buf_dtype,
-                latency='low',
-                extra_settings=exclusive_settings if
-                        self.is_input_wasapi_exclusive and
-                        self.is_output_wasapi_exclusive else None,
-                callback=combined_callback
+                latency="low",
+                extra_settings=(
+                    exclusive_settings
+                    if self.is_input_wasapi_exclusive
+                    and self.is_output_wasapi_exclusive
+                    else None
+                ),
+                callback=combined_callback,
             ) as s:
                 self.latency.value = s.latency[-1]
                 self.stop_evt.wait()
@@ -342,16 +346,20 @@ class AudioIoProcess(Process):
                 samplerate=self.sample_rate,
                 channels=self.channels,
                 dtype=self.buf_dtype,
-                latency='low',
-                extra_settings=exclusive_settings if self.is_input_wasapi_exclusive else None,
-                callback=input_callback
+                latency="low",
+                extra_settings=(
+                    exclusive_settings if self.is_input_wasapi_exclusive else None
+                ),
+                callback=input_callback,
             ) as si, sd.OutputStream(
                 samplerate=self.sample_rate,
                 channels=self.channels,
                 dtype=self.buf_dtype,
-                latency='low',
-                extra_settings=exclusive_settings if self.is_output_wasapi_exclusive else None,
-                callback=output_callback
+                latency="low",
+                extra_settings=(
+                    exclusive_settings if self.is_output_wasapi_exclusive else None
+                ),
+                callback=output_callback,
             ) as so:
                 self.latency.value = si.latency[-1] + so.latency[-1]
                 self.stop_evt.wait()

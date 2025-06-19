@@ -28,9 +28,7 @@ def get_synthesizer(cpt: OrderedDict, device=torch.device("cpu")):
     return net_g, cpt
 
 
-def load_synthesizer(
-    pth_path: FileLike, device=torch.device("cpu") # type: ignore
-):
+def load_synthesizer(pth_path: FileLike, device=torch.device("cpu")):  # type: ignore
     return get_synthesizer(
         torch.load(pth_path, map_location=torch.device("cpu"), weights_only=True),
         device,
