@@ -140,7 +140,6 @@
     "Train model": "Train model",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)",
-    "Unfortunately, there is no compatible GPU available to support your training.": "Unfortunately, there is no compatible GPU available to support your training.",
     "Unknown": "Unknown",
     "Unload model to save GPU memory": "Unload model to save GPU memory",
     "Version": "Version",

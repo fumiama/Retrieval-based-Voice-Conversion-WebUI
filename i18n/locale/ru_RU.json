@@ -140,7 +140,6 @@
     "Train model": "Обучить модель",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "Обучение модели завершено. Журнал обучения можно просмотреть в консоли или в файле 'train.log' в папке с моделью.",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "Изменить высоту голоса (укажите количество полутонов; чтобы поднять голос на октаву, выберите 12, понизить на октаву — -12):",
-    "Unfortunately, there is no compatible GPU available to support your training.": "К сожалению, у вас нету графического процессора, который поддерживает обучение моделей.",
     "Unknown": "Unknown",
     "Unload model to save GPU memory": "Выгрузить модель из памяти GPU для освобождения ресурсов",
     "Version": "Версия архитектуры модели:",

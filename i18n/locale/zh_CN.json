@@ -140,7 +140,6 @@
     "Train model": "训练模型",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "训练结束, 您可查看控制台训练日志或实验文件夹下的train.log",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "变调(整数, 半音数量, 升八度12降八度-12)",
-    "Unfortunately, there is no compatible GPU available to support your training.": "很遗憾您这没有能用的显卡来支持您训练",
     "Unknown": "未知",
     "Unload model to save GPU memory": "卸载音色省显存",
     "Version": "版本",

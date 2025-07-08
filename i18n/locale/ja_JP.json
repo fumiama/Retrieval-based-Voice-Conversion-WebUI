@@ -140,7 +140,6 @@
     "Train model": "モデルの学習",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "学習終了時に、学習ログやフォルダ内のtrain.logを確認することができます",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "ピッチ変更(整数、半音数、上下オクターブ12-12)",
-    "Unfortunately, there is no compatible GPU available to support your training.": "学習に対応したGPUが動作しないのは残念です。",
     "Unknown": "未知",
     "Unload model to save GPU memory": "音源を削除してメモリを節約",
     "Version": "バージョン",

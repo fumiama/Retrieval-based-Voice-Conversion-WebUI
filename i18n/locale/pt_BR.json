@@ -140,7 +140,6 @@
     "Train model": "Treinar Modelo",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "Após o término do treinamento, você pode verificar o log de treinamento do console ou train.log na pasta de experimentos",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "Mude o tom aqui. Se a voz for do mesmo sexo, não é necessario alterar (12 caso seja Masculino para feminino, -12 caso seja ao contrário).",
-    "Unfortunately, there is no compatible GPU available to support your training.": "Infelizmente, não há GPU compatível disponível para apoiar o seu treinamento.",
     "Unknown": "Unknown",
     "Unload model to save GPU memory": "Descarregue a voz para liberar a memória da GPU:",
     "Version": "Versão",

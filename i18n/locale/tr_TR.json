@@ -140,7 +140,6 @@
     "Train model": "Modeli Eğit",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "Eğitim tamamlandı. Eğitim günlüklerini konsolda veya deney klasörü altındaki train.log dosyasında kontrol edebilirsiniz.",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "Transpoze et (tamsayı, yarıton sayısıyla; bir oktav yükseltmek için: 12, bir oktav düşürmek için: -12):",
-    "Unfortunately, there is no compatible GPU available to support your training.": "Maalesef, eğitiminizi desteklemek için uyumlu bir GPU bulunmamaktadır.",
     "Unknown": "Unknown",
     "Unload model to save GPU memory": "GPU bellek kullanımını azaltmak için sesi kaldır",
     "Version": "Sürüm",
