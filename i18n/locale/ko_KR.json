@@ -140,7 +140,6 @@
     "Train model": "모델 훈련",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "훈련 완료, 콘솔 훈련 로그 또는 실험 폴더 내의 train.log 확인 가능",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "키 변경(정수, 반음 수, 옥타브 상승 12, 옥타브 하강 -12)",
-    "Unfortunately, there is no compatible GPU available to support your training.": "사용 가능한 그래픽 카드가 없어 훈련을 지원할 수 없습니다",
     "Unknown": "Unknown",
     "Unload model to save GPU memory": "음색 언로드로 디스플레이 메모리 절약",
     "Version": "버전",

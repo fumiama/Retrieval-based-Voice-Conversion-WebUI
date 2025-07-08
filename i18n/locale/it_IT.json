@@ -140,7 +140,6 @@
     "Train model": "Addestra modello",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "Addestramento completato. ",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "Trasposizione (numero intero, numero di semitoni, alza di un'ottava: 12, abbassa di un'ottava: -12):",
-    "Unfortunately, there is no compatible GPU available to support your training.": "Sfortunatamente, non è disponibile alcuna GPU compatibile per supportare l'addestramento.",
     "Unknown": "Unknown",
     "Unload model to save GPU memory": "Scarica la voce per risparmiare memoria della GPU:",
     "Version": "Versione",
