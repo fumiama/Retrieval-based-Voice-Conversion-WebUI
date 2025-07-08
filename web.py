@@ -78,63 +78,6 @@ if config.dml == True:
 
 i18n = I18nAuto()
 logger.info(i18n)
-# 判断是否有能用来训练和加速推理的N卡
-ngpu = torch.cuda.device_count()
-gpu_infos = []
-mem = []
-if_gpu_ok = False
-
-if torch.cuda.is_available() or ngpu != 0:
-    for i in range(ngpu):
-        gpu_name = torch.cuda.get_device_name(i)
-        if any(
-            value in gpu_name.upper()
-            for value in [
-                "10",
-                "16",
-                "20",
-                "30",
-                "40",
-                "A2",
-                "A3",
-                "A4",
-                "P4",
-                "A50",
-                "500",
-                "A60",
-                "70",
-                "80",
-                "90",
-                "M4",
-                "T4",
-                "TITAN",
-                "4060",
-                "L",
-                "6000",
-            ]
-        ):
-            # A10#A100#V100#A40#P40#M40#K80#A4500
-            if_gpu_ok = True  # 至少有一张能用的N卡
-            gpu_infos.append("%s\t%s" % (i, gpu_name))
-            mem.append(
-                int(
-                    torch.cuda.get_device_properties(i).total_memory
-                    / 1024
-                    / 1024
-                    / 1024
-                    + 0.4
-                )
-            )
-if if_gpu_ok and len(gpu_infos) > 0:
-    gpu_info = "\n".join(gpu_infos)
-    default_batch_size = min(mem) // 2
-else:
-    gpu_info = i18n(
-        "Unfortunately, there is no compatible GPU available to support your training."
-    )
-    default_batch_size = 1
-gpus = "-".join([i[0] for i in gpu_infos])
-
 
 weight_root = os.getenv("weight_root")
 weight_uvr5_root = os.getenv("weight_uvr5_root")
@@ -314,6 +257,7 @@ def extract_f0_feature(n_p, f0method, if_f0, exp_dir, version19):
     exp_dir=sys.argv[4]
     os.environ["CUDA_VISIBLE_DEVICES"]=str(i_gpu)
     """
+    gpus = [config.device]
     leng = len(gpus)
     ps = []
     for idx, n_g in enumerate(gpus):
@@ -1201,7 +1145,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                 with gr.Column():
                     gpu_info9 = gr.Textbox(
                         label=i18n("GPU Information"),
-                        value=gpu_info,
+                        value=config.device,
                     )
                     f0method8 = gr.Radio(
                         label=i18n(
@@ -1254,7 +1198,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                         maximum=40,
                         step=1,
                         label=i18n("Batch size per GPU"),
-                        value=default_batch_size,
+                        value=config.default_batch_size,
                         interactive=True,
                     )
                     if_save_latest13 = gr.Radio(
@@ -1296,7 +1240,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                         label=i18n(
                             "Enter the GPU index(es) separated by '-', e.g., 0-1-2 to use GPU 0, 1, and 2"
                         ),
-                        value=gpus,
+                        value="0",
                         interactive=True,
                     )
                     sr2.change(

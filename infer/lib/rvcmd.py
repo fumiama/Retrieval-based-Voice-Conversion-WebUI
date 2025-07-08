@@ -194,11 +194,11 @@ def download_all_assets(tmpdir: str, version="0.2.5"):
     if not architecture:
         logger.error(f"architecture {architecture} is not supported")
         exit(1)
+    BASE_URL = "https://github.com/fumiama/RVC-Models-Downloader/releases/download/"
+    suffix = "zip" if is_win else "tar.gz"
+    RVCMD_URL = BASE_URL + f"v{version}/rvcmd_{system_type}_{architecture}.{suffix}"
+    cmdfile = os.path.join(tmpdir, "rvcmd")
     try:
-        BASE_URL = "https://github.com/fumiama/RVC-Models-Downloader/releases/download/"
-        suffix = "zip" if is_win else "tar.gz"
-        RVCMD_URL = BASE_URL + f"v{version}/rvcmd_{system_type}_{architecture}.{suffix}"
-        cmdfile = os.path.join(tmpdir, "rvcmd")
         if is_win:
             download_and_extract_zip(RVCMD_URL, tmpdir)
             cmdfile += ".exe"
