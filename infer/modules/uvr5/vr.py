@@ -37,7 +37,7 @@ class AudioPre:
         else:
             mp = ModelParameters("infer/lib/uvr5_pack/lib_v5/modelparams/4band_v2.json")
             model = Nets.CascadedASPPNet(mp.param["bins"] * 2)
-        cpk = torch.load(model_path, map_location="cpu")
+        cpk = torch.load(model_path, map_location="cpu", weights_only=True)
         model.load_state_dict(cpk)
         model.eval()
         if is_half:

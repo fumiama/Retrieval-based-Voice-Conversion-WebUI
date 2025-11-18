@@ -198,44 +198,10 @@ def download_all_assets(tmpdir: str, version="0.2.5"):
     suffix = "zip" if is_win else "tar.gz"
     RVCMD_URL = BASE_URL + f"v{version}/rvcmd_{system_type}_{architecture}.{suffix}"
     cmdfile = os.path.join(tmpdir, "rvcmd")
-    try:
-        if is_win:
-            download_and_extract_zip(RVCMD_URL, tmpdir)
-            cmdfile += ".exe"
-        else:
-            download_and_extract_tar_gz(RVCMD_URL, tmpdir)
-            os.chmod(cmdfile, 0o755)
-        subprocess.run([cmdfile, "-notui", "-w", "0", "assets/rvc"])
-    except Exception:
-        BASE_URL = "https://raw.gitcode.com/u011570312/RVC-Models-Downloader/assets/"
-        suffix = {
-            "darwin_amd64": "555",
-            "darwin_arm64": "556",
-            "linux_386": "557",
-            "linux_amd64": "558",
-            "linux_arm64": "559",
-            "windows_386": "562",
-            "windows_amd64": "563",
-        }[f"{system_type}_{architecture}"]
-        RVCMD_URL = BASE_URL + suffix
-        download_dns_yaml(
-            "https://raw.gitcode.com/u011570312/RVC-Models-Downloader/raw/main/dns.yaml",
-            tmpdir,
-        )
-        if is_win:
-            download_and_extract_zip(RVCMD_URL, tmpdir)
-            cmdfile += ".exe"
-        else:
-            download_and_extract_tar_gz(RVCMD_URL, tmpdir)
-            os.chmod(cmdfile, 0o755)
-        subprocess.run(
-            [
-                cmdfile,
-                "-notui",
-                "-w",
-                "0",
-                "-dns",
-                os.path.join(tmpdir, "dns.yaml"),
-                "assets/rvc",
-            ]
-        )
+    if is_win:
+        download_and_extract_zip(RVCMD_URL, tmpdir)
+        cmdfile += ".exe"
+    else:
+        download_and_extract_tar_gz(RVCMD_URL, tmpdir)
+        os.chmod(cmdfile, 0o755)
+    subprocess.run([cmdfile, "-notui", "-w", "0", "assets/rvc"])

@@ -152,7 +152,7 @@ def model_hash_ckpt(cpt):
 
 
 def model_hash_from(path):
-    cpt = torch.load(path, map_location="cpu")
+    cpt = torch.load(path, map_location="cpu", weights_only=True)
     h = model_hash_ckpt(cpt)
     del cpt
     return h
