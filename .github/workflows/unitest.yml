@@ -11,12 +11,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@master
+    - name: Space cleanup
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        df -h
+
+        docker rmi `docker images -q`
+        sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+        sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php* android*
+        sudo -E apt-get update
+        sudo -E apt-get -y autoremove --purge
+        sudo -E apt-get clean
+
+        df -h
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        nvidia-smi
         sudo apt update
         wget https://github.com/fumiama/RVC-Models-Downloader/releases/download/v0.2.11/rvcmd_linux_amd64.deb
         sudo apt -y install ./rvcmd_linux_amd64.deb
@@ -24,7 +39,7 @@ jobs:
         python -m pip install --upgrade setuptools
         python -m pip install --upgrade wheel
         pip install torch torchvision torchaudio
-        pip install -r requirements/dml.txt
+        pip install -r requirements/main.txt
         rvcmd -notrs -w 1 -notui assets/rvc
     - name: Test step 1 & 2
       run: |
