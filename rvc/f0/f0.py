@@ -11,14 +11,14 @@ class F0Predictor(object):
         f0_min=50,
         f0_max=1100,
         sampling_rate=44100,
-        device: Optional[str] = None,
+        device: Optional[Union[str, torch.device]] = None,
     ):
         self.hop_length = hop_length
         self.f0_min = f0_min
         self.f0_max = f0_max
         self.sampling_rate = sampling_rate
-        if device is None:
-            device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        if not device:
+            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.device = device
 
     def compute_f0(

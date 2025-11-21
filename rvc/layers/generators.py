@@ -46,6 +46,7 @@ class Generator(torch.nn.Module):
 
         self.resblocks = nn.ModuleList()
         resblock_module = ResBlock1 if resblock == "1" else ResBlock2
+        ch = 0
         for i in range(len(self.ups)):
             ch = upsample_initial_channel // (2 ** (i + 1))
             for k, d in zip(resblock_kernel_sizes, resblock_dilation_sizes):

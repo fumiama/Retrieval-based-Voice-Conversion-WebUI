@@ -34,7 +34,7 @@ class SynthesizerTrnMsNSFsid(nn.Module):
         upsample_kernel_sizes: List[int],
         spk_embed_dim: int,
         gin_channels: int,
-        sr: Optional[Union[str, int]],
+        sr: Union[str, int],
         encoder_dim: int,
         use_f0: bool,
     ):
@@ -143,7 +143,7 @@ class SynthesizerTrnMsNSFsid(nn.Module):
                     torch.nn.utils.remove_weight_norm(self.enc_q)
         return self
 
-    @torch.jit.ignore
+    @torch.jit.ignore()
     def forward(
         self,
         phone: torch.Tensor,
@@ -155,18 +155,20 @@ class SynthesizerTrnMsNSFsid(nn.Module):
         pitchf: Optional[torch.Tensor] = None,
     ):  # 这里ds是id，[bs,1]
         # print(1,pitch.shape)#[bs,t]
-        g = self.emb_g(ds).unsqueeze(-1)  # [b, 256, 1]##1是t，广播的
+        embg = self.emb_g(ds).unsqueeze(-1)  # [b, 256, 1]##1是t，广播的
         m_p, logs_p, x_mask = self.enc_p(phone, pitch, phone_lengths)
-        z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=g)
-        z_p = self.flow(z, y_mask, g=g)
+        z, m_q, logs_q, y_mask = self.enc_q(y, y_lengths, g=embg)
+        z_p = self.flow(z, y_mask, g=embg)
         z_slice, ids_slice = rand_slice_segments_on_last_dim(
             z, y_lengths, self.segment_size
         )
-        if pitchf is not None:
+        if pitchf is not None and isinstance(self.dec, NSFGenerator):
             pitchf = slice_on_last_dim(pitchf, ids_slice, self.segment_size)
-            o = self.dec(z_slice, pitchf, g=g)
+            o = self.dec(z_slice, pitchf, g=embg) # type: ignore
+        elif isinstance(self.dec, Generator):
+            o = self.dec(z_slice, g=embg)
         else:
-            o = self.dec(z_slice, g=g)
+            raise KeyError(f"unknown dec type: {type(self.dec).__name__}")
         return o, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
 
     @torch.jit.export
@@ -201,15 +203,17 @@ class SynthesizerTrnMsNSFsid(nn.Module):
             z_p = (m_p + torch.exp(logs_p) * torch.randn_like(m_p) * 0.66666) * x_mask
             z = self.flow(z_p, x_mask, g=g, reverse=True)
         del z_p, m_p, logs_p
-        if pitchf is not None:
-            o = self.dec(
+        if pitchf is not None and isinstance(self.dec, NSFGenerator):
+           o = self.dec(
                 z * x_mask,
                 pitchf,
                 g=g,
                 n_res=return_length2,
             )
-        else:
+        elif isinstance(self.dec, Generator):
             o = self.dec(z * x_mask, g=g, n_res=return_length2)
+        else:
+            raise KeyError(f"unknown dec type: {type(self.dec).__name__}")
         del x_mask, z
         return o  # , x_mask, (z, z_p, m_p, logs_p)
 
@@ -326,7 +330,7 @@ class SynthesizerTrnMs256NSFsid_nono(SynthesizerTrnMsNSFsid):
         upsample_kernel_sizes: List[int],
         spk_embed_dim: int,
         gin_channels: int,
-        sr=None,
+        sr: Union[str, int],
     ):
         super().__init__(
             spec_channels,
@@ -346,6 +350,7 @@ class SynthesizerTrnMs256NSFsid_nono(SynthesizerTrnMsNSFsid):
             upsample_kernel_sizes,
             spk_embed_dim,
             gin_channels,
+            sr,
             256,
             False,
         )
@@ -371,7 +376,7 @@ class SynthesizerTrnMs768NSFsid_nono(SynthesizerTrnMsNSFsid):
         upsample_kernel_sizes: List[int],
         spk_embed_dim: int,
         gin_channels: int,
-        sr=None,
+        sr: Union[str, int],
     ):
         super().__init__(
             spec_channels,
@@ -391,6 +396,7 @@ class SynthesizerTrnMs768NSFsid_nono(SynthesizerTrnMsNSFsid):
             upsample_kernel_sizes,
             spk_embed_dim,
             gin_channels,
+            sr,
             768,
             False,
         )

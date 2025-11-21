@@ -30,7 +30,7 @@ class WN(torch.nn.Module):
         dilation_rate: int,
         n_layers: int,
         gin_channels: int = 0,
-        p_dropout: int = 0,
+        p_dropout: float = 0,
     ):
         super(WN, self).__init__()
         assert kernel_size % 2 == 1

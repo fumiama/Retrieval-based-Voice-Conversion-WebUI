@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 import numpy as np
@@ -17,9 +17,9 @@ class MelSpectrogram(torch.nn.Module):
         hop_length: int,
         n_fft: Optional[int] = None,
         mel_fmin: int = 0,
-        mel_fmax: int = None,
+        mel_fmax: Optional[int] = None,
         clamp: float = 1e-5,
-        device=torch.device("cpu"),
+        device: Union[str, torch.device] = torch.device("cpu"),
     ):
         super().__init__()
         if n_fft is None:

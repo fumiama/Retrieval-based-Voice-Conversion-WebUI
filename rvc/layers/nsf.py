@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Union
 import math
 
 import torch
@@ -83,7 +83,7 @@ class NSFGenerator(torch.nn.Module):
         self.conv_pre = Conv1d(
             initial_channel, upsample_initial_channel, 7, 1, padding=3
         )
-        resblock = ResBlock1 if resblock == "1" else ResBlock2
+        resblockcls = ResBlock1 if resblock == "1" else ResBlock2
 
         self.ups = nn.ModuleList()
         for i, (u, k) in enumerate(zip(upsample_rates, upsample_kernel_sizes)):
@@ -114,12 +114,13 @@ class NSFGenerator(torch.nn.Module):
                 self.noise_convs.append(Conv1d(1, c_cur, kernel_size=1))
 
         self.resblocks = nn.ModuleList()
+        ch = 0
         for i in range(len(self.ups)):
-            ch: int = upsample_initial_channel // (2 ** (i + 1))
+            ch = upsample_initial_channel // (2 ** (i + 1))
             for j, (k, d) in enumerate(
                 zip(resblock_kernel_sizes, resblock_dilation_sizes)
             ):
-                self.resblocks.append(resblock(ch, k, d))
+                self.resblocks.append(resblockcls(ch, k, d))
 
         self.conv_post = Conv1d(ch, 1, 7, 1, padding=3, bias=False)
         self.ups.apply(call_weight_data_normal_if_Conv)

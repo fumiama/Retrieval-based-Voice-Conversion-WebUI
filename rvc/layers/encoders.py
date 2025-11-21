@@ -42,8 +42,8 @@ class Encoder(nn.Module):
                     hidden_channels,
                     hidden_channels,
                     n_heads,
+                    window_size,
                     p_dropout=p_dropout,
-                    window_size=window_size,
                 )
             )
             self.norm_layers_1.append(LayerNorm(hidden_channels))
@@ -121,7 +121,7 @@ class TextEncoder(nn.Module):
     def __call__(
         self,
         phone: torch.Tensor,
-        pitch: torch.Tensor,
+        pitch: Optional[torch.Tensor],
         lengths: torch.Tensor,
         skip_head: Optional[int] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
@@ -135,7 +135,7 @@ class TextEncoder(nn.Module):
     def forward(
         self,
         phone: torch.Tensor,
-        pitch: torch.Tensor,
+        pitch: Optional[torch.Tensor],
         lengths: torch.Tensor,
         skip_head: Optional[int] = None,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:

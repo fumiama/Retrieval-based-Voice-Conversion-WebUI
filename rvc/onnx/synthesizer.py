@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Union
 
 import torch
 
@@ -25,7 +25,7 @@ class SynthesizerTrnMsNSFsid(SynthesizerBase):
         upsample_kernel_sizes: List[int],
         spk_embed_dim: int,
         gin_channels: int,
-        sr: Optional[Union[str, int]],
+        sr: Union[str, int],
         encoder_dim: int,
     ):
         super().__init__(
