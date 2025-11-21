@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
-        os: [ubuntu-latest]
+        os: [ubuntu-20.04]
       fail-fast: true
 
     steps:
@@ -17,6 +17,7 @@ jobs:
       run: |
         df -h
 
+        docker rmi `docker images -q`
         sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
         sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php* android*
         sudo -E apt-get update
