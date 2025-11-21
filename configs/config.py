@@ -50,6 +50,7 @@ class Config(metaclass=Singleton):
             self.nocheck,
             self.update,
         ) = self.arg_parse()
+        self.dml = False
         self.instead = ""
         self.preprocess_per = 3.7
         self.x_pad, self.x_query, self.x_center, self.x_max = self.device_config()
@@ -239,6 +240,7 @@ class Config(metaclass=Singleton):
 
             self.device = torch_directml.device(torch_directml.default_device())
             self.is_half = False
+            self.dml = True
         else:
             if self.instead:
                 logger.info(f"Use {self.instead} instead")
