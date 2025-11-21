@@ -43,3 +43,6 @@ python-dotenv>=1.0.0
 av
 torchfcpe
 pybase16384
+torch-directml
+torchvision
+torchaudio
