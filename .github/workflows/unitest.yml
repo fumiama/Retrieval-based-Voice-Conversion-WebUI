@@ -70,15 +70,13 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        nvidia-smi
-        sudo apt update
         wget https://github.com/fumiama/RVC-Models-Downloader/releases/download/v0.2.11/rvcmd_linux_amd64.deb
         sudo apt -y install ./rvcmd_linux_amd64.deb
         pip install --force pip==24.0 # fix fairseq installing issue https://github.com/facebookresearch/fairseq/issues/5552
         python -m pip install --upgrade setuptools
         python -m pip install --upgrade wheel
         pip install torch torchvision torchaudio
-        pip install -r requirements/main.txt
+        pip install -r requirements/cpu.txt
         rvcmd -notrs -w 1 -notui assets/rvc
     - name: Test step 1 & 2
       run: |

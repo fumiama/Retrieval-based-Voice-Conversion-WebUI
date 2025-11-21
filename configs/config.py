@@ -4,6 +4,7 @@ import sys
 import json
 import shutil
 from multiprocessing import cpu_count
+import importlib.util
 
 import torch
 
@@ -46,7 +47,6 @@ class Config(metaclass=Singleton):
             self.global_link,
             self.noparallel,
             self.noautoopen,
-            self.dml,
             self.nocheck,
             self.update,
         ) = self.arg_parse()
@@ -84,11 +84,6 @@ class Config(metaclass=Singleton):
             help="Do not open in browser automatically",
         )
         parser.add_argument(
-            "--dml",
-            action="store_true",
-            help="torch_dml",
-        )
-        parser.add_argument(
             "--nocheck", action="store_true", help="Run without checking assets"
         )
         parser.add_argument(
@@ -104,7 +99,6 @@ class Config(metaclass=Singleton):
             cmd_opts.global_link,
             cmd_opts.noparallel,
             cmd_opts.noautoopen,
-            cmd_opts.dml,
             cmd_opts.nocheck,
             cmd_opts.update,
         )
@@ -183,7 +177,7 @@ class Config(metaclass=Singleton):
             if self.has_xpu():
                 self.device = self.instead = "xpu:0"
                 self.is_half = True
-            i_device = int(self.device.split(":")[-1])
+            i_device = int(str(self.device).split(":")[-1])
             self.gpu_name = torch.cuda.get_device_name(i_device)
             if (
                 ("16" in self.gpu_name and "V100" not in self.gpu_name.upper())
@@ -239,7 +233,7 @@ class Config(metaclass=Singleton):
             x_query = 5
             x_center = 30
             x_max = 32
-        if self.dml:
+        if importlib.util.find_spec("torch_directml") is not None:
             logger.info("Use DirectML instead")
             import torch_directml
 
