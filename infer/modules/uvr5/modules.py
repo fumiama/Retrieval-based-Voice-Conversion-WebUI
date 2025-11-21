@@ -62,10 +62,6 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
                     os.path.basename(inp_path),
                 )
                 resample_audio(inp_path, tmp_path, "pcm_s16le", "s16", 44100, "stereo")
-                try:  # Remove the original file
-                    os.remove(inp_path)
-                except Exception as e:
-                    print(f"Failed to remove the original file: {e}")
                 inp_path = tmp_path
             try:
                 if done == 0:

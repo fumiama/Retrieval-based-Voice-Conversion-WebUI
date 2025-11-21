@@ -162,15 +162,7 @@ def download_and_extract_zip(url: str, folder: str):
         logger.info(f"extracted into {folder}")
 
 
-def download_dns_yaml(url: str, folder: str):
-    logger.info(f"downloading {url}")
-    response = requests.get(url, stream=True, timeout=(5, 10))
-    with open(os.path.join(folder, "dns.yaml"), "wb") as out_file:
-        out_file.write(response.content)
-        logger.info(f"downloaded into {folder}")
-
-
-def download_all_assets(tmpdir: str, version="0.2.5"):
+def download_all_assets(tmpdir: str, version="0.2.11"):
     import subprocess
     import platform
 

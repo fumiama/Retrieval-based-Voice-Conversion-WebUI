@@ -214,7 +214,7 @@ class Config(metaclass=Singleton):
             self.use_fp32_config()
         else:
             logger.info("No supported Nvidia GPU found")
-            self.device = self.instead = "cpu"
+            self.device = self.instead = torch.get_default_device()
             self.is_half = False
             self.use_fp32_config()
 
