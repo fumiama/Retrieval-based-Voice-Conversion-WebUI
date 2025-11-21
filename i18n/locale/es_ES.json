@@ -140,7 +140,6 @@
     "Train model": "Entrenar Modelo",
     "Training complete. You can check the training logs in the console or the 'train.log' file under the experiment folder.": "Entrenamiento finalizado, puede ver el registro de entrenamiento en la consola o en el archivo train.log en la carpeta del experimento",
     "Transpose (integer, number of semitones, raise by an octave: 12, lower by an octave: -12)": "Cambio de tono (entero, número de semitonos, subir una octava +12 o bajar una octava -12)",
-    "Unfortunately, there is no compatible GPU available to support your training.": "Lamentablemente, no tiene una tarjeta gráfica adecuada para soportar su entrenamiento",
     "Unknown": "Desconocido",
     "Unload model to save GPU memory": "Descargue la voz para ahorrar memoria GPU",
     "Version": "Versión",
