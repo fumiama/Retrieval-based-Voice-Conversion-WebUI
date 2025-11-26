@@ -40,7 +40,8 @@ device = sys.argv[4]
 is_half = sys.argv[5] == "True"
 
 if importlib.util.find_spec("torch_directml") is not None:
-    import torch_directml # use side effect
+    import torch_directml  # use side effect
+
 
 class FeatureInput(object):
     def __init__(self, is_half: bool, device="cpu", samplerate=16000, hop_size=160):

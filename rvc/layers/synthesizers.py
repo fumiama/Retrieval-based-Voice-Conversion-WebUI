@@ -164,7 +164,7 @@ class SynthesizerTrnMsNSFsid(nn.Module):
         )
         if pitchf is not None and isinstance(self.dec, NSFGenerator):
             pitchf = slice_on_last_dim(pitchf, ids_slice, self.segment_size)
-            o = self.dec(z_slice, pitchf, g=embg) # type: ignore
+            o = self.dec(z_slice, pitchf, g=embg)  # type: ignore
         elif isinstance(self.dec, Generator):
             o = self.dec(z_slice, g=embg)
         else:
@@ -204,7 +204,7 @@ class SynthesizerTrnMsNSFsid(nn.Module):
             z = self.flow(z_p, x_mask, g=g, reverse=True)
         del z_p, m_p, logs_p
         if pitchf is not None and isinstance(self.dec, NSFGenerator):
-           o = self.dec(
+            o = self.dec(
                 z * x_mask,
                 pitchf,
                 g=g,
