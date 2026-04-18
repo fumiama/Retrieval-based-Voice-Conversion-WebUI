@@ -195,7 +195,10 @@ def get_audio_properties(input_path: str) -> Tuple[int, int]:
     container = av.open(input_path)
     audio_stream = next(s for s in container.streams if s.type == "audio")
     channels = 1 if audio_stream.layout == "mono" else 2
-    rate = audio_stream.base_rate
+    try:
+        rate = audio_stream.base_rate
+    except:
+        rate = audio_stream.sample_rate
     container.close()
     return channels, rate
 

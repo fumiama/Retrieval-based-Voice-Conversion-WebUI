@@ -4,6 +4,7 @@ import sys
 import json
 import shutil
 from multiprocessing import cpu_count
+import importlib.util
 
 import torch
 
@@ -46,13 +47,14 @@ class Config(metaclass=Singleton):
             self.global_link,
             self.noparallel,
             self.noautoopen,
-            self.dml,
             self.nocheck,
             self.update,
         ) = self.arg_parse()
+        self.dml = False
         self.instead = ""
         self.preprocess_per = 3.7
         self.x_pad, self.x_query, self.x_center, self.x_max = self.device_config()
+        self.default_batch_size = self.get_default_batch_size()
 
     @staticmethod
     def load_config_json() -> dict:
@@ -83,11 +85,6 @@ class Config(metaclass=Singleton):
             help="Do not open in browser automatically",
         )
         parser.add_argument(
-            "--dml",
-            action="store_true",
-            help="torch_dml",
-        )
-        parser.add_argument(
             "--nocheck", action="store_true", help="Run without checking assets"
         )
         parser.add_argument(
@@ -103,7 +100,6 @@ class Config(metaclass=Singleton):
             cmd_opts.global_link,
             cmd_opts.noparallel,
             cmd_opts.noautoopen,
-            cmd_opts.dml,
             cmd_opts.nocheck,
             cmd_opts.update,
         )
@@ -137,6 +133,35 @@ class Config(metaclass=Singleton):
         except AttributeError:
             pass
 
+    @staticmethod
+    def get_default_batch_size() -> int:
+        if not torch.cuda.is_available():
+            # TODO: add non-cuda multicards
+            return 1
+        # 判断是否有能用来训练和加速推理的N卡
+        ngpu = torch.cuda.device_count()
+        if not ngpu:
+            return 1
+        mem = []
+        if_gpu_ok = False
+
+        for i in range(ngpu):
+            if_gpu_ok = True  # 至少有一张能用的N卡
+            mem.append(
+                int(
+                    torch.cuda.get_device_properties(i).total_memory
+                    / 1024
+                    / 1024
+                    / 1024
+                    + 0.4
+                )
+            )
+        if if_gpu_ok:
+            default_batch_size = min(mem) // 2
+        else:
+            default_batch_size = 1
+        return default_batch_size
+
     def use_fp32_config(self):
         for config_file in version_config_list:
             self.json_config[config_file]["train"]["fp16_run"] = False
@@ -153,7 +178,7 @@ class Config(metaclass=Singleton):
             if self.has_xpu():
                 self.device = self.instead = "xpu:0"
                 self.is_half = True
-            i_device = int(self.device.split(":")[-1])
+            i_device = int(str(self.device).split(":")[-1])
             self.gpu_name = torch.cuda.get_device_name(i_device)
             if (
                 ("16" in self.gpu_name and "V100" not in self.gpu_name.upper())
@@ -184,7 +209,7 @@ class Config(metaclass=Singleton):
             self.use_fp32_config()
         else:
             logger.info("No supported Nvidia GPU found")
-            self.device = self.instead = "cpu"
+            self.device = self.instead = torch.get_default_device()
             self.is_half = False
             self.use_fp32_config()
 
@@ -209,12 +234,13 @@ class Config(metaclass=Singleton):
             x_query = 5
             x_center = 30
             x_max = 32
-        if self.dml:
+        if importlib.util.find_spec("torch_directml") is not None:
             logger.info("Use DirectML instead")
             import torch_directml
 
             self.device = torch_directml.device(torch_directml.default_device())
             self.is_half = False
+            self.dml = True
         else:
             if self.instead:
                 logger.info(f"Use {self.instead} instead")

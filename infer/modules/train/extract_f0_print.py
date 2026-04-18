@@ -2,6 +2,7 @@ import os
 import sys
 import traceback
 from pathlib import Path
+import importlib.util
 
 from dotenv import load_dotenv
 
@@ -37,6 +38,9 @@ n_p = int(sys.argv[2])
 f0method = sys.argv[3]
 device = sys.argv[4]
 is_half = sys.argv[5] == "True"
+
+if importlib.util.find_spec("torch_directml") is not None:
+    import torch_directml  # use side effect
 
 
 class FeatureInput(object):
@@ -102,6 +106,12 @@ if __name__ == "__main__":
     Config.use_insecure_load()
 
     printt(" ".join(sys.argv))
+    # GPU methods (rmvpe, fcpe, crepe, etc.) gain nothing from multiprocessing since
+    # all processes share one GPU. Spawning n_p processes each lazily loading
+    # the model onto the same CUDA device exhausts VRAM and causes deadlocks.
+    if "cuda" in device:
+        printt("WARN: use 1 thread since GPU is used.")
+        n_p = 1
     featureInput = FeatureInput(is_half, device)
     paths = []
     inp_root = "%s/1_16k_wavs" % (exp_dir)

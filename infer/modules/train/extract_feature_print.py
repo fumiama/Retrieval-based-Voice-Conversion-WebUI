@@ -10,19 +10,24 @@ from infer.lib.audio import load_audio
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
 
+if len(sys.argv) != 8:
+    sys.exit(0)
+
 device = sys.argv[1]
 n_part = int(sys.argv[2])
 i_part = int(sys.argv[3])
-if len(sys.argv) == 7:
-    exp_dir = sys.argv[4]
-    version = sys.argv[5]
-    is_half = sys.argv[6].lower() == "true"
-else:
-    i_gpu = sys.argv[4]
-    exp_dir = sys.argv[5]
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(i_gpu)
-    version = sys.argv[6]
-    is_half = sys.argv[7].lower() == "true"
+i_gpu = sys.argv[4]
+# CUDA_VISIBLE_DEVICES expects bare GPU indices (e.g. "0" or "0,1"),
+# but callers may pass "cuda:0", "cuda:0-cuda:1", etc.  Strip the prefix
+# and normalise separators so any combination works.
+import re
+
+i_gpu = re.sub(r"cuda:", "", str(i_gpu))
+i_gpu = i_gpu.replace("-", ",")
+os.environ["CUDA_VISIBLE_DEVICES"] = i_gpu
+exp_dir = sys.argv[5]
+version = sys.argv[6]
+is_half = sys.argv[7].lower() == "true"
 
 import fairseq
 import numpy as np

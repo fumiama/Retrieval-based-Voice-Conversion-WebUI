@@ -75,7 +75,7 @@ def show_info(path):
     try:
         if hasattr(path, "name"):
             path = path.name
-        a = torch.load(path, map_location="cpu")
+        a = torch.load(path, map_location="cpu", weights_only=True)
         txt = show_model_info(a, show_long_id=True)
         del a
     except:

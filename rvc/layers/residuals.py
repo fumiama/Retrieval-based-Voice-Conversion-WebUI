@@ -20,7 +20,7 @@ class ResBlock1(torch.nn.Module):
         self,
         channels: int,
         kernel_size: int = 3,
-        dilation: List[int] = (1, 3, 5),
+        dilation: List[int] = [1, 3, 5],
     ):
         super(ResBlock1, self).__init__()
 
@@ -117,7 +117,7 @@ class ResBlock2(torch.nn.Module):
         self,
         channels: int,
         kernel_size=3,
-        dilation: List[int] = (1, 3),
+        dilation: List[int] = [1, 3],
     ):
         super(ResBlock2, self).__init__()
         self.convs = nn.ModuleList()
@@ -182,7 +182,7 @@ class ResidualCouplingLayer(nn.Module):
         kernel_size: int,
         dilation_rate: int,
         n_layers: int,
-        p_dropout: int = 0,
+        p_dropout: float = 0,
         gin_channels: int = 0,
         mean_only: bool = False,
     ):

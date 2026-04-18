@@ -40,11 +40,9 @@ app = gr.Blocks()
 with app:
     with gr.Tabs():
         with gr.TabItem("在线demo"):
-            gr.Markdown(
-                value="""
+            gr.Markdown(value="""
                 RVC 在线demo
-                """
-            )
+                """)
             sid = gr.Dropdown(label=i18n("Inferencing voice"), choices=sorted(names))
             with gr.Column():
                 spk_item = gr.Slider(
