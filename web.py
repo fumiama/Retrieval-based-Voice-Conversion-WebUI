@@ -36,7 +36,6 @@ import threading
 import shutil
 import logging
 
-
 logging.getLogger("numba").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
