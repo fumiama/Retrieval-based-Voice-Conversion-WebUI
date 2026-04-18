@@ -32,7 +32,7 @@ try:
 except Exception:
     pass
 finally:
-    if not ('GradScaler' in globals() and 'autocast' in globals()):
+    if not ("GradScaler" in globals() and "autocast" in globals()):
         from torch.amp.grad_scaler import GradScaler
         from torch.amp.autocast_mode import autocast
 
