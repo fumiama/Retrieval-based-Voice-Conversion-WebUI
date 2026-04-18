@@ -88,23 +88,24 @@ index_paths = [""]
 
 
 def lookup_names(weight_root):
-    global names
+    names = []
     for name in os.listdir(weight_root):
         if name.endswith(".pth"):
             names.append(name)
+    return names
 
 
 def lookup_indices(index_root):
-    global index_paths
+    index_paths = []
     for root, _, files in os.walk(index_root, topdown=False):
         for name in files:
             if name.endswith(".index") and "trained" not in name:
                 index_paths.append(str(pathlib.Path(root, name)))
+    return index_paths
 
 
-lookup_names(weight_root)
-lookup_indices(index_root)
-lookup_indices(outside_index_root)
+names = [""] + lookup_names(weight_root)
+index_paths = [""] + lookup_indices(index_root) + lookup_indices(outside_index_root)
 uvr5_names = []
 for name in os.listdir(weight_uvr5_root):
     if name.endswith(".pth") or "onnx" in name:
@@ -112,12 +113,8 @@ for name in os.listdir(weight_uvr5_root):
 
 
 def change_choices():
-    global index_paths, names
-    names = [""]
-    lookup_names(weight_root)
-    index_paths = [""]
-    lookup_indices(index_root)
-    lookup_indices(outside_index_root)
+    names = [""] + lookup_names(weight_root)
+    index_paths = [""] + lookup_indices(index_root) + lookup_indices(outside_index_root)
     return {"choices": sorted(names), "__type__": "update"}, {
         "choices": sorted(index_paths),
         "__type__": "update",

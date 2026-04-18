@@ -1,6 +1,7 @@
 import os, pathlib
 
-from fairseq import checkpoint_utils
+import torch
+from fairseq import checkpoint_utils, data
 
 
 def get_index_path_from_model(sid):
@@ -21,10 +22,11 @@ def get_index_path_from_model(sid):
 
 
 def load_hubert(device, is_half):
-    models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
-        ["assets/hubert/hubert_base.pt"],
-        suffix="",
-    )
+    with torch.serialization.safe_globals([data.dictionary.Dictionary]):
+        models, _, _ = checkpoint_utils.load_model_ensemble_and_task(
+            ["assets/hubert/hubert_base.pt"],
+            suffix="",
+        )
     hubert_model = models[0]
     hubert_model = hubert_model.to(device)
     if is_half:

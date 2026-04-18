@@ -212,10 +212,7 @@ class PosteriorEncoder(nn.Module):
         self.enc.remove_weight_norm()
 
     def __prepare_scriptable__(self):
-        for hook in self.enc._forward_pre_hooks.values():
-            if (
-                hook.__module__ == "torch.nn.utils.weight_norm"
-                and hook.__class__.__name__ == "WeightNorm"
-            ):
-                torch.nn.utils.remove_weight_norm(self.enc)
+        from torch.nn.utils import parametrize
+        if parametrize.is_parametrized(self.enc, "weight"):
+            parametrize.remove_parametrizations(self.enc, "weight")
         return self

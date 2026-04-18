@@ -10,9 +10,6 @@ from pybase16384 import encode_to_string, decode_from_string
 from configs import CPUConfig
 from rvc.synthesizer import get_synthesizer
 
-from .pipeline import Pipeline
-from .utils import load_hubert
-
 
 class TorchSeedContext:
     def __init__(self, seed):
@@ -95,6 +92,9 @@ def wave_hash(time_field):
 
 
 def model_hash(config, tgt_sr, net_g, if_f0, version):
+    from .pipeline import Pipeline
+    from .utils import load_hubert
+
     pipeline = Pipeline(tgt_sr, config)
     audio = original_audio()
     hbt = load_hubert(config.device, config.is_half)
