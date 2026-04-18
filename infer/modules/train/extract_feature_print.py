@@ -17,7 +17,13 @@ device = sys.argv[1]
 n_part = int(sys.argv[2])
 i_part = int(sys.argv[3])
 i_gpu = sys.argv[4]
-os.environ["CUDA_VISIBLE_DEVICES"] = str(i_gpu)
+# CUDA_VISIBLE_DEVICES expects bare GPU indices (e.g. "0" or "0,1"),
+# but callers may pass "cuda:0", "cuda:0-cuda:1", etc.  Strip the prefix
+# and normalise separators so any combination works.
+import re
+i_gpu = re.sub(r'cuda:', '', str(i_gpu))
+i_gpu = i_gpu.replace('-', ',')
+os.environ["CUDA_VISIBLE_DEVICES"] = i_gpu
 exp_dir = sys.argv[5]
 version = sys.argv[6]
 is_half = sys.argv[7].lower() == "true"

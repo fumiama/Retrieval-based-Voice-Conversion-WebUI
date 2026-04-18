@@ -106,6 +106,12 @@ if __name__ == "__main__":
     Config.use_insecure_load()
 
     printt(" ".join(sys.argv))
+    # GPU methods (rmvpe, fcpe, crepe, etc.) gain nothing from multiprocessing since
+    # all processes share one GPU. Spawning n_p processes each lazily loading
+    # the model onto the same CUDA device exhausts VRAM and causes deadlocks.
+    if "cuda" in device:
+        printt("WARN: use 1 thread since GPU is used.")
+        n_p = 1
     featureInput = FeatureInput(is_half, device)
     paths = []
     inp_root = "%s/1_16k_wavs" % (exp_dir)
