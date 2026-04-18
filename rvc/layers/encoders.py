@@ -213,6 +213,7 @@ class PosteriorEncoder(nn.Module):
 
     def __prepare_scriptable__(self):
         from torch.nn.utils import parametrize
+
         if parametrize.is_parametrized(self.enc, "weight"):
             parametrize.remove_parametrizations(self.enc, "weight")
         return self
