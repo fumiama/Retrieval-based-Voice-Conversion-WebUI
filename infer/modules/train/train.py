@@ -127,7 +127,9 @@ def main():
             children[i].join()
 
 
-def run(rank, n_gpus, hps: utils.HParams, logger: logging.Logger, master_port: str = "29500"):
+def run(
+    rank, n_gpus, hps: utils.HParams, logger: logging.Logger, master_port: str = "29500"
+):
     global global_step
     if rank == 0:
         # logger = utils.get_logger(hps.model_dir)
